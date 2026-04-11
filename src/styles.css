@@ -1,0 +1,1138 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("https://landing.streamcraft.net/tycoon/font/montserrat/Montserrat-Regular.ttf");
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("https://landing.streamcraft.net/tycoon/font/montserrat/Montserrat-Medium.ttf");
+  font-style: normal;
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("https://landing.streamcraft.net/tycoon/font/montserrat/Montserrat-SemiBold.ttf");
+  font-style: normal;
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("https://landing.streamcraft.net/tycoon/font/montserrat/Montserrat-Bold.ttf");
+  font-style: normal;
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("https://landing.streamcraft.net/tycoon/font/montserrat/Montserrat-ExtraBold.ttf");
+  font-style: normal;
+  font-weight: 800;
+}
+
+@font-face {
+  font-family: "Unbounded";
+  src: url("https://landing.streamcraft.net/tycoon/font/unbounded/Unbounded-Bold.ttf");
+  font-style: normal;
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "Minecraft Five";
+  src: url("https://landing.streamcraft.net/tycoon/font/minecraft/MinecraftFive-Regular.woff2")
+    format("woff2");
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "Minecraft Five";
+  src: url("https://landing.streamcraft.net/tycoon/font/minecraft/MinecraftFive-Bold.woff2")
+    format("woff2");
+  font-style: normal;
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "Minecraft Ten";
+  src: url("https://landing.streamcraft.net/tycoon/font/minecraft/MinecraftTen.woff2")
+    format("woff2");
+  font-style: normal;
+  font-weight: 400;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  min-height: 100%;
+}
+
+html,
+body {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: #000;
+  color: #fff;
+  font-family: "Montserrat", sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.page-wrap {
+  width: min(1100px, calc(100% - 2rem));
+  margin-inline: auto;
+}
+
+.about-page {
+  padding: 120px 0 80px;
+}
+
+.content-panel {
+  background: linear-gradient(to bottom, rgba(28, 17, 73, 0.9), rgba(1, 7, 28, 0.96));
+  padding: 28px;
+  box-shadow:
+    0 0 0 8px rgba(0, 0, 0, 0.5) inset,
+    0 20px 50px rgba(0, 0, 0, 0.35);
+}
+
+.xk-overline {
+  margin: 0 0 16px;
+  font-family: "Minecraft Ten", sans-serif;
+  font-size: 24px;
+  color: #f8b2ff;
+  text-shadow: 0 6px 0 rgba(0, 0, 0, 0.7);
+}
+
+.xk-hero-text {
+  margin: 20px 0 0;
+  font-size: 18px;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.tycoon-landing {
+  overflow: hidden;
+  --white_alpha-20: hsla(0, 0%, 100%, 0.2);
+  --white_alpha-30: hsla(0, 0%, 100%, 0.3);
+  --white_alpha-60: hsla(0, 0%, 100%, 0.6);
+  --white_alpha-80: hsla(0, 0%, 100%, 0.8);
+  --black_alpha-60: hsla(0, 0%, 0%, 0.6);
+  --g-150: 150px;
+  --g-100: 100px;
+  --g-75: 75px;
+  --g-50: 50px;
+  --g-45: 45px;
+  --g-40: 40px;
+  --g-35: 35px;
+  --g-30: 30px;
+  --g-25: 25px;
+  --g-20: 20px;
+  --g-15: 15px;
+  --g-10: 10px;
+  --size-80: 80px;
+  --size-48: 48px;
+  --size-40: 40px;
+  --size-32: 32px;
+  --size-24: 24px;
+  --size-20: 20px;
+  --timing-function_default: cubic-bezier(0, 0.8, 0.26, 0.99);
+}
+
+.tycoon-landing *,
+.tycoon-landing a,
+.tycoon-landing div,
+.tycoon-landing p {
+  font-family: "Montserrat", sans-serif;
+}
+
+.tycoon-landing-btn {
+  --color-gradient-1: #17182e;
+  --color-gradient-2: #4e488a;
+  --color-light: #6c64a2;
+  --color-shadow: #2b2c58;
+  --color-text: rgba(194, 204, 255, 0.8);
+  --stroke: calc(var(--g-10) * 0.8);
+  display: inline-block;
+  position: relative;
+  padding: calc(var(--g-10) * 2);
+  transition: all 0.2s var(--timing-function_default);
+}
+
+.tycoon-landing-btn::before {
+  content: "";
+  position: absolute;
+  width: 120%;
+  height: 120%;
+  top: -10%;
+  left: -10%;
+  z-index: 1;
+  border-radius: 50%;
+  background: var(--color-light);
+  filter: blur(35px);
+  opacity: 0;
+  transition: all 0.2s var(--timing-function_default);
+}
+
+.tycoon-landing-btn:hover {
+  transform: scale(1.1);
+}
+
+.tycoon-landing-btn:hover::before {
+  opacity: 0.3;
+}
+
+.tycoon-landing-btn_style-success {
+  --color-gradient-1: #55b238;
+  --color-gradient-2: #6de548;
+  --color-light: #c3ff53;
+  --color-shadow: #135910;
+  --color-text: #205914;
+}
+
+.tycoon-landing-btn_style-primary {
+  --color-gradient-1: #01238e;
+  --color-gradient-2: #1c74e5;
+  --color-light: #1098fd;
+  --color-shadow: #0641cb;
+  --color-text: rgba(255, 255, 255, 0.85);
+}
+
+.tycoon-landing-btn__content {
+  position: relative;
+  z-index: 2;
+  padding: var(--g-20) var(--g-50);
+  white-space: nowrap;
+  background: linear-gradient(to bottom, var(--color-gradient-1), var(--color-gradient-2));
+  font-family: "Minecraft Ten", sans-serif !important;
+  font-size: var(--size-32);
+  color: var(--color-text);
+  box-shadow:
+    0 calc(var(--stroke) * -1) var(--color-light),
+    calc(var(--stroke) * -1) 0 var(--color-light),
+    0 var(--stroke) var(--color-shadow),
+    var(--stroke) 0 var(--color-shadow),
+    var(--stroke) 0 0 var(--stroke) #000,
+    calc(var(--stroke) * -1) 0 0 var(--stroke) #000,
+    0 var(--stroke) 0 var(--stroke) #000,
+    0 calc(var(--stroke) * -1) 0 var(--stroke) #000;
+  letter-spacing: 1px;
+}
+
+.tycoon-landing-btn__content-arrow {
+  position: relative;
+  height: 36px;
+  top: 2px;
+  margin-left: 8px;
+}
+
+.index-fixed {
+  position: fixed;
+  bottom: var(--g-15);
+  z-index: 10;
+}
+
+.index-fixed._left {
+  left: var(--g-15);
+}
+
+.index-fixed._left .tycoon-landing-btn__content {
+  padding: var(--g-10) var(--g-20);
+}
+
+.index-fixed._right {
+  right: var(--g-15);
+}
+
+.index-fixed._right .tycoon-landing-btn__content {
+  padding: var(--g-10) var(--g-30);
+}
+
+.tycoon-landing-header {
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  background: #000;
+}
+
+.tycoon-landing-header__background,
+.tycoon-landing-header__hero,
+.tycoon-landing-header__frontline,
+.tycoon-landing-header__hero-mobile {
+  position: absolute;
+  max-width: unset;
+}
+
+.tycoon-landing-header__background {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tycoon-landing-header__hero {
+  right: 0;
+  bottom: 0;
+  width: min(58vw, 980px);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.tycoon-landing-header__container {
+  position: relative;
+  z-index: 3;
+  padding-top: 130px;
+}
+
+.tycoon-landing-header__logo {
+  position: relative;
+  min-height: 360px;
+}
+
+.tycoon-landing-header__logo-effect img {
+  position: absolute;
+  inset: 0;
+  width: min(580px, 100%);
+  margin: auto;
+}
+
+.tycoon-landing-header__logo-effect-1 {
+  animation: xk-rotate-1 18s linear infinite;
+}
+
+.tycoon-landing-header__logo-effect-2 {
+  animation: xk-rotate-2 14s linear infinite;
+}
+
+.tycoon-landing-header__logo-effect-3 {
+  animation: xk-rotate-1 10s linear infinite reverse;
+}
+
+.xk-header-logo__text {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  justify-items: start;
+  gap: 16px;
+  max-width: 540px;
+  padding-top: 40px;
+}
+
+.xk-header-logo__caption {
+  font-family: "Minecraft Ten", sans-serif;
+  font-size: 28px;
+  color: #f8b2ff;
+  text-shadow: 0 6px 0 rgba(0, 0, 0, 0.7);
+}
+
+.xk-header-logo__text strong {
+  font-family: "Unbounded", sans-serif;
+  font-size: clamp(3rem, 8vw, 5.7rem);
+  line-height: 0.9;
+  font-weight: 800;
+  text-transform: uppercase;
+  text-shadow:
+    0 8px 0 rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(255, 0, 238, 0.28);
+}
+
+.xk-header-logo__text small {
+  font-family: "Minecraft Five", sans-serif;
+  font-size: 26px;
+  color: #ffe895;
+  text-shadow: 0 6px 0 rgba(0, 0, 0, 0.7);
+}
+
+.tycoon-landing-header__container-content {
+  margin-top: 24px;
+}
+
+.xk-header-copy {
+  max-width: 560px;
+  margin: 0 0 28px;
+  font-size: 20px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.86);
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.38);
+}
+
+.tycoon-landing-header__frontline {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  z-index: 3;
+}
+
+.tycoon-landing-header__arrow {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: var(--g-75);
+  z-index: 4;
+  width: 100px;
+  margin: auto;
+  text-align: center;
+}
+
+.tycoon-landing-header__arrow-icon {
+  filter:
+    drop-shadow(0 8px 15px rgba(255, 153, 252, 0.5))
+    drop-shadow(0 16px 50px rgba(255, 8, 247, 0.5))
+    drop-shadow(0 0 100px #c300ff);
+  animation: xk-arrow 5s ease-in-out infinite;
+}
+
+.tycoon-landing-section {
+  position: relative;
+}
+
+.tycoon-landing-section_style-green {
+  --line-texture: url("https://landing.streamcraft.net/tycoon/img/general/section-green-line.png");
+  --background-texture: url("https://landing.streamcraft.net/tycoon/img/general/section-green-background.png");
+  --background-color: #064e2f;
+  --effect-color-1: rgba(0, 255, 115, 0.2);
+  --effect-color-2: rgba(178, 255, 0, 0.2);
+}
+
+.tycoon-landing-section_style-brown {
+  --line-texture: url("https://landing.streamcraft.net/tycoon/img/general/section-brown-line.png");
+  --background-texture: url("https://landing.streamcraft.net/tycoon/img/general/section-brown-background.png");
+  --background-color: #1c0800;
+  --effect-color-1: rgba(255, 111, 0, 0.15);
+  --effect-color-2: rgba(255, 66, 0, 0.15);
+}
+
+.tycoon-landing-section_style-gradient-1 {
+  --line-texture: url("https://landing.streamcraft.net/tycoon/img/general/section-gradient-1-line.png");
+  --background-texture: url("https://landing.streamcraft.net/tycoon/img/general/section-gradient-1-background.png");
+  --background-color: #01071c;
+  --effect-color-1: rgba(255, 108, 213, 0.6);
+  --effect-color-2: rgba(188, 0, 255, 0.8);
+  background: linear-gradient(to bottom, #01071c, #1c1149, #4631ad, #a135d0);
+}
+
+.tycoon-landing-section__background {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(var(--g-20) * 14);
+  height: 100%;
+  background: var(--background-texture) repeat-y top left;
+  background-size: contain;
+  opacity: 0.9;
+}
+
+.tycoon-landing-section__background._righted {
+  left: auto;
+  right: 0;
+  transform: rotateY(180deg);
+}
+
+.tycoon-landing-section__line {
+  position: relative;
+  z-index: 1;
+}
+
+.tycoon-landing-section__line::before {
+  content: "";
+  display: block;
+  position: relative;
+  width: 100%;
+  height: calc(var(--g-10) * 10);
+  background: var(--line-texture) repeat-x top left;
+  background-size: contain;
+  box-shadow:
+    0 6px 1px rgba(255, 255, 255, 0.15) inset,
+    0 15px 35px 15px rgba(0, 0, 0, 0.3),
+    0 15px 10px 0 rgba(0, 0, 0, 0.3);
+  z-index: 2;
+}
+
+.tycoon-landing-section__effect::before,
+.tycoon-landing-section__effect::after {
+  content: "";
+  position: absolute;
+  width: 60vw;
+  height: 80vh;
+  top: calc(var(--g-150) * 2);
+  border-radius: 50%;
+  filter: blur(75px);
+}
+
+.tycoon-landing-section__effect::before {
+  background: var(--effect-color-2);
+  right: 75vw;
+}
+
+.tycoon-landing-section__effect::after {
+  background: var(--effect-color-1);
+  left: 75vw;
+}
+
+.tycoon-landing-wrapper {
+  position: relative;
+  z-index: 2;
+  width: min(1280px, calc(100% - 2rem));
+  margin-inline: auto;
+}
+
+.tycoon-landing-section__header {
+  text-align: center;
+}
+
+.tycoon-landing-section__header-icon {
+  position: relative;
+  display: inline-block;
+  width: calc(var(--g-50) * 5);
+}
+
+.tycoon-landing-section__header-icon img {
+  position: relative;
+  max-width: 80%;
+  z-index: 2;
+}
+
+.tycoon-landing-section__header-icon::before,
+.tycoon-landing-section__header-icon::after {
+  content: "";
+  position: absolute;
+  width: 90%;
+  height: 150%;
+  top: -25%;
+  filter: blur(60px);
+}
+
+.tycoon-landing-section__header-icon::before {
+  background: var(--effect-color-1);
+  right: 50%;
+}
+
+.tycoon-landing-section__header-icon::after {
+  background: var(--effect-color-2);
+  left: 50%;
+}
+
+.tycoon-landing-section__header-text,
+.tycoon-landing-section__header-mark {
+  font-family: "Minecraft Ten", sans-serif !important;
+  font-weight: 400;
+}
+
+.tycoon-landing-section__header-text {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  font-size: var(--size-48);
+  line-height: 1.4;
+  color: #fff;
+  text-shadow: 0 8px 0 rgba(0, 0, 0, 0.7);
+  letter-spacing: 1px;
+}
+
+.tycoon-landing-section__header-mark {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: var(--size-80);
+  filter: drop-shadow(0 12px 0 rgba(0, 0, 0, 0.7));
+}
+
+.tycoon-color-gradient-purple {
+  background-image: linear-gradient(to bottom, #ff97f6 0, #8600f1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.tycoon-color-lime {
+  color: #00ff73;
+}
+
+.tycoon-color-yellowgreen {
+  color: #b2ff00;
+}
+
+.tycoon-color-yellow {
+  color: #ffe064;
+}
+
+.tycoon-color-orange-2 {
+  color: #ff4300;
+}
+
+.index-start__subheading {
+  font-family: "Minecraft Ten", sans-serif !important;
+  font-size: var(--size-32);
+  color: #9d87ff;
+}
+
+.index-start__separator {
+  width: var(--g-150);
+  height: 7px;
+  margin: auto;
+  background-color: rgba(157, 135, 255, 0.3);
+}
+
+.index-start__other {
+  opacity: 0.75;
+}
+
+.index-start__launcher-btn {
+  min-width: 260px;
+}
+
+.index-start__preview {
+  position: relative;
+  display: grid;
+  justify-content: center;
+  align-content: end;
+}
+
+.index-start__preview-img {
+  position: relative;
+  z-index: 2;
+  max-width: 100%;
+  box-shadow: 0 -60px 125px -75px rgba(0, 0, 0, 0.9);
+}
+
+.index-start__preview-effect {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -20%;
+  z-index: 1;
+  max-width: 150%;
+  margin: auto;
+  opacity: 0.95;
+}
+
+.xk-launcher-frame {
+  position: relative;
+}
+
+.xk-card-grid,
+.xk-feature-grid {
+  display: grid;
+  gap: 28px;
+}
+
+.xk-card-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.xk-feature-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.tycoon-landing-card {
+  --card-color-1: #cc4b00;
+  --card-color-2: #990003;
+  --card-color-3: #4d1b00;
+  position: relative;
+  text-align: center;
+}
+
+.tycoon-landing-card_style-violet {
+  --card-color-1: #f800e7;
+  --card-color-2: #52298c;
+  --card-color-3: #380066;
+}
+
+.tycoon-landing-card_style-red {
+  --card-color-1: #cc4b00;
+  --card-color-2: #990003;
+  --card-color-3: #660002;
+}
+
+.tycoon-landing-card_style-gold {
+  --card-color-1: #fa9639;
+  --card-color-2: #cd5100;
+  --card-color-3: #660002;
+}
+
+.tycoon-landing-card_style-green {
+  --card-color-1: #3cb887;
+  --card-color-2: #22664b;
+  --card-color-3: #004d2e;
+}
+
+.tycoon-landing-card_style-blue {
+  --card-color-1: #00eaff;
+  --card-color-2: #0051a8;
+  --card-color-3: #003366;
+}
+
+.tycoon-landing-card::before {
+  content: "";
+  position: absolute;
+  width: 120%;
+  height: 115%;
+  top: -15%;
+  left: -10%;
+  border-radius: 50%;
+  background: var(--card-color-1);
+  opacity: 0.3;
+  filter: blur(45px);
+}
+
+.tycoon-landing-card__wrapper {
+  position: relative;
+  background: var(--card-color-3)
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8) 90%, rgba(0, 0, 0, 0.9));
+  padding: var(--g-25);
+}
+
+.tycoon-landing-card__wrapper-inner {
+  padding: var(--g-15);
+  background: linear-gradient(to bottom, var(--card-color-1), var(--card-color-2));
+}
+
+.tycoon-landing-card__content {
+  position: relative;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.8);
+  box-shadow: 0 0 0 var(--g-10) rgba(0, 0, 0, 0.8);
+}
+
+.tycoon-landing-card__shadow {
+  position: relative;
+  top: -1px;
+  width: 100%;
+}
+
+.tycoon-landing-feature__badge-wrapper {
+  display: grid;
+  justify-content: center;
+  width: 100%;
+}
+
+.tycoon-landing-feature__badge {
+  --border-size: calc(var(--g-10) * 0.6);
+  --badge-color-1: #fbc33a;
+  --badge-color-2: #cc4b01;
+  --badge-color-background: #510102;
+  --badge-color-shadow: #2b0708;
+  --badge-color-text: #ffe895;
+  background: linear-gradient(to bottom, var(--badge-color-1), var(--badge-color-2));
+  padding: 0 var(--border-size);
+  box-shadow:
+    0 calc(var(--border-size) * -2) 0 calc(var(--border-size) * -1) var(--badge-color-1),
+    0 calc(var(--border-size) * 2) 0 calc(var(--border-size) * -1) var(--badge-color-2),
+    0 var(--border-size) 0 0 var(--badge-color-shadow),
+    0 calc(var(--border-size) * 2) 0 calc(var(--border-size) * -1) var(--badge-color-shadow),
+    0 calc(var(--border-size) * 3) calc(var(--border-size) * 4) var(--border-size)
+      var(--badge-color-shadow);
+}
+
+.tycoon-landing-feature__badge_style-violet {
+  --badge-color-1: #fb3af5;
+  --badge-color-2: #72009f;
+  --badge-color-background: #320151;
+  --badge-color-shadow: #1d072b;
+}
+
+.tycoon-landing-feature__badge_style-green {
+  --badge-color-1: #54ff8d;
+  --badge-color-2: #194d37;
+  --badge-color-background: #0d261c;
+  --badge-color-shadow: #0d261c;
+  --badge-color-text: #b2ff00;
+}
+
+.tycoon-landing-feature__badge_style-orange {
+  --badge-color-1: #fa9639;
+  --badge-color-2: #cd5100;
+  --badge-color-background: #660002;
+}
+
+.tycoon-landing-feature__badge_style-blue {
+  --badge-color-1: #00eaff;
+  --badge-color-2: #0051a8;
+  --badge-color-background: #001a33;
+  --badge-color-shadow: #001a33;
+  --badge-color-text: #53ebff;
+}
+
+.tycoon-landing-feature__badge-content {
+  padding: var(--g-10) var(--g-25);
+  background: var(--badge-color-background);
+  box-shadow: 0 0 0 6px inset rgba(0, 0, 0, 0.3);
+  font-family: "Minecraft Five", sans-serif !important;
+  font-weight: 700;
+  font-size: var(--size-40);
+  color: var(--badge-color-text);
+  text-shadow: 0 8px 0 rgba(0, 0, 0, 0.6);
+}
+
+.tycoon-landing-feature__info {
+  margin: 0 auto;
+  padding: var(--g-35);
+  width: 100%;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), transparent);
+  font-family: "Minecraft Five", sans-serif !important;
+  font-size: var(--size-24);
+  text-align: center;
+  text-shadow: 0 6px 0 rgba(0, 0, 0, 0.6);
+  line-height: 1.6;
+}
+
+.tycoon-landing-feature__info_style-orange {
+  color: #ff8944;
+}
+
+.tycoon-landing-feature__info_style-violet {
+  color: #dd8fff;
+}
+
+.tycoon-landing-feature__info_style-green {
+  color: #3cb887;
+}
+
+.tycoon-landing-feature__info_style-blue {
+  color: rgba(84, 235, 255, 0.72);
+}
+
+.tycoon-landing-feature__info-mark-1 {
+  color: #fff;
+}
+
+.tycoon-landing-feature__info-mark-2 {
+  color: #ffe68b;
+}
+
+.xk-info-card__content,
+.xk-simple-feature,
+.xk-cta-content {
+  padding: 28px 18px 18px;
+  min-height: 100%;
+}
+
+.xk-info-card__text {
+  margin-top: 46px;
+}
+
+.xk-simple-feature {
+  min-height: 320px;
+}
+
+.xk-cta-content {
+  padding-bottom: 42px;
+}
+
+.xk-cta-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.tycoon-landing-section__ending {
+  display: block;
+  position: relative;
+  bottom: -1px;
+  width: 100%;
+  z-index: 4;
+}
+
+.mc-footer {
+  background: #020206;
+  padding: 60px 0 40px;
+}
+
+.mc-footer-inner {
+  text-align: center;
+}
+
+.mc-footer-title {
+  margin: 0;
+  font-family: "Unbounded", sans-serif;
+  font-size: clamp(1.4rem, 4vw, 2.2rem);
+  font-weight: 700;
+}
+
+.mc-footer-text,
+.mc-footer-copy {
+  margin-top: 16px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.xk-start-tags .tycoon-landing-btn {
+  cursor: default;
+}
+
+.mt-15 {
+  margin-top: 15px;
+}
+
+.mt-25 {
+  margin-top: 25px;
+}
+
+.mt-35 {
+  margin-top: 35px;
+}
+
+.mt-50 {
+  margin-top: 50px;
+}
+
+.mt-75 {
+  margin-top: 75px;
+}
+
+.mx-1 {
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+.mx-3 {
+  margin-left: 12px;
+  margin-right: 12px;
+}
+
+.ml-1 {
+  margin-left: 4px;
+}
+
+.m-0 {
+  margin: 0;
+}
+
+.px-35 {
+  padding-left: 35px;
+  padding-right: 35px;
+}
+
+.px-150 {
+  padding-left: 150px;
+  padding-right: 150px;
+}
+
+.pt-150 {
+  padding-top: 150px;
+}
+
+.pb-50 {
+  padding-bottom: 50px;
+}
+
+.py-150 {
+  padding-top: 150px;
+  padding-bottom: 150px;
+}
+
+.text-40 {
+  font-size: var(--size-40) !important;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.justify-content-start {
+  justify-content: flex-start;
+}
+
+.justify-content-center {
+  justify-content: center;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.col-12,
+.col-7,
+.col-5,
+.col-10 {
+  width: 100%;
+}
+
+.d-block {
+  display: block;
+}
+
+.d-md-none {
+  display: none;
+}
+
+@keyframes xk-rotate-1 {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes xk-rotate-2 {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes xk-arrow {
+  0%,
+  40%,
+  60%,
+  80%,
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+  10% {
+    transform: scale(1.2) translateY(24px);
+    opacity: 0;
+  }
+  11% {
+    transform: scale(0.9) translateY(-24px);
+  }
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: scale(1) translateY(10px);
+  }
+}
+
+@media (max-width: 1200px) {
+  .tycoon-landing {
+    --g-150: 100px;
+    --g-100: 75px;
+    --g-75: 50px;
+    --g-50: 40px;
+    --g-40: 30px;
+    --g-35: 25px;
+    --g-30: 20px;
+    --g-25: 18px;
+    --g-20: 16px;
+    --g-15: 14px;
+    --size-80: 56px;
+    --size-48: 40px;
+    --size-40: 32px;
+    --size-32: 24px;
+    --size-24: 18px;
+    --size-20: 16px;
+  }
+
+  .xk-card-grid,
+  .xk-feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tycoon-landing-header__hero {
+    width: min(58vw, 760px);
+  }
+}
+
+@media (max-width: 900px) {
+  .px-150 {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .tycoon-landing-header__hero {
+    display: none;
+  }
+
+  .d-md-none {
+    display: block;
+  }
+
+  .tycoon-landing-header__hero-mobile {
+    position: relative;
+    width: min(100%, 620px);
+    max-width: 100%;
+    margin: 40px auto 0;
+    display: block;
+  }
+
+  .tycoon-landing-header__logo {
+    min-height: 280px;
+  }
+}
+
+@media (max-width: 640px) {
+  .tycoon-landing {
+    --g-150: 50px;
+    --g-100: 40px;
+    --g-75: 35px;
+    --g-50: 25px;
+    --g-45: 20px;
+    --g-40: 18px;
+    --g-35: 16px;
+    --g-30: 14px;
+    --g-25: 12px;
+    --g-20: 10px;
+    --g-15: 8px;
+    --g-10: 6px;
+    --size-80: 36px;
+    --size-48: 24px;
+    --size-40: 20px;
+    --size-32: 16px;
+    --size-24: 14px;
+    --size-20: 13px;
+  }
+
+  .index-fixed._left {
+    display: none;
+  }
+
+  .index-fixed._right {
+    right: 8px;
+    bottom: 8px;
+  }
+
+  .tycoon-landing-btn__content {
+    white-space: normal;
+  }
+
+  .xk-header-logo__caption {
+    font-size: 16px;
+  }
+
+  .xk-header-logo__text small {
+    font-size: 16px;
+  }
+
+  .xk-header-copy {
+    font-size: 16px;
+  }
+
+  .index-start__launcher-btn {
+    min-width: unset;
+    width: 100%;
+    display: block;
+    margin: 10px 0;
+  }
+}
