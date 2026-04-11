@@ -63,7 +63,7 @@ function HomePage() {
       >
         <div className="tycoon-landing-btn__content px-35">
           <img
-            src="https://landing.streamcraft.net/tycoon/img/general/btn-default-arrow-up.svg"
+          src="/streamcraft/img/general/btn-default-arrow-up.svg"
             alt=""
           />
         </div>
@@ -77,7 +77,7 @@ function HomePage() {
         <div className="tycoon-landing-btn__content text-40">
           Играть
           <img
-            src="https://landing.streamcraft.net/tycoon/img/general/btn-success-arrow-right.svg"
+            src="/streamcraft/img/general/btn-success-arrow-right.svg"
             className="tycoon-landing-btn__content-arrow ml-1"
             alt=""
           />
@@ -86,16 +86,26 @@ function HomePage() {
 
       <section id="header" className="tycoon-landing-header xk-header-hero">
         <img
-          src="https://landing.streamcraft.net/tycoon/img/landing-12-2025/header-background.webp"
+          src="/streamcraft/img/landing/header-background.webp"
           className="tycoon-landing-header__background"
           alt=""
         />
 
-        <img
-          src="https://landing.streamcraft.net/tycoon/img/landing-12-2025/header-hero.webp"
-          className="tycoon-landing-header__hero"
-          alt=""
-        />
+        <div className="tycoon-landing-header__hero xk-minecraft-hero" aria-hidden="true">
+          <div className="xk-minecraft-hero__glow" />
+          <div className="xk-minecraft-hero__mountain xk-minecraft-hero__mountain_back" />
+          <div className="xk-minecraft-hero__mountain xk-minecraft-hero__mountain_front" />
+          <div className="xk-minecraft-hero__ground" />
+          <div className="xk-minecraft-hero__castle" />
+          <div className="xk-minecraft-hero__player">
+            <span className="xk-minecraft-hero__head" />
+            <span className="xk-minecraft-hero__body" />
+            <span className="xk-minecraft-hero__arm xk-minecraft-hero__arm_left" />
+            <span className="xk-minecraft-hero__arm xk-minecraft-hero__arm_right" />
+            <span className="xk-minecraft-hero__leg xk-minecraft-hero__leg_left" />
+            <span className="xk-minecraft-hero__leg xk-minecraft-hero__leg_right" />
+          </div>
+        </div>
 
         <div className="tycoon-landing-header__container px-150">
           <div className="row justify-content-start">
@@ -103,21 +113,21 @@ function HomePage() {
               <div className="tycoon-landing-header__logo xk-header-logo">
                 <div className="tycoon-landing-header__logo-effect">
                   <img
-                    src="https://landing.streamcraft.net/tycoon/img/landing-12-2025/header-wide-rays.svg"
+                    src="/streamcraft/img/landing/header-wide-rays.svg"
                     className="tycoon-landing-header__logo-effect-1"
                     alt=""
                   />
                 </div>
                 <div className="tycoon-landing-header__logo-effect">
                   <img
-                    src="https://landing.streamcraft.net/tycoon/img/landing-12-2025/header-thin-rays.svg"
+                    src="/streamcraft/img/landing/header-thin-rays.svg"
                     className="tycoon-landing-header__logo-effect-2"
                     alt=""
                   />
                 </div>
                 <div className="tycoon-landing-header__logo-effect">
                   <img
-                    src="https://landing.streamcraft.net/tycoon/img/landing-12-2025/header-thin-rays-2.svg"
+                    src="/streamcraft/img/landing/header-thin-rays-2.svg"
                     className="tycoon-landing-header__logo-effect-3"
                     alt=""
                   />
@@ -140,7 +150,7 @@ function HomePage() {
                   <div className="tycoon-landing-btn__content text-40">
                     Подать заявку
                     <img
-                      src="https://landing.streamcraft.net/tycoon/img/general/btn-success-arrow-right.svg"
+                      src="/streamcraft/img/general/btn-success-arrow-right.svg"
                       className="tycoon-landing-btn__content-arrow ml-1"
                       alt=""
                     />
@@ -150,24 +160,34 @@ function HomePage() {
             </div>
 
             <div className="col-12 d-block d-md-none">
-              <img
-                src="https://landing.streamcraft.net/tycoon/img/landing-12-2025/header-hero.webp"
-                className="tycoon-landing-header__hero-mobile"
-                alt=""
-              />
+              <div className="tycoon-landing-header__hero-mobile xk-minecraft-hero xk-minecraft-hero_mobile" aria-hidden="true">
+                <div className="xk-minecraft-hero__glow" />
+                <div className="xk-minecraft-hero__mountain xk-minecraft-hero__mountain_back" />
+                <div className="xk-minecraft-hero__mountain xk-minecraft-hero__mountain_front" />
+                <div className="xk-minecraft-hero__ground" />
+                <div className="xk-minecraft-hero__castle" />
+                <div className="xk-minecraft-hero__player">
+                  <span className="xk-minecraft-hero__head" />
+                  <span className="xk-minecraft-hero__body" />
+                  <span className="xk-minecraft-hero__arm xk-minecraft-hero__arm_left" />
+                  <span className="xk-minecraft-hero__arm xk-minecraft-hero__arm_right" />
+                  <span className="xk-minecraft-hero__leg xk-minecraft-hero__leg_left" />
+                  <span className="xk-minecraft-hero__leg xk-minecraft-hero__leg_right" />
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         <img
-          src="https://landing.streamcraft.net/tycoon/img/landing-12-2025/header-frontline.webp"
+          src="/streamcraft/img/landing/header-frontline.webp"
           className="tycoon-landing-header__frontline"
           alt=""
         />
 
         <a href="#start" className="tycoon-landing-header__arrow">
           <img
-            src="https://landing.streamcraft.net/tycoon/img/general/header-arrow-down.svg"
+            src="/streamcraft/img/general/header-arrow-down.svg"
             className="tycoon-landing-header__arrow-icon"
             alt=""
           />
@@ -186,7 +206,7 @@ function HomePage() {
           <div className="tycoon-landing-section__header">
             <div className="tycoon-landing-section__header-icon">
               <img
-                src="https://landing.streamcraft.net/tycoon/img/general/section-gradient-1-heading-icon.svg"
+                src="/streamcraft/img/general/section-gradient-1-heading-icon.svg"
                 alt=""
               />
             </div>
@@ -203,7 +223,7 @@ function HomePage() {
                 <div className="tycoon-landing-btn__content text-40">
                   Подать заявку
                   <img
-                    src="https://landing.streamcraft.net/tycoon/img/general/btn-success-arrow-right.svg"
+                    src="/streamcraft/img/general/btn-success-arrow-right.svg"
                     className="tycoon-landing-btn__content-arrow ml-1"
                     alt=""
                   />
@@ -236,13 +256,13 @@ function HomePage() {
         <div className="index-start__preview px-150">
           <div className="xk-launcher-frame">
             <img
-              src="https://landing.streamcraft.net/tycoon/img/general/launcher-preview.webp"
+              src="/streamcraft/img/general/launcher-preview.webp"
               className="index-start__preview-img"
               alt=""
             />
           </div>
           <img
-            src="https://landing.streamcraft.net/tycoon/img/general/launcher-preview-effect.svg"
+            src="/streamcraft/img/general/launcher-preview-effect.svg"
             className="index-start__preview-effect"
             alt=""
           />
@@ -259,7 +279,7 @@ function HomePage() {
           <div className="tycoon-landing-section__header">
             <div className="tycoon-landing-section__header-icon _absolution">
               <img
-                src="https://landing.streamcraft.net/tycoon/img/general/section-green-heading-icon.svg"
+                src="/streamcraft/img/general/section-green-heading-icon.svg"
                 alt=""
               />
             </div>
@@ -294,7 +314,7 @@ function HomePage() {
                     </div>
                   </div>
                   <img
-                    src="https://landing.streamcraft.net/tycoon/img/general/card-shadow.png"
+                    src="/streamcraft/img/general/card-shadow.png"
                     className="tycoon-landing-card__shadow"
                     alt=""
                   />
@@ -322,7 +342,7 @@ function HomePage() {
                     </div>
                   </div>
                   <img
-                    src="https://landing.streamcraft.net/tycoon/img/general/card-shadow.png"
+                    src="/streamcraft/img/general/card-shadow.png"
                     className="tycoon-landing-card__shadow"
                     alt=""
                   />
@@ -343,7 +363,7 @@ function HomePage() {
           <div className="tycoon-landing-section__header">
             <div className="tycoon-landing-section__header-icon _absolution">
               <img
-                src="https://landing.streamcraft.net/tycoon/img/general/section-brown-heading-icon.svg"
+                src="/streamcraft/img/general/section-brown-heading-icon.svg"
                 alt=""
               />
             </div>
@@ -383,7 +403,7 @@ function HomePage() {
                         <div className="tycoon-landing-btn__content text-40">
                           Открыть Discord
                           <img
-                            src="https://landing.streamcraft.net/tycoon/img/general/btn-success-arrow-right.svg"
+                            src="/streamcraft/img/general/btn-success-arrow-right.svg"
                             className="tycoon-landing-btn__content-arrow ml-1"
                             alt=""
                           />
@@ -394,7 +414,7 @@ function HomePage() {
                 </div>
               </div>
               <img
-                src="https://landing.streamcraft.net/tycoon/img/general/card-shadow.png"
+                src="/streamcraft/img/general/card-shadow.png"
                 className="tycoon-landing-card__shadow"
                 alt=""
               />
@@ -403,7 +423,7 @@ function HomePage() {
         </div>
 
         <img
-          src="https://landing.streamcraft.net/tycoon/img/general/section-ending.png"
+          src="/streamcraft/img/general/section-ending.png"
           className="tycoon-landing-section__ending"
           alt=""
         />
