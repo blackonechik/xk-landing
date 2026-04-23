@@ -116,9 +116,9 @@ function HomePage() {
             <div className="col-12 col-md-9 col-lg-6">
               <div className="tycoon-landing-header__logo xk-header-logo">
                 <div className="xk-header-logo__text">
-                  <span className="xk-header-logo__caption">Private Minecraft Server</span>
+                  <span className="xk-header-logo__caption">Приватный майнкрафт сервер</span>
                   <strong>XK SMP</strong>
-                  <small>RolePlay • Vanilla • Dream SMP Spirit</small>
+                  <small>РП • Ванилла • Хардкор</small>
                 </div>
               </div>
 

@@ -342,7 +342,6 @@ a {
 
 .tycoon-landing-header__logo {
   position: relative;
-  min-height: 360px;
 }
 
 .tycoon-landing-header__logo-effect img {
@@ -593,6 +592,7 @@ a {
 
 .tycoon-landing-section {
   position: relative;
+  background-color: var(--background-color);
 }
 
 .tycoon-landing-section_style-green {
@@ -614,10 +614,10 @@ a {
 .tycoon-landing-section_style-gradient-1 {
   --line-texture: url("/assets/img/general/section-gradient-1-line.png");
   --background-texture: url("/assets/img/general/section-gradient-1-background.png");
-  --background-color: #01071c;
-  --effect-color-1: rgba(255, 108, 213, 0.6);
-  --effect-color-2: rgba(188, 0, 255, 0.8);
-  background: linear-gradient(to bottom, #01071c, #1c1149, #4631ad, #a135d0);
+  --background-color: #07080c;
+  --effect-color-1: rgba(140, 148, 160, 0.25);
+  --effect-color-2: rgba(80, 88, 100, 0.3);
+  background: linear-gradient(to bottom, #07080c, #0e1016, #181c24, #1e2330);
 }
 
 .tycoon-landing-section__background {
@@ -750,7 +750,7 @@ a {
 }
 
 .tycoon-landing .tycoon-landing-section__header .tycoon-color-gradient-purple {
-  background-image: linear-gradient(to bottom, #ff97f6 0, #8600f1 100%);
+  background-image: linear-gradient(to bottom, #c8cdd6 0, #7a8494 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -775,14 +775,14 @@ a {
 .index-start__subheading {
   font-family: "Minecraft Ten", sans-serif !important;
   font-size: var(--size-32);
-  color: #9d87ff;
+  color: #8a9aaa;
 }
 
 .index-start__separator {
   width: var(--g-150);
   height: 7px;
   margin: auto;
-  background-color: rgba(157, 135, 255, 0.3);
+  background-color: rgba(120, 135, 155, 0.3);
 }
 
 .index-start__other {
