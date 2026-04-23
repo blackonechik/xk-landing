@@ -85,10 +85,14 @@ function HomePage() {
       </a>
 
       <section id="header" className="tycoon-landing-header xk-header-hero">
-        <img
-          src="/streamcraft/img/landing/header-background.webp"
+        <video
+          src="/assets/background-hero.mp4"
           className="tycoon-landing-header__background"
-          alt=""
+          autoPlay
+          loop
+          muted
+          playsInline
+          aria-hidden="true"
         />
 
         <div className="tycoon-landing-header__hero xk-minecraft-hero" aria-hidden="true">
@@ -111,27 +115,6 @@ function HomePage() {
           <div className="row justify-content-start">
             <div className="col-12 col-md-9 col-lg-6">
               <div className="tycoon-landing-header__logo xk-header-logo">
-                <div className="tycoon-landing-header__logo-effect">
-                  <img
-                    src="/streamcraft/img/landing/header-wide-rays.svg"
-                    className="tycoon-landing-header__logo-effect-1"
-                    alt=""
-                  />
-                </div>
-                <div className="tycoon-landing-header__logo-effect">
-                  <img
-                    src="/streamcraft/img/landing/header-thin-rays.svg"
-                    className="tycoon-landing-header__logo-effect-2"
-                    alt=""
-                  />
-                </div>
-                <div className="tycoon-landing-header__logo-effect">
-                  <img
-                    src="/streamcraft/img/landing/header-thin-rays-2.svg"
-                    className="tycoon-landing-header__logo-effect-3"
-                    alt=""
-                  />
-                </div>
                 <div className="xk-header-logo__text">
                   <span className="xk-header-logo__caption">Private Minecraft Server</span>
                   <strong>XK SMP</strong>
@@ -212,13 +195,12 @@ function HomePage() {
             </div>
             <h2 className="tycoon-landing-section__header-text mt-35">
               Начни играть
-              <br />
               <span className="tycoon-landing-section__header-mark tycoon-color-gradient-purple">
                 Прямо сейчас!
               </span>
             </h2>
 
-            <div className="mt-25">
+
               <a href="#apply" className="tycoon-landing-btn tycoon-landing-btn_style-success">
                 <div className="tycoon-landing-btn__content text-40">
                   Подать заявку
@@ -249,18 +231,10 @@ function HomePage() {
                   </span>
                 </div>
               </div>
-            </div>
           </div>
         </div>
 
         <div className="index-start__preview px-150">
-          <div className="xk-launcher-frame">
-            <img
-              src="/streamcraft/img/general/launcher-preview.webp"
-              className="index-start__preview-img"
-              alt=""
-            />
-          </div>
           <img
             src="/streamcraft/img/general/launcher-preview-effect.svg"
             className="index-start__preview-effect"
