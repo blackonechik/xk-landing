@@ -63,7 +63,7 @@ function HomePage() {
       >
         <div className="tycoon-landing-btn__content px-35">
           <img
-          src="/streamcraft/img/general/btn-default-arrow-up.svg"
+          src="/assets/img/general/btn-default-arrow-up.svg"
             alt=""
           />
         </div>
@@ -77,7 +77,7 @@ function HomePage() {
         <div className="tycoon-landing-btn__content text-40">
           Играть
           <img
-            src="/streamcraft/img/general/btn-success-arrow-right.svg"
+            src="/assets/img/general/btn-success-arrow-right.svg"
             className="tycoon-landing-btn__content-arrow ml-1"
             alt=""
           />
@@ -133,7 +133,7 @@ function HomePage() {
                   <div className="tycoon-landing-btn__content text-40">
                     Подать заявку
                     <img
-                      src="/streamcraft/img/general/btn-success-arrow-right.svg"
+                      src="/assets/img/general/btn-success-arrow-right.svg"
                       className="tycoon-landing-btn__content-arrow ml-1"
                       alt=""
                     />
@@ -163,14 +163,14 @@ function HomePage() {
         </div>
 
         <img
-          src="/streamcraft/img/landing/header-frontline.webp"
+          src="/assets/img/landing/header-frontline.webp"
           className="tycoon-landing-header__frontline"
           alt=""
         />
 
         <a href="#start" className="tycoon-landing-header__arrow">
           <img
-            src="/streamcraft/img/general/header-arrow-down.svg"
+            src="/assets/img/general/header-arrow-down.svg"
             className="tycoon-landing-header__arrow-icon"
             alt=""
           />
@@ -189,7 +189,7 @@ function HomePage() {
           <div className="tycoon-landing-section__header">
             <div className="tycoon-landing-section__header-icon">
               <img
-                src="/streamcraft/img/general/section-gradient-1-heading-icon.svg"
+                src="/assets/img/general/section-gradient-1-heading-icon.svg"
                 alt=""
               />
             </div>
@@ -205,7 +205,7 @@ function HomePage() {
                 <div className="tycoon-landing-btn__content text-40">
                   Подать заявку
                   <img
-                    src="/streamcraft/img/general/btn-success-arrow-right.svg"
+                    src="/assets/img/general/btn-success-arrow-right.svg"
                     className="tycoon-landing-btn__content-arrow ml-1"
                     alt=""
                   />
@@ -236,7 +236,7 @@ function HomePage() {
 
         <div className="index-start__preview px-150">
           <img
-            src="/streamcraft/img/general/launcher-preview-effect.svg"
+            src="/assets/img/general/launcher-preview-effect.svg"
             className="index-start__preview-effect"
             alt=""
           />
@@ -253,7 +253,7 @@ function HomePage() {
           <div className="tycoon-landing-section__header">
             <div className="tycoon-landing-section__header-icon _absolution">
               <img
-                src="/streamcraft/img/general/section-green-heading-icon.svg"
+                src="/assets/img/general/section-green-heading-icon.svg"
                 alt=""
               />
             </div>
@@ -288,7 +288,7 @@ function HomePage() {
                     </div>
                   </div>
                   <img
-                    src="/streamcraft/img/general/card-shadow.png"
+                    src="/assets/img/general/card-shadow.png"
                     className="tycoon-landing-card__shadow"
                     alt=""
                   />
@@ -316,7 +316,7 @@ function HomePage() {
                     </div>
                   </div>
                   <img
-                    src="/streamcraft/img/general/card-shadow.png"
+                    src="/assets/img/general/card-shadow.png"
                     className="tycoon-landing-card__shadow"
                     alt=""
                   />
@@ -337,7 +337,7 @@ function HomePage() {
           <div className="tycoon-landing-section__header">
             <div className="tycoon-landing-section__header-icon _absolution">
               <img
-                src="/streamcraft/img/general/section-brown-heading-icon.svg"
+                src="/assets/img/general/section-brown-heading-icon.svg"
                 alt=""
               />
             </div>
@@ -377,7 +377,7 @@ function HomePage() {
                         <div className="tycoon-landing-btn__content text-40">
                           Открыть Discord
                           <img
-                            src="/streamcraft/img/general/btn-success-arrow-right.svg"
+                            src="/assets/img/general/btn-success-arrow-right.svg"
                             className="tycoon-landing-btn__content-arrow ml-1"
                             alt=""
                           />
@@ -388,7 +388,7 @@ function HomePage() {
                 </div>
               </div>
               <img
-                src="/streamcraft/img/general/card-shadow.png"
+                src="/assets/img/general/card-shadow.png"
                 className="tycoon-landing-card__shadow"
                 alt=""
               />
@@ -397,7 +397,7 @@ function HomePage() {
         </div>
 
         <img
-          src="/streamcraft/img/general/section-ending.png"
+          src="/assets/img/general/section-ending.png"
           className="tycoon-landing-section__ending"
           alt=""
         />
