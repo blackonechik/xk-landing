@@ -1,6 +1,72 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import { motion, useReducedMotion } from 'motion/react'
+import type { Variants } from 'motion/react'
+
+const viewportReveal = {
+  once: true,
+  amount: 0.24,
+  margin: '0px 0px -12% 0px',
+}
+
+const sectionReveal: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 42,
+  },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.74,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+}
+
+const staggerReveal: Variants = {
+  hidden: {},
+  show: {
+    transition: {
+      staggerChildren: 0.12,
+      delayChildren: 0.08,
+    },
+  },
+}
+
+const cardReveal: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 46,
+    scale: 0.96,
+  },
+  show: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.68,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+}
+
+const trailerReveal: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 52,
+    scale: 0.985,
+  },
+  show: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.82,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+}
 
 const reasons = [
   {
@@ -50,6 +116,9 @@ export const Route = createFileRoute('/')({
 function HomePage() {
   const shouldReduceMotion = useReducedMotion()
   const [isTrailerPlaying, setIsTrailerPlaying] = useState(false)
+  const revealInitial = shouldReduceMotion ? false : 'hidden'
+  const cardHover = shouldReduceMotion ? undefined : { y: -8, scale: 1.015 }
+  const tapPress = shouldReduceMotion ? undefined : { scale: 0.99 }
 
   return (
     <main className="tycoon-landing xk-adapted">
@@ -59,10 +128,7 @@ function HomePage() {
         style={{ opacity: 1 }}
       >
         <div className="tycoon-landing-btn__content px-35">
-          <img
-          src="/assets/img/general/btn-default-arrow-up.svg"
-            alt=""
-          />
+          <img src="/assets/img/general/btn-default-arrow-up.svg" alt="" />
         </div>
       </a>
 
@@ -110,7 +176,9 @@ function HomePage() {
         <motion.div
           className="tycoon-landing-header__hero xk-minecraft-hero"
           aria-hidden="true"
-          initial={shouldReduceMotion ? false : { opacity: 0, x: 90, scale: 0.94 }}
+          initial={
+            shouldReduceMotion ? false : { opacity: 0, x: 90, scale: 0.94 }
+          }
           animate={{ opacity: 1, x: 0, scale: 1 }}
           transition={{ delay: 0.35, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
         >
@@ -143,11 +211,15 @@ function HomePage() {
                       }
                 }
                 animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
-                transition={{ delay: 0.28, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+                transition={{
+                  delay: 0.28,
+                  duration: 0.9,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
               >
                 <div className="tycoon-landing-header__logo xk-header-logo">
-                <div className="xk-header-logo__text">
-                  <span className="xk-header-logo__caption">
+                  <div className="xk-header-logo__text">
+                    <span className="xk-header-logo__caption">
                       Приватный майнкрафт сервер
                     </span>
                     <strong>XK SMP</strong>
@@ -161,26 +233,27 @@ function HomePage() {
                     неуплаты хостинга. Ванильный мир с RP-жизнями, городами,
                     королевствами и решениями, которые реально меняют историю.
                   </p>
-                <motion.a
-                  href="#apply"
-                  className="tycoon-landing-btn tycoon-landing-btn_style-success"
-                  whileHover={shouldReduceMotion ? undefined : { scale: 1.08 }}
-                  whileTap={shouldReduceMotion ? undefined : { scale: 0.98 }}
-                >
-                  <div className="tycoon-landing-header__play-bright" />
-                  <div className="tycoon-landing-btn__content text-40">
-                    Подать заявку
-                    <img
-                      src="/assets/img/general/btn-success-arrow-right.svg"
-                      className="tycoon-landing-btn__content-arrow ml-1"
-                      alt=""
-                    />
-                  </div>
-                </motion.a>
+                  <motion.a
+                    href="#apply"
+                    className="tycoon-landing-btn tycoon-landing-btn_style-success"
+                    whileHover={
+                      shouldReduceMotion ? undefined : { scale: 1.08 }
+                    }
+                    whileTap={shouldReduceMotion ? undefined : { scale: 0.98 }}
+                  >
+                    <div className="tycoon-landing-header__play-bright" />
+                    <div className="tycoon-landing-btn__content text-40">
+                      Подать заявку
+                      <img
+                        src="/assets/img/general/btn-success-arrow-right.svg"
+                        className="tycoon-landing-btn__content-arrow ml-1"
+                        alt=""
+                      />
+                    </div>
+                  </motion.a>
                 </div>
               </motion.div>
             </div>
-
           </div>
         </div>
 
@@ -216,13 +289,25 @@ function HomePage() {
         <div className="tycoon-landing-section__line" />
 
         <div className="tycoon-landing-wrapper py-30">
-          <div className="tycoon-landing-section__header">
+          <motion.div
+            className="tycoon-landing-section__header"
+            variants={sectionReveal}
+            initial={revealInitial}
+            whileInView="show"
+            viewport={viewportReveal}
+          >
             <h2 className="tycoon-landing-section__header-text mt-35">
               Посмотрите трейлер сервера
             </h2>
-          </div>
+          </motion.div>
 
-          <div className="index-start__layout mt-50">
+          <motion.div
+            className="index-start__layout mt-50"
+            variants={trailerReveal}
+            initial={revealInitial}
+            whileInView="show"
+            viewport={viewportReveal}
+          >
             <div className="index-start__trailer">
               <div className="index-start__trailer-frame">
                 <div className="index-start__trailer-surface">
@@ -241,36 +326,49 @@ function HomePage() {
                         alt=""
                         className="index-start__trailer-preview"
                       />
-                      <div className="index-start__trailer-overlay" aria-hidden="true" />
-                      <button
+                      <div
+                        className="index-start__trailer-overlay"
+                        aria-hidden="true"
+                      />
+                      <motion.button
                         type="button"
                         className="index-start__trailer-launcher"
                         onClick={() => setIsTrailerPlaying(true)}
                         aria-label="Включить трейлер сервера"
+                        whileTap={tapPress}
                       >
                         <img
                           src="/assets/img/general/section-gradient-1-heading-icon.svg"
                           alt=""
                           className="index-start__trailer-launcher-icon"
                         />
-                      </button>
+                      </motion.button>
                     </>
                   )}
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      <section id="reasons" className="tycoon-landing-section tycoon-landing-section_style-green">
+      <section
+        id="reasons"
+        className="tycoon-landing-section tycoon-landing-section_style-green"
+      >
         <div className="tycoon-landing-section__background" />
         <div className="tycoon-landing-section__background _righted" />
         <div className="tycoon-landing-section__line" />
         <div className="tycoon-landing-section__effect" />
 
         <div className="tycoon-landing-wrapper py-150">
-          <div className="tycoon-landing-section__header">
+          <motion.div
+            className="tycoon-landing-section__header"
+            variants={sectionReveal}
+            initial={revealInitial}
+            whileInView="show"
+            viewport={viewportReveal}
+          >
             <div className="tycoon-landing-section__header-icon _absolution">
               <img
                 src="/assets/img/general/section-green-heading-icon.svg"
@@ -284,24 +382,40 @@ function HomePage() {
                 И почему здесь хочется остаться
               </span>
             </h2>
-          </div>
+          </motion.div>
 
-          <div className="xk-card-grid mt-50">
+          <motion.div
+            className="xk-card-grid mt-50"
+            variants={staggerReveal}
+            initial={revealInitial}
+            whileInView="show"
+            viewport={viewportReveal}
+          >
             {reasons.map((reason) => (
-              <article
+              <motion.article
                 key={reason.title}
                 className={`tycoon-landing-feature position-relative xk-info-card _${reason.tone}`}
+                variants={cardReveal}
+                whileHover={cardHover}
               >
-                <div className={`tycoon-landing-card tycoon-landing-card_style-${mapTone(reason.tone)}`}>
+                <div
+                  className={`tycoon-landing-card tycoon-landing-card_style-${mapTone(reason.tone)}`}
+                >
                   <div className="tycoon-landing-card__wrapper">
                     <div className="tycoon-landing-card__wrapper-inner">
                       <div className="tycoon-landing-card__content xk-info-card__content">
                         <div className="tycoon-landing-feature__badge-wrapper">
-                          <div className={`tycoon-landing-feature__badge tycoon-landing-feature__badge_style-${mapBadge(reason.tone)}`}>
-                            <div className="tycoon-landing-feature__badge-content">{reason.title}</div>
+                          <div
+                            className={`tycoon-landing-feature__badge tycoon-landing-feature__badge_style-${mapBadge(reason.tone)}`}
+                          >
+                            <div className="tycoon-landing-feature__badge-content">
+                              {reason.title}
+                            </div>
                           </div>
                         </div>
-                        <p className={`tycoon-landing-feature__info xk-info-card__text tycoon-landing-feature__info_style-${mapInfo(reason.tone)}`}>
+                        <p
+                          className={`tycoon-landing-feature__info xk-info-card__text tycoon-landing-feature__info_style-${mapInfo(reason.tone)}`}
+                        >
                           {reason.text}
                         </p>
                       </div>
@@ -313,23 +427,42 @@ function HomePage() {
                     alt=""
                   />
                 </div>
-              </article>
+              </motion.article>
             ))}
-          </div>
+          </motion.div>
 
-          <div className="xk-feature-grid mt-75">
+          <motion.div
+            className="xk-feature-grid mt-75"
+            variants={staggerReveal}
+            initial={revealInitial}
+            whileInView="show"
+            viewport={viewportReveal}
+          >
             {features.map((feature, index) => (
-              <article key={feature.title} className="tycoon-landing-feature">
-                <div className={`tycoon-landing-card ${index % 2 === 0 ? 'tycoon-landing-card_style-violet' : 'tycoon-landing-card_style-blue'}`}>
+              <motion.article
+                key={feature.title}
+                className="tycoon-landing-feature"
+                variants={cardReveal}
+                whileHover={cardHover}
+              >
+                <div
+                  className={`tycoon-landing-card ${index % 2 === 0 ? 'tycoon-landing-card_style-violet' : 'tycoon-landing-card_style-blue'}`}
+                >
                   <div className="tycoon-landing-card__wrapper">
                     <div className="tycoon-landing-card__wrapper-inner">
                       <div className="tycoon-landing-card__content xk-simple-feature">
                         <div className="tycoon-landing-feature__badge-wrapper">
-                          <div className={`tycoon-landing-feature__badge ${index % 2 === 0 ? 'tycoon-landing-feature__badge_style-violet' : 'tycoon-landing-feature__badge_style-blue'}`}>
-                            <div className="tycoon-landing-feature__badge-content">{feature.title}</div>
+                          <div
+                            className={`tycoon-landing-feature__badge ${index % 2 === 0 ? 'tycoon-landing-feature__badge_style-violet' : 'tycoon-landing-feature__badge_style-blue'}`}
+                          >
+                            <div className="tycoon-landing-feature__badge-content">
+                              {feature.title}
+                            </div>
                           </div>
                         </div>
-                        <p className={`tycoon-landing-feature__info ${index % 2 === 0 ? 'tycoon-landing-feature__info_style-violet' : 'tycoon-landing-feature__info_style-blue'} mt-50`}>
+                        <p
+                          className={`tycoon-landing-feature__info ${index % 2 === 0 ? 'tycoon-landing-feature__info_style-violet' : 'tycoon-landing-feature__info_style-blue'} mt-50`}
+                        >
                           {feature.text}
                         </p>
                       </div>
@@ -341,20 +474,29 @@ function HomePage() {
                     alt=""
                   />
                 </div>
-              </article>
+              </motion.article>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      <section id="apply" className="tycoon-landing-section tycoon-landing-section_style-brown">
+      <section
+        id="apply"
+        className="tycoon-landing-section tycoon-landing-section_style-brown"
+      >
         <div className="tycoon-landing-section__background" />
         <div className="tycoon-landing-section__background _righted" />
         <div className="tycoon-landing-section__line" />
         <div className="tycoon-landing-section__effect" />
 
         <div className="tycoon-landing-wrapper py-150">
-          <div className="tycoon-landing-section__header">
+          <motion.div
+            className="tycoon-landing-section__header"
+            variants={sectionReveal}
+            initial={revealInitial}
+            whileInView="show"
+            viewport={viewportReveal}
+          >
             <div className="tycoon-landing-section__header-icon _absolution">
               <img
                 src="/assets/img/general/section-brown-heading-icon.svg"
@@ -368,9 +510,16 @@ function HomePage() {
                 И присоединяйся к XK SMP
               </span>
             </h2>
-          </div>
+          </motion.div>
 
-          <div className="tycoon-landing-feature mt-50">
+          <motion.div
+            className="tycoon-landing-feature mt-50"
+            variants={cardReveal}
+            initial={revealInitial}
+            whileInView="show"
+            viewport={viewportReveal}
+            whileHover={cardHover}
+          >
             <div className="tycoon-landing-card">
               <div className="tycoon-landing-card__wrapper">
                 <div className="tycoon-landing-card__wrapper-inner">
@@ -385,10 +534,16 @@ function HomePage() {
 
                     <p className="tycoon-landing-feature__info tycoon-landing-feature__info_style-orange mt-50">
                       Если тебе нужен приватный Minecraft сервер с
-                      <span className="tycoon-landing-feature__info-mark-1"> живой историей</span>,
-                      союзниками, городами, королевствами и
-                      <span className="tycoon-landing-feature__info-mark-2"> важными решениями</span>,
-                      тебе сюда.
+                      <span className="tycoon-landing-feature__info-mark-1">
+                        {' '}
+                        живой историей
+                      </span>
+                      , союзниками, городами, королевствами и
+                      <span className="tycoon-landing-feature__info-mark-2">
+                        {' '}
+                        важными решениями
+                      </span>
+                      , тебе сюда.
                     </p>
 
                     <div className="xk-cta-actions">
@@ -415,7 +570,7 @@ function HomePage() {
                 alt=""
               />
             </div>
-          </div>
+          </motion.div>
         </div>
 
         <img

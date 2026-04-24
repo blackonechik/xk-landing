@@ -452,7 +452,6 @@ a {
   width: 112%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
   filter: brightness(0.84) saturate(0.9);
 }
 
@@ -510,8 +509,6 @@ a {
     rgba(0, 0, 0, 0.35) 94%,
     rgba(0, 0, 0, 0) 100%
   );
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
 }
 
 .tycoon-landing-header__hero {
