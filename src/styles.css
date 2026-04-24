@@ -62,9 +62,197 @@ body {
   font-family: "Minecraft Rus", sans-serif;
 }
 
+body.xk-loading-active {
+  overflow: hidden;
+}
+
 a {
   color: inherit;
   text-decoration: none;
+}
+
+.xk-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 24px;
+  background:
+    linear-gradient(180deg, rgba(7, 13, 35, 0.78), rgba(2, 4, 12, 0.96)),
+    radial-gradient(circle at 50% 18%, rgba(255, 215, 98, 0.2), transparent 24%),
+    #050914;
+}
+
+.xk-loader_is-leaving {
+  animation: xk-loader-out 0.55s ease forwards;
+}
+
+.xk-loader__sky,
+.xk-loader__stars,
+.xk-loader__scene,
+.xk-loader__content {
+  position: absolute;
+}
+
+.xk-loader__sky {
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.7), transparent 72%);
+  opacity: 0.56;
+}
+
+.xk-loader__stars {
+  inset: 0;
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.75) 0 2px, transparent 2px),
+    radial-gradient(circle, rgba(140, 235, 255, 0.65) 0 2px, transparent 2px),
+    radial-gradient(circle, rgba(255, 232, 149, 0.75) 0 2px, transparent 2px);
+  background-position:
+    8% 18%,
+    70% 14%,
+    86% 36%;
+  background-size:
+    190px 170px,
+    240px 210px,
+    280px 230px;
+  animation: xk-loader-stars 2.8s steps(2, end) infinite;
+}
+
+.xk-loader__scene {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: min(30vh, 260px);
+  background:
+    linear-gradient(180deg, #64c949 0 24%, #2c8730 24% 38%, #6c4529 38% 72%, #3a2117 72%),
+    #3a2117;
+  box-shadow:
+    inset 0 16px 0 rgba(255, 255, 255, 0.1),
+    0 -30px 70px rgba(0, 0, 0, 0.42);
+}
+
+.xk-loader__block {
+  position: absolute;
+  width: clamp(42px, 6vw, 74px);
+  aspect-ratio: 1;
+  bottom: calc(100% - 24px);
+  border: 4px solid rgba(0, 0, 0, 0.6);
+  box-shadow:
+    inset 0 7px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -8px 0 rgba(0, 0, 0, 0.22),
+    0 18px 30px rgba(0, 0, 0, 0.34);
+  animation: xk-loader-blocks 1.25s steps(4, end) infinite;
+}
+
+.xk-loader__block_grass {
+  left: 14%;
+  background: linear-gradient(180deg, #62ce45 0 28%, #855532 28%);
+}
+
+.xk-loader__block_stone {
+  left: 30%;
+  animation-delay: 0.1s;
+  background: linear-gradient(135deg, #8f98a6, #404958);
+}
+
+.xk-loader__block_ore {
+  right: 30%;
+  animation-delay: 0.2s;
+  background:
+    linear-gradient(135deg, transparent 0 42%, rgba(83, 235, 255, 0.9) 42% 54%, transparent 54%),
+    linear-gradient(135deg, #717b8b, #303846);
+}
+
+.xk-loader__block_wood {
+  right: 14%;
+  animation-delay: 0.3s;
+  background: linear-gradient(90deg, #8b542a 0 22%, #b97535 22% 44%, #6c3d21 44% 64%, #a76831 64%);
+}
+
+.xk-loader__content {
+  top: 48%;
+  left: 50%;
+  z-index: 2;
+  display: grid;
+  justify-items: center;
+  width: min(680px, calc(100vw - 40px));
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.xk-loader__eyebrow,
+.xk-loader__subtitle {
+  margin: 0;
+  font-family: "Minecraft Five", sans-serif;
+  text-shadow: 0 5px 0 rgba(0, 0, 0, 0.7);
+}
+
+.xk-loader__eyebrow {
+  color: #ffe895;
+  font-size: clamp(18px, 3.2vw, 32px);
+}
+
+.xk-loader__logo {
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  align-items: end;
+  gap: clamp(10px, 2vw, 18px);
+  margin: 16px 0 12px;
+  font-family: "Minecraft Ten", sans-serif;
+  font-size: clamp(66px, 15vw, 152px);
+  line-height: 0.82;
+  color: #f7f7f7;
+  text-transform: uppercase;
+  text-shadow:
+    0 8px 0 #3a3a3a,
+    0 16px 0 #111,
+    0 0 34px rgba(255, 255, 255, 0.3);
+  animation: xk-loader-logo 1.35s steps(2, end) infinite;
+}
+
+.xk-loader__logo strong {
+  color: #7ee64d;
+  font: inherit;
+  text-shadow:
+    0 8px 0 #205914,
+    0 16px 0 #111,
+    0 0 34px rgba(126, 230, 77, 0.36);
+}
+
+.xk-loader__subtitle {
+  max-width: 560px;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: clamp(15px, 2.3vw, 23px);
+  line-height: 1.55;
+}
+
+.xk-loader__bar {
+  position: relative;
+  width: min(460px, 82vw);
+  height: 28px;
+  margin-top: 28px;
+  padding: 5px;
+  border: 4px solid #0a0a0a;
+  background: #1c1c1c;
+  box-shadow:
+    inset 0 4px 0 rgba(255, 255, 255, 0.1),
+    0 12px 0 rgba(0, 0, 0, 0.35);
+}
+
+.xk-loader__bar span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.28) 0 10%, transparent 10% 20%) 0 0 / 42px 100%,
+    linear-gradient(180deg, #b2ff00, #36b13d);
+  transform-origin: left;
+  animation: xk-loader-progress 2.1s steps(16, end) forwards;
 }
 
 .page-wrap {
@@ -376,7 +564,7 @@ a {
 .xk-header-logo__caption {
   font-family: "Minecraft Ten", sans-serif;
   font-size: 28px;
-  color: #f8b2ff;
+  color: #ffb15a;
   text-shadow: 0 6px 0 rgba(0, 0, 0, 0.7);
 }
 
@@ -419,7 +607,19 @@ a {
   right: 0;
   bottom: 0;
   width: 100%;
+  height: clamp(84px, 11vw, 160px);
   z-index: 2;
+  background-image: url("/assets/img/landing/wheat.png");
+  background-repeat: repeat-x;
+  background-position: center bottom;
+  background-size: auto 88%;
+  image-rendering: pixelated;
+  filter:
+    brightness(1.3)
+    saturate(1.8)
+    contrast(1.05)
+    drop-shadow(0 10px 24px rgba(0, 0, 0, 0.25));
+  pointer-events: none;
 }
 
 .tycoon-landing-header__arrow {
@@ -772,6 +972,13 @@ a {
   color: #ff4300;
 }
 
+.index-start__layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  align-items: center;
+}
+
 .index-start__subheading {
   font-family: "Minecraft Ten", sans-serif !important;
   font-size: var(--size-32);
@@ -785,37 +992,73 @@ a {
   background-color: rgba(120, 135, 155, 0.3);
 }
 
-.index-start__other {
-  opacity: 0.75;
-}
-
-.index-start__launcher-btn {
-  min-width: 260px;
-}
-
-.index-start__preview {
-  position: relative;
+.index-start__trailer {
   display: grid;
-  justify-content: center;
-  align-content: end;
+  justify-items: stretch;
+  width: 100%;
 }
 
-.index-start__preview-img {
+.index-start__trailer-frame {
   position: relative;
-  z-index: 2;
-  max-width: 100%;
-  box-shadow: 0 -60px 125px -75px rgba(0, 0, 0, 0.9);
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(to bottom, #2d3440, #171b24);
+  box-shadow:
+    0 0 0 8px rgba(0, 0, 0, 0.45),
+    0 24px 60px rgba(0, 0, 0, 0.38);
 }
 
-.index-start__preview-effect {
+.index-start__trailer-frame::before {
+  content: "";
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -20%;
-  z-index: 1;
-  max-width: 150%;
-  margin: auto;
-  opacity: 0.95;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent 40%);
+  pointer-events: none;
+}
+
+.index-start__trailer-surface {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #000;
+  border: 4px solid rgba(0, 0, 0, 0.65);
+}
+
+.index-start__trailer-launcher {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  border: 0;
+  padding: 0;
+  background:
+    radial-gradient(circle at center, rgba(0, 0, 0, 0.12) 0, rgba(0, 0, 0, 0.7) 72%),
+    linear-gradient(180deg, rgba(15, 18, 26, 0.08), rgba(0, 0, 0, 0.45));
+  cursor: pointer;
+}
+
+.index-start__trailer-launcher:hover .index-start__trailer-launcher-icon {
+  transform: scale(1.06);
+  filter: grayscale(1) brightness(1.06) drop-shadow(0 0 18px rgba(255, 255, 255, 0.12));
+}
+
+.index-start__trailer-launcher-icon {
+  width: clamp(92px, 10vw, 140px);
+  height: auto;
+  filter: grayscale(1) brightness(0.92) contrast(1.05) drop-shadow(0 0 16px rgba(0, 0, 0, 0.45));
+  transition: transform 0.18s ease, filter 0.18s ease;
+}
+
+.index-start__trailer-embed {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
 }
 
 .xk-launcher-frame {
@@ -1220,6 +1463,52 @@ a {
   }
 }
 
+@keyframes xk-loader-progress {
+  from {
+    transform: scaleX(0.08);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes xk-loader-logo {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes xk-loader-blocks {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-18px);
+  }
+}
+
+@keyframes xk-loader-stars {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.86;
+  }
+}
+
+@keyframes xk-loader-out {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
 @media (max-width: 1200px) {
   .tycoon-landing {
     --g-150: 100px;
@@ -1312,6 +1601,10 @@ a {
   .tycoon-landing-header__logo {
     min-height: 280px;
   }
+
+  .index-start__layout {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 640px) {
@@ -1366,10 +1659,39 @@ a {
     white-space: nowrap;
   }
 
-  .index-start__launcher-btn {
-    min-width: unset;
-    width: 100%;
-    display: block;
-    margin: 10px 0;
+  .index-start__trailer-frame {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 520px) {
+  .xk-loader__content {
+    top: 44%;
+  }
+
+  .xk-loader__logo {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    margin-block: 12px;
+  }
+
+  .xk-loader__bar {
+    height: 24px;
+    margin-top: 22px;
+  }
+
+  .xk-loader__block {
+    width: 42px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xk-loader,
+  .xk-loader__stars,
+  .xk-loader__block,
+  .xk-loader__logo,
+  .xk-loader__bar span {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
   }
 }

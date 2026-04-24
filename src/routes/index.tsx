@@ -1,4 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { useState } from 'react'
+import { motion, useReducedMotion } from 'motion/react'
 
 const reasons = [
   {
@@ -54,6 +56,9 @@ export const Route = createFileRoute('/')({
 })
 
 function HomePage() {
+  const shouldReduceMotion = useReducedMotion()
+  const [isTrailerPlaying, setIsTrailerPlaying] = useState(false)
+
   return (
     <main className="tycoon-landing xk-adapted">
       <a
@@ -85,7 +90,7 @@ function HomePage() {
       </a>
 
       <section id="header" className="tycoon-landing-header xk-header-hero">
-        <video
+        <motion.video
           src="/assets/background-hero.mp4"
           className="tycoon-landing-header__background"
           autoPlay
@@ -93,9 +98,30 @@ function HomePage() {
           muted
           playsInline
           aria-hidden="true"
+          initial={
+            shouldReduceMotion
+              ? false
+              : {
+                  opacity: 0,
+                  scale: 1.08,
+                  filter: 'brightness(0.45) saturate(0.7) blur(8px)',
+                }
+          }
+          animate={{
+            opacity: 1,
+            scale: 1,
+            filter: 'brightness(0.84) saturate(0.9) blur(0px)',
+          }}
+          transition={{ duration: 1.25, ease: [0.22, 1, 0.36, 1] }}
         />
 
-        <div className="tycoon-landing-header__hero xk-minecraft-hero" aria-hidden="true">
+        <motion.div
+          className="tycoon-landing-header__hero xk-minecraft-hero"
+          aria-hidden="true"
+          initial={shouldReduceMotion ? false : { opacity: 0, x: 90, scale: 0.94 }}
+          animate={{ opacity: 1, x: 0, scale: 1 }}
+          transition={{ delay: 0.35, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+        >
           <div className="xk-minecraft-hero__glow" />
           <div className="xk-minecraft-hero__mountain xk-minecraft-hero__mountain_back" />
           <div className="xk-minecraft-hero__mountain xk-minecraft-hero__mountain_front" />
@@ -109,26 +135,46 @@ function HomePage() {
             <span className="xk-minecraft-hero__leg xk-minecraft-hero__leg_left" />
             <span className="xk-minecraft-hero__leg xk-minecraft-hero__leg_right" />
           </div>
-        </div>
+        </motion.div>
 
         <div className="tycoon-landing-header__container px-150">
           <div className="row justify-content-start">
             <div className="col-12 col-md-9 col-lg-6">
-              <div className="tycoon-landing-header__logo xk-header-logo">
-                <div className="xk-header-logo__text">
-                  <span className="xk-header-logo__caption">Приватный майнкрафт сервер</span>
-                  <strong>XK SMP</strong>
-                  <small>РП • Ванилла • Хардкор</small>
+              <motion.div
+                initial={
+                  shouldReduceMotion
+                    ? false
+                    : {
+                        opacity: 0,
+                        x: -84,
+                        filter: 'blur(8px)',
+                      }
+                }
+                animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+                transition={{ delay: 0.28, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <div className="tycoon-landing-header__logo xk-header-logo">
+                  <div className="xk-header-logo__text">
+                    <span className="xk-header-logo__caption">
+                      Приватный майнкрафт сервер
+                    </span>
+                    <strong>XK SMP</strong>
+                    <small>РП • Ванилла • Хардкор</small>
+                  </div>
                 </div>
-              </div>
 
-              <div className="tycoon-landing-header__container-content">
-                <p className="xk-header-copy">
-                  Сервер, который не является однодневкой и не закроется из-за
-                  неуплаты хостинга. Ванильный мир без приватов и донатов, где
-                  всё решают игроки, города и политика.
-                </p>
-                <a href="#apply" className="tycoon-landing-btn tycoon-landing-btn_style-success">
+                <div className="tycoon-landing-header__container-content">
+                  <p className="xk-header-copy">
+                    Сервер, который не является однодневкой и не закроется из-за
+                    неуплаты хостинга. Ванильный мир без приватов и донатов, где
+                    всё решают игроки, города и политика.
+                  </p>
+                <motion.a
+                  href="#apply"
+                  className="tycoon-landing-btn tycoon-landing-btn_style-success"
+                  whileHover={shouldReduceMotion ? undefined : { scale: 1.08 }}
+                  whileTap={shouldReduceMotion ? undefined : { scale: 0.98 }}
+                >
                   <div className="tycoon-landing-header__play-bright" />
                   <div className="tycoon-landing-btn__content text-40">
                     Подать заявку
@@ -138,12 +184,19 @@ function HomePage() {
                       alt=""
                     />
                   </div>
-                </a>
-              </div>
+                </motion.a>
+                </div>
+              </motion.div>
             </div>
 
             <div className="col-12 d-block d-md-none">
-              <div className="tycoon-landing-header__hero-mobile xk-minecraft-hero xk-minecraft-hero_mobile" aria-hidden="true">
+              <motion.div
+                className="tycoon-landing-header__hero-mobile xk-minecraft-hero xk-minecraft-hero_mobile"
+                aria-hidden="true"
+                initial={shouldReduceMotion ? false : { opacity: 0, y: 36, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ delay: 0.65, duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+              >
                 <div className="xk-minecraft-hero__glow" />
                 <div className="xk-minecraft-hero__mountain xk-minecraft-hero__mountain_back" />
                 <div className="xk-minecraft-hero__mountain xk-minecraft-hero__mountain_front" />
@@ -157,24 +210,32 @@ function HomePage() {
                   <span className="xk-minecraft-hero__leg xk-minecraft-hero__leg_left" />
                   <span className="xk-minecraft-hero__leg xk-minecraft-hero__leg_right" />
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>
 
-        <img
-          src="/assets/img/landing/header-frontline.webp"
+        <motion.div
           className="tycoon-landing-header__frontline"
-          alt=""
+          aria-hidden="true"
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 34 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
         />
 
-        <a href="#start" className="tycoon-landing-header__arrow">
+        <motion.a
+          href="#start"
+          className="tycoon-landing-header__arrow"
+          initial={shouldReduceMotion ? false : { opacity: 0, y: -18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.15, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+        >
           <img
             src="/assets/img/general/header-arrow-down.svg"
             className="tycoon-landing-header__arrow-icon"
             alt=""
           />
-        </a>
+        </motion.a>
       </section>
 
       <section
@@ -194,52 +255,40 @@ function HomePage() {
               />
             </div>
             <h2 className="tycoon-landing-section__header-text mt-35">
-              Начни играть
-              <span className="tycoon-landing-section__header-mark tycoon-color-gradient-purple">
-                Прямо сейчас!
-              </span>
+              Посмотрите трейлер сервера
             </h2>
+          </div>
 
-
-              <a href="#apply" className="tycoon-landing-btn tycoon-landing-btn_style-success">
-                <div className="tycoon-landing-btn__content text-40">
-                  Подать заявку
-                  <img
-                    src="/assets/img/general/btn-success-arrow-right.svg"
-                    className="tycoon-landing-btn__content-arrow ml-1"
-                    alt=""
-                  />
-                </div>
-              </a>
-
-              <div className="index-start__other mt-30">
-                <div className="row align-items-center justify-content-center">
-                  <div className="index-start__separator m-0" />
-                  <span className="index-start__subheading mx-3">Почему заходят к нам:</span>
-                  <div className="index-start__separator m-0" />
-                </div>
-
-                <div className="text-center mt-15 xk-start-tags">
-                  <span className="tycoon-landing-btn index-start__launcher-btn mx-1 mx-md-2 mx-md-3 mx-lg-4">
-                    <span className="tycoon-landing-btn__content px-35">Vanilla</span>
-                  </span>
-                  <span className="tycoon-landing-btn tycoon-landing-btn_style-primary index-start__launcher-btn mx-1 mx-md-2 mx-md-3 mx-lg-4">
-                    <span className="tycoon-landing-btn__content px-35">RolePlay</span>
-                  </span>
-                  <span className="tycoon-landing-btn index-start__launcher-btn mx-1 mx-md-2 mx-md-3 mx-lg-4">
-                    <span className="tycoon-landing-btn__content px-35">No Donate</span>
-                  </span>
+          <div className="index-start__layout mt-50">
+            <div className="index-start__trailer">
+              <div className="index-start__trailer-frame">
+                <div className="index-start__trailer-surface">
+                  {isTrailerPlaying ? (
+                    <iframe
+                      className="index-start__trailer-embed"
+                      src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0&autoplay=1"
+                      title="XK SMP trailer"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                    />
+                  ) : (
+                    <button
+                      type="button"
+                      className="index-start__trailer-launcher"
+                      onClick={() => setIsTrailerPlaying(true)}
+                      aria-label="Включить трейлер сервера"
+                    >
+                      <img
+                        src="/assets/img/general/section-gradient-1-heading-icon.svg"
+                        alt=""
+                        className="index-start__trailer-launcher-icon"
+                      />
+                    </button>
+                  )}
                 </div>
               </div>
+            </div>
           </div>
-        </div>
-
-        <div className="index-start__preview px-150">
-          <img
-            src="/assets/img/general/launcher-preview-effect.svg"
-            className="index-start__preview-effect"
-            alt=""
-          />
         </div>
       </section>
 
