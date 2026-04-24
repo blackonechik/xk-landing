@@ -189,29 +189,6 @@ function HomePage() {
               </motion.div>
             </div>
 
-            <div className="col-12 d-block d-md-none">
-              <motion.div
-                className="tycoon-landing-header__hero-mobile xk-minecraft-hero xk-minecraft-hero_mobile"
-                aria-hidden="true"
-                initial={shouldReduceMotion ? false : { opacity: 0, y: 36, scale: 0.96 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ delay: 0.65, duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <div className="xk-minecraft-hero__glow" />
-                <div className="xk-minecraft-hero__mountain xk-minecraft-hero__mountain_back" />
-                <div className="xk-minecraft-hero__mountain xk-minecraft-hero__mountain_front" />
-                <div className="xk-minecraft-hero__ground" />
-                <div className="xk-minecraft-hero__castle" />
-                <div className="xk-minecraft-hero__player">
-                  <span className="xk-minecraft-hero__head" />
-                  <span className="xk-minecraft-hero__body" />
-                  <span className="xk-minecraft-hero__arm xk-minecraft-hero__arm_left" />
-                  <span className="xk-minecraft-hero__arm xk-minecraft-hero__arm_right" />
-                  <span className="xk-minecraft-hero__leg xk-minecraft-hero__leg_left" />
-                  <span className="xk-minecraft-hero__leg xk-minecraft-hero__leg_right" />
-                </div>
-              </motion.div>
-            </div>
           </div>
         </div>
 
@@ -246,14 +223,8 @@ function HomePage() {
         <div className="tycoon-landing-section__background _righted" />
         <div className="tycoon-landing-section__line" />
 
-        <div className="tycoon-landing-wrapper pt-150 pb-50">
+        <div className="tycoon-landing-wrapper py-30">
           <div className="tycoon-landing-section__header">
-            <div className="tycoon-landing-section__header-icon">
-              <img
-                src="/assets/img/general/section-gradient-1-heading-icon.svg"
-                alt=""
-              />
-            </div>
             <h2 className="tycoon-landing-section__header-text mt-35">
               Посмотрите трейлер сервера
             </h2>
@@ -272,18 +243,26 @@ function HomePage() {
                       allowFullScreen
                     />
                   ) : (
-                    <button
-                      type="button"
-                      className="index-start__trailer-launcher"
-                      onClick={() => setIsTrailerPlaying(true)}
-                      aria-label="Включить трейлер сервера"
-                    >
+                    <>
                       <img
-                        src="/assets/img/general/section-gradient-1-heading-icon.svg"
+                        src="https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg"
                         alt=""
-                        className="index-start__trailer-launcher-icon"
+                        className="index-start__trailer-preview"
                       />
-                    </button>
+                      <div className="index-start__trailer-overlay" aria-hidden="true" />
+                      <button
+                        type="button"
+                        className="index-start__trailer-launcher"
+                        onClick={() => setIsTrailerPlaying(true)}
+                        aria-label="Включить трейлер сервера"
+                      >
+                        <img
+                          src="/assets/img/general/section-gradient-1-heading-icon.svg"
+                          alt=""
+                          className="index-start__trailer-launcher-icon"
+                        />
+                      </button>
+                    </>
                   )}
                 </div>
               </div>
