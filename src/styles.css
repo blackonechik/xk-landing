@@ -932,6 +932,7 @@ a {
   font-size: var(--size-48);
   line-height: 1.4;
   color: #fff;
+  text-align: center;
   text-shadow: 0 8px 0 rgba(0, 0, 0, 0.7);
   letter-spacing: 1px;
 }
@@ -1237,7 +1238,7 @@ a {
 
 .tycoon-landing-feature__info {
   margin: 0 auto;
-  padding: var(--g-35);
+  padding: var(--g-15);
   width: 100%;
   background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), transparent);
   font-family: "Minecraft Five", sans-serif !important;
@@ -1274,16 +1275,16 @@ a {
 .xk-info-card__content,
 .xk-simple-feature,
 .xk-cta-content {
-  padding: 28px 18px 18px;
+  padding: 15px;
   min-height: 100%;
 }
 
 .xk-info-card__text {
-  margin-top: 46px;
+  margin-top: 26px;
 }
 
 .xk-simple-feature {
-  min-height: 320px;
+  min-height: 260px;
 }
 
 .xk-cta-content {

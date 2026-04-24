@@ -4,38 +4,30 @@ import { motion, useReducedMotion } from 'motion/react'
 
 const reasons = [
   {
-    title: 'Выделенная машина',
-    text: 'Сервер находится не на псевдо-хостингах, а на полноценной выделенной машине.',
+    title: 'Города и королевства',
+    text: 'Строй государства, заключай союзы и веди дипломатию, которая меняет карту мира.',
     tone: 'green',
   },
   {
-    title: 'Стабильность TPS',
-    text: 'Нормальная техническая база, чтобы мир жил долго и не превращался в борьбу с лагами.',
-    tone: 'gold',
+    title: 'RP жизни',
+    text: 'У каждого игрока всего 2 жизни, и каждая из них делает историю ценнее. Если всё пошло не по плану, другого игрока можно успеть поднять в течение нескольких минут после смерти. А когда жизни заканчиваются, их можно купить на сайте. Здесь особенно важно держаться вместе и не теряться с другими игроками.',
+    tone: 'violet',
   },
   {
-    title: 'RP жизни',
-    text: 'Каждое решение имеет вес, а история мира складывается из ваших поступков и конфликтов.',
-    tone: 'violet',
+    title: 'Стабильность TPS',
+    text: 'Сервер работает на мощном оборудовании и выдерживает высокую нагрузку без лагов. Команда постоянно оптимизирует сервер и плагины, чтобы ваш пинг не улетал на Марс.',
+    tone: 'gold',
   },
 ]
 
 const features = [
   {
-    title: 'Города и королевства',
-    text: 'Строй государства, вступай в союзы, веди дипломатию или запускай войны, которые меняют карту мира.',
-  },
-  {
     title: 'Dream SMP вайб',
     text: 'Сервер вдохновлён форматом сюжетного SMP, где самое важное создают сами игроки.',
   },
   {
-    title: 'Без приватов и донатов',
-    text: 'Никакого pay-to-win. Только ванильный мир, договорённости игроков и реальная репутация.',
-  },
-  {
     title: 'Защита аккаунта',
-    text: 'Есть возможность привязать аккаунт к VK или Discord, чтобы чувствовать себя спокойнее.',
+    text: 'Можно привязать аккаунт к Telegram или играть через лицензионный аккаунт, чтобы вход был надёжным и удобным.',
   },
 ]
 
@@ -48,7 +40,7 @@ export const Route = createFileRoute('/')({
       {
         name: 'description',
         content:
-          'XK SMP — приватный Minecraft RolePlay сервер в духе Dream SMP: ваниль, RP-жизни, города, королевства и долгий мир без донатов и приватов.',
+          'XK SMP — приватный Minecraft RolePlay сервер в духе Dream SMP: ваниль, RP-жизни, города, королевства и живой мир, где важны союзники, характер и история.',
       },
     ],
   }),
@@ -154,20 +146,20 @@ function HomePage() {
                 transition={{ delay: 0.28, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
               >
                 <div className="tycoon-landing-header__logo xk-header-logo">
-                  <div className="xk-header-logo__text">
-                    <span className="xk-header-logo__caption">
+                <div className="xk-header-logo__text">
+                  <span className="xk-header-logo__caption">
                       Приватный майнкрафт сервер
                     </span>
                     <strong>XK SMP</strong>
-                    <small>РП • Ванилла • Хардкор</small>
+                    <small>РП • Ванилла • Живой мир</small>
                   </div>
                 </div>
 
                 <div className="tycoon-landing-header__container-content">
                   <p className="xk-header-copy">
                     Сервер, который не является однодневкой и не закроется из-за
-                    неуплаты хостинга. Ванильный мир без приватов и донатов, где
-                    всё решают игроки, города и политика.
+                    неуплаты хостинга. Ванильный мир с RP-жизнями, городами,
+                    королевствами и решениями, которые реально меняют историю.
                   </p>
                 <motion.a
                   href="#apply"
@@ -385,15 +377,17 @@ function HomePage() {
                   <div className="tycoon-landing-card__content xk-cta-content">
                     <div className="tycoon-landing-feature__badge-wrapper">
                       <div className="tycoon-landing-feature__badge">
-                        <div className="tycoon-landing-feature__badge-content">Discord Whitelist</div>
+                        <div className="tycoon-landing-feature__badge-content">
+                          Telegram Whitelist
+                        </div>
                       </div>
                     </div>
 
                     <p className="tycoon-landing-feature__info tycoon-landing-feature__info_style-orange mt-50">
                       Если тебе нужен приватный Minecraft сервер с
-                      <span className="tycoon-landing-feature__info-mark-1"> долгой перспективой</span>,
-                      политикой, городами, королевствами и
-                      <span className="tycoon-landing-feature__info-mark-2"> настоящим чувством живого мира</span>,
+                      <span className="tycoon-landing-feature__info-mark-1"> живой историей</span>,
+                      союзниками, городами, королевствами и
+                      <span className="tycoon-landing-feature__info-mark-2"> важными решениями</span>,
                       тебе сюда.
                     </p>
 
@@ -403,7 +397,7 @@ function HomePage() {
                         className="tycoon-landing-btn tycoon-landing-btn_style-success"
                       >
                         <div className="tycoon-landing-btn__content text-40">
-                          Открыть Discord
+                          Открыть Telegram
                           <img
                             src="/assets/img/general/btn-success-arrow-right.svg"
                             className="tycoon-landing-btn__content-arrow ml-1"
