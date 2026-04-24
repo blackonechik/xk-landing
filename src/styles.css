@@ -1572,6 +1572,10 @@ a {
     padding-right: 24px;
   }
 
+  .tycoon-landing-header__container {
+    padding-top: 20px;
+  }
+
   .tycoon-landing-header__hero {
     display: none;
   }
@@ -1610,10 +1614,6 @@ a {
     max-width: 100%;
     margin: 40px auto 0;
     display: block;
-  }
-
-  .tycoon-landing-header__logo {
-    min-height: 280px;
   }
 
   .index-start__layout {
