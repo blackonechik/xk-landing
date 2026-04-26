@@ -1,4 +1,4 @@
 export const paymentMeta = {
-  title: 'Оплата | XK SMP',
-  description: 'Оплата проходки и RP-жизней для приватного сервера XK SMP.',
+  title: 'Оплата | XK HARDCORE',
+  description: 'Оплата проходки и RP-жизней для приватного сервера XK HARDCORE.',
 }

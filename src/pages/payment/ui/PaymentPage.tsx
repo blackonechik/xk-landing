@@ -54,9 +54,10 @@ export function PaymentPage() {
         mark="Проходка и RP-жизни"
         titleClassName="tycoon-color-yellow"
         markClassName="tycoon-color-orange-2"
-        iconSrc="/assets/img/general/section-brown-heading-icon.svg"
+        wrapperClassName="xk-payment-wrapper"
         withEffect
         withEnding
+        withLine={false}
       >
         <div className="xk-payment-layout mt-50">
           <LandingCard title="Заказ" contentClassName="xk-payment-card" infoClassName="xk-payment-card__body">
@@ -93,7 +94,7 @@ export function PaymentPage() {
                     />
                     <span className="xk-payment-product__name">{product.name}</span>
                     <span className="xk-payment-product__text">{product.description}</span>
-                    <strong>{product.amountRub} ₽</strong>
+                    <strong>{product.amountRub} руб.</strong>
                   </label>
                 ))}
               </div>
@@ -125,7 +126,7 @@ export function PaymentPage() {
             </div>
             <div className="xk-payment-summary__row">
               <span>Стоимость</span>
-              <strong>{selectedProduct.amountRub} ₽</strong>
+              <strong>{selectedProduct.amountRub} руб.</strong>
             </div>
             <p>
               Сейчас оплата работает через подготовленную заглушку ЮMoney. После подключения

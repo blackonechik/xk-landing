@@ -35,7 +35,7 @@ export function TrailerSection({ revealInitial, tapPress }: TrailerSectionProps)
                 <iframe
                   className="index-start__trailer-embed"
                   src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0&autoplay=1"
-                  title="XK SMP trailer"
+                  title="XK HARDCORE trailer"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
                 />

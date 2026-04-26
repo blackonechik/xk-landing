@@ -1,14 +1,14 @@
 import type { LandingFeature, LandingInfoCard } from './types'
 
 export const homeMeta = {
-  title: 'XK SMP | Private Minecraft RolePlay Server',
+  title: 'XK HARDCORE | Private Minecraft RolePlay Server',
   description:
-    'XK SMP — приватный Minecraft RolePlay сервер в духе Dream SMP: ваниль, RP-жизни, города, королевства и живой мир, где важны союзники, характер и история.',
+    'XK HARDCORE — приватный Minecraft RolePlay сервер в духе Dream SMP: ваниль, RP-жизни, города, королевства и живой мир, где важны союзники, характер и история.',
 }
 
 export const heroContent = {
   caption: 'Приватный майнкрафт сервер',
-  title: 'XK SMP',
+  title: 'XK HARDCORE',
   subtitle: 'РП • Ванилла • Живой мир',
   description:
     'Сервер, который не является однодневкой и не закроется из-за неуплаты хостинга. Ванильный мир с RP-жизнями, городами, королевствами и решениями, которые реально меняют историю.',
@@ -48,7 +48,7 @@ export const features: LandingFeature[] = [
 export const applyContent = {
   badge: 'Telegram Whitelist',
   title: 'Подавай заявку',
-  mark: 'И присоединяйся к XK SMP',
+  mark: 'И присоединяйся к XK HARDCORE',
   telegramLabel: 'Открыть Telegram',
   buyPassLabel: 'Купить проходку',
 }

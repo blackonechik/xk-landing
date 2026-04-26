@@ -20,6 +20,22 @@
 }
 
 @font-face {
+  font-family: "Montserrat";
+  src: url("/assets/font/montserrat/Montserrat-Regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("/assets/font/montserrat/Montserrat-SemiBold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
   font-family: "Minecraft Five";
   src: url("/assets/font/minecraft/MinecraftFive-Regular.woff2") format("woff2");
   font-style: normal;
@@ -328,7 +344,7 @@ a {
   --color-gradient-2: #4e488a;
   --color-light: #6c64a2;
   --color-shadow: #2b2c58;
-  --color-text: rgba(194, 204, 255, 0.8);
+  --color-text: #fff;
   --stroke: calc(var(--g-10) * 0.8);
   display: inline-block;
   position: relative;
@@ -367,7 +383,7 @@ a {
   --color-gradient-2: #6de548;
   --color-light: #c3ff53;
   --color-shadow: #135910;
-  --color-text: #205914;
+  --color-text: #fff;
 }
 
 .tycoon-landing-btn_style-primary {
@@ -375,7 +391,7 @@ a {
   --color-gradient-2: #1c74e5;
   --color-light: #1098fd;
   --color-shadow: #0641cb;
-  --color-text: rgba(255, 255, 255, 0.85);
+  --color-text: #fff;
 }
 
 .tycoon-landing-btn__content {
@@ -409,10 +425,11 @@ a {
   height: 36px;
   top: 2px;
   margin-left: 0;
+  filter: brightness(0) invert(1);
 }
 
 .tycoon-landing-btn__content-arrow_primary {
-  filter: hue-rotate(154deg) saturate(1.7) brightness(1.25);
+  filter: brightness(0) invert(1);
 }
 
 .tycoon-landing-btn:disabled {
@@ -1321,6 +1338,11 @@ a {
 .xk-payment-page {
   min-height: 100svh;
   background: #1c0800;
+}
+
+.xk-payment-wrapper {
+  padding-top: 56px;
+  padding-bottom: 110px;
 }
 
 .xk-payment-layout {

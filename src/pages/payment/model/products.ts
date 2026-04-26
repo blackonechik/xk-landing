@@ -11,7 +11,7 @@ export const paymentProducts: PaymentProduct[] = [
   {
     id: 'smp-pass',
     name: 'Проходка',
-    description: 'Доступ на приватный XK SMP и заявка в whitelist.',
+    description: 'Доступ на приватный XK HARDCORE и заявка в whitelist.',
     amountRub: 200,
   },
   {

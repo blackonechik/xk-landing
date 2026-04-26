@@ -59,7 +59,7 @@ export default function LoadingScreen() {
       className={isLeaving ? 'xk-loader xk-loader_is-leaving' : 'xk-loader'}
       role="status"
       aria-live="polite"
-      aria-label="Загрузка XK SMP"
+      aria-label="Загрузка XK HARDCORE"
     >
       <div className="xk-loader__sky" aria-hidden="true" />
       <div className="xk-loader__stars" aria-hidden="true" />
@@ -73,7 +73,7 @@ export default function LoadingScreen() {
         <p className="xk-loader__eyebrow">Загрузка мира</p>
         <div className="xk-loader__logo" aria-hidden="true">
           <span>XK</span>
-          <strong>SMP</strong>
+          <strong>HARDCORE</strong>
         </div>
         <p className="xk-loader__subtitle">Генерируем чанки и собираем историю</p>
         <div className="xk-loader__bar" aria-hidden="true">

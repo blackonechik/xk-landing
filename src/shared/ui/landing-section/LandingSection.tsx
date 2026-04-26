@@ -18,6 +18,7 @@ type LandingSectionProps = {
   revealInitial?: false | 'hidden'
   withEffect?: boolean
   withEnding?: boolean
+  withLine?: boolean
 }
 
 export function LandingSection({
@@ -34,6 +35,7 @@ export function LandingSection({
   revealInitial,
   withEffect = false,
   withEnding = false,
+  withLine = true,
 }: LandingSectionProps) {
   return (
     <section
@@ -45,10 +47,10 @@ export function LandingSection({
       ]
         .filter(Boolean)
         .join(' ')}
-    >
+      >
       <div className="tycoon-landing-section__background" />
       <div className="tycoon-landing-section__background _righted" />
-      <div className="tycoon-landing-section__line" />
+      {withLine ? <div className="tycoon-landing-section__line" /> : null}
       {withEffect ? <div className="tycoon-landing-section__effect" /> : null}
 
       <div className={['tycoon-landing-wrapper', wrapperClassName].filter(Boolean).join(' ')}>
