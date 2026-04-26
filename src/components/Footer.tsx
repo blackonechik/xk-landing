@@ -9,6 +9,7 @@ export default function Footer() {
           Приватный Minecraft сервер без приватов и донатов. Ваниль, RP,
           королевства и история, которую создают игроки.
         </p>
+        <p className="mc-footer-copy">ИНН 233711467280</p>
         <p className="mc-footer-copy">&copy; {year} XK HARDCORE. Все права защищены.</p>
       </div>
     </footer>
