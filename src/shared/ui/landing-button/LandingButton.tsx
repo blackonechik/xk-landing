@@ -3,30 +3,33 @@ import type { ComponentProps, ReactNode } from 'react'
 
 type LandingButtonTone = 'default' | 'success' | 'primary'
 
-type LandingButtonProps = ComponentProps<typeof motion.a> & {
+type SharedLandingButtonProps = {
   children: ReactNode
   tone?: LandingButtonTone
   contentClassName?: string
   beforeContent?: ReactNode
   arrow?: boolean
+  arrowTone?: LandingButtonTone
 }
 
-export function LandingButton({
-  children,
-  tone = 'default',
-  className,
-  contentClassName,
-  beforeContent,
-  arrow = false,
-  ...props
-}: LandingButtonProps) {
-  const toneClass = tone === 'default' ? '' : `tycoon-landing-btn_style-${tone}`
+type LandingButtonProps =
+  | (SharedLandingButtonProps & ComponentProps<typeof motion.a> & { as?: 'a' })
+  | (SharedLandingButtonProps & ComponentProps<typeof motion.button> & { as: 'button' })
 
-  return (
-    <motion.a
-      className={['tycoon-landing-btn', toneClass, className].filter(Boolean).join(' ')}
-      {...props}
-    >
+export function LandingButton(props: LandingButtonProps) {
+  const {
+    children,
+    tone = 'default',
+    className,
+    contentClassName,
+    beforeContent,
+    arrow = false,
+    arrowTone = tone,
+  } = props
+  const toneClass = tone === 'default' ? '' : `tycoon-landing-btn_style-${tone}`
+  const buttonClassName = ['tycoon-landing-btn', toneClass, className].filter(Boolean).join(' ')
+  const content = (
+    <>
       {beforeContent}
       <div
         className={['tycoon-landing-btn__content', contentClassName]
@@ -37,11 +40,33 @@ export function LandingButton({
         {arrow ? (
           <img
             src="/assets/img/general/btn-success-arrow-right.svg"
-            className="tycoon-landing-btn__content-arrow ml-1"
+            className={[
+              'tycoon-landing-btn__content-arrow',
+              `tycoon-landing-btn__content-arrow_${arrowTone}`,
+              'ml-1',
+            ].join(' ')}
             alt=""
           />
         ) : null}
       </div>
+    </>
+  )
+
+  if (props.as === 'button') {
+    const { as: _as, children: _children, tone: _tone, contentClassName: _contentClassName, beforeContent: _beforeContent, arrow: _arrow, arrowTone: _arrowTone, className: _className, ...buttonProps } = props
+
+    return (
+      <motion.button className={buttonClassName} {...buttonProps}>
+        {content}
+      </motion.button>
+    )
+  }
+
+  const { as: _as, children: _children, tone: _tone, contentClassName: _contentClassName, beforeContent: _beforeContent, arrow: _arrow, arrowTone: _arrowTone, className: _className, ...anchorProps } = props
+
+  return (
+    <motion.a className={buttonClassName} {...anchorProps}>
+      {content}
     </motion.a>
   )
 }

@@ -45,11 +45,18 @@ export function ApplySection({ revealInitial, cardHover }: ApplySectionProps) {
             tone="primary"
             className="xk-cta-actions__telegram"
             contentClassName="text-40"
+            arrowTone="primary"
             arrow
           >
             {applyContent.telegramLabel}
           </LandingButton>
-          <LandingButton href="/payment" tone="success" contentClassName="text-40" arrow>
+          <LandingButton
+            href="/payment"
+            tone="success"
+            className="xk-cta-actions__buy"
+            contentClassName="text-40"
+            arrow
+          >
             {applyContent.buyPassLabel}
           </LandingButton>
         </div>
