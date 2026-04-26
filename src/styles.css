@@ -1290,8 +1290,15 @@ a {
 
 .xk-cta-actions {
   display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
   justify-content: center;
   margin-top: 12px;
+}
+
+.xk-cta-actions__telegram .tycoon-landing-btn__content {
+  padding: var(--g-15) var(--g-30);
+  font-size: var(--size-32) !important;
 }
 
 .tycoon-landing-section__ending {
