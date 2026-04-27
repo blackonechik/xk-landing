@@ -16,14 +16,6 @@ function PaymentProductIcon({ productId }: { productId: PaymentProductId }) {
       ? '/assets/img/general/resized_32_heart.png'
       : '/assets/img/general/resized_32_written_book.png'
 
-  if (productId === 'life') {
-    return (
-      <span className="xk-payment-product__icon" aria-hidden="true">
-        <img src={iconSrc} alt="" />
-      </span>
-    )
-  }
-
   return (
     <span className="xk-payment-product__icon" aria-hidden="true">
       <img src={iconSrc} alt="" />
@@ -186,9 +178,9 @@ export function PaymentPage() {
               <span>Стоимость</span>
               <strong className="xk-payment-summary__value">{selectedProduct.amountRub} руб.</strong>
             </div>
-              <p className="xk-payment-note">
-                Нажимая кнопку, вы принимаете условия <a href="/offer">публичной оферты</a>.
-              </p>
+            <p className="xk-payment-note">
+              Нажимая кнопку, вы принимаете условия <a href="/offer">публичной оферты</a>.
+            </p>
             <LandingButton
               as="button"
               type="submit"

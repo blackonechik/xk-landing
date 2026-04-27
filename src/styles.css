@@ -1353,6 +1353,11 @@ a {
   align-items: start;
 }
 
+.xk-payment-status-layout {
+  max-width: 920px;
+  margin-inline: auto;
+}
+
 .xk-payment-card {
   padding: 18px;
 }
@@ -1549,6 +1554,109 @@ a {
 
 .xk-payment-summary__submit .tycoon-landing-btn__content-arrow {
   height: 24px;
+}
+
+.xk-payment-status {
+  display: grid;
+  gap: 14px;
+  text-align: center;
+}
+
+.xk-payment-status__title {
+  margin: 0;
+  font-family: "Minecraft Five", sans-serif !important;
+  font-size: 20px;
+  line-height: 1.5;
+  color: #fff0b5;
+  text-shadow: 0 4px 0 rgba(0, 0, 0, 0.52);
+}
+
+.xk-payment-status__text {
+  margin: 0;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.xk-payment-status__text strong {
+  font-family: "Minecraft Five", sans-serif !important;
+  color: #ffe895;
+}
+
+.xk-payment-status__hint {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.56);
+}
+
+.xk-payment-status__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+.xk-admin-page {
+  min-height: 100svh;
+  background: #06080f;
+}
+
+.xk-admin-layout {
+  display: grid;
+  gap: 20px;
+}
+
+.xk-admin-panel {
+  display: grid;
+  gap: 14px;
+  text-align: left;
+}
+
+.xk-admin-actions {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.xk-admin-stats p {
+  margin: 0;
+  font-family: "Minecraft Five", sans-serif !important;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.xk-admin-stats strong {
+  color: #b2ff00;
+}
+
+.xk-admin-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 3px solid rgba(255, 255, 255, 0.14);
+  background: rgba(0, 0, 0, 0.36);
+}
+
+.xk-admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 860px;
+}
+
+.xk-admin-table th,
+.xk-admin-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  text-align: left;
+  font-size: 13px;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+.xk-admin-table th {
+  font-family: "Minecraft Five", sans-serif !important;
+  color: #ffe895;
+}
+
+.xk-admin-table td {
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .tycoon-landing-section__ending {
@@ -2022,6 +2130,12 @@ a {
   .xk-payment-summary__row {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .xk-admin-table th,
+  .xk-admin-table td {
+    padding: 8px 9px;
+    font-size: 12px;
   }
 }
 

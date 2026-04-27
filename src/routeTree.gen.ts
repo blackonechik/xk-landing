@@ -11,8 +11,12 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PaymentRouteImport } from './routes/payment'
 import { Route as OfferRouteImport } from './routes/offer'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PaymentSuccessRouteImport } from './routes/payment.success'
+import { Route as PaymentPendingRouteImport } from './routes/payment.pending'
+import { Route as PaymentFailedRouteImport } from './routes/payment.failed'
 
 const PaymentRoute = PaymentRouteImport.update({
   id: '/payment',
@@ -22,6 +26,11 @@ const PaymentRoute = PaymentRouteImport.update({
 const OfferRoute = OfferRouteImport.update({
   id: '/offer',
   path: '/offer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -34,39 +43,92 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PaymentSuccessRoute = PaymentSuccessRouteImport.update({
+  id: '/success',
+  path: '/success',
+  getParentRoute: () => PaymentRoute,
+} as any)
+const PaymentPendingRoute = PaymentPendingRouteImport.update({
+  id: '/pending',
+  path: '/pending',
+  getParentRoute: () => PaymentRoute,
+} as any)
+const PaymentFailedRoute = PaymentFailedRouteImport.update({
+  id: '/failed',
+  path: '/failed',
+  getParentRoute: () => PaymentRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
   '/offer': typeof OfferRoute
-  '/payment': typeof PaymentRoute
+  '/payment': typeof PaymentRouteWithChildren
+  '/payment/failed': typeof PaymentFailedRoute
+  '/payment/pending': typeof PaymentPendingRoute
+  '/payment/success': typeof PaymentSuccessRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
   '/offer': typeof OfferRoute
-  '/payment': typeof PaymentRoute
+  '/payment': typeof PaymentRouteWithChildren
+  '/payment/failed': typeof PaymentFailedRoute
+  '/payment/pending': typeof PaymentPendingRoute
+  '/payment/success': typeof PaymentSuccessRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
   '/offer': typeof OfferRoute
-  '/payment': typeof PaymentRoute
+  '/payment': typeof PaymentRouteWithChildren
+  '/payment/failed': typeof PaymentFailedRoute
+  '/payment/pending': typeof PaymentPendingRoute
+  '/payment/success': typeof PaymentSuccessRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/offer' | '/payment'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/admin'
+    | '/offer'
+    | '/payment'
+    | '/payment/failed'
+    | '/payment/pending'
+    | '/payment/success'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/offer' | '/payment'
-  id: '__root__' | '/' | '/about' | '/offer' | '/payment'
+  to:
+    | '/'
+    | '/about'
+    | '/admin'
+    | '/offer'
+    | '/payment'
+    | '/payment/failed'
+    | '/payment/pending'
+    | '/payment/success'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/admin'
+    | '/offer'
+    | '/payment'
+    | '/payment/failed'
+    | '/payment/pending'
+    | '/payment/success'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AdminRoute: typeof AdminRoute
   OfferRoute: typeof OfferRoute
-  PaymentRoute: typeof PaymentRoute
+  PaymentRoute: typeof PaymentRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -85,6 +147,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OfferRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -99,14 +168,51 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/payment/success': {
+      id: '/payment/success'
+      path: '/success'
+      fullPath: '/payment/success'
+      preLoaderRoute: typeof PaymentSuccessRouteImport
+      parentRoute: typeof PaymentRoute
+    }
+    '/payment/pending': {
+      id: '/payment/pending'
+      path: '/pending'
+      fullPath: '/payment/pending'
+      preLoaderRoute: typeof PaymentPendingRouteImport
+      parentRoute: typeof PaymentRoute
+    }
+    '/payment/failed': {
+      id: '/payment/failed'
+      path: '/failed'
+      fullPath: '/payment/failed'
+      preLoaderRoute: typeof PaymentFailedRouteImport
+      parentRoute: typeof PaymentRoute
+    }
   }
 }
+
+interface PaymentRouteChildren {
+  PaymentFailedRoute: typeof PaymentFailedRoute
+  PaymentPendingRoute: typeof PaymentPendingRoute
+  PaymentSuccessRoute: typeof PaymentSuccessRoute
+}
+
+const PaymentRouteChildren: PaymentRouteChildren = {
+  PaymentFailedRoute: PaymentFailedRoute,
+  PaymentPendingRoute: PaymentPendingRoute,
+  PaymentSuccessRoute: PaymentSuccessRoute,
+}
+
+const PaymentRouteWithChildren =
+  PaymentRoute._addFileChildren(PaymentRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AdminRoute: AdminRoute,
   OfferRoute: OfferRoute,
-  PaymentRoute: PaymentRoute,
+  PaymentRoute: PaymentRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -15,6 +15,15 @@ type CreatePaymentResponse = {
   }
 }
 
+export type PaymentStatus = 'pending' | 'paid' | 'failed'
+
+type PaymentStatusResponse = {
+  payment: {
+    id: string
+    status: 'pending' | 'paid'
+  }
+}
+
 export async function createPayment(payload: CreatePaymentPayload) {
   const response = await fetch(`${apiBaseUrl}/api/payments`, {
     method: 'POST',
@@ -38,6 +47,28 @@ export async function createPayment(payload: CreatePaymentPayload) {
   }
 
   return data.payment
+}
+
+export async function getPaymentStatus(orderId: string): Promise<PaymentStatus> {
+  const response = await fetch(`${apiBaseUrl}/api/payments/${orderId}`)
+  const data = (await response.json().catch(() => undefined)) as
+    | PaymentStatusResponse
+    | { error?: string }
+    | undefined
+
+  if (response.status === 404) {
+    return 'failed'
+  }
+
+  if (!response.ok || !data || !('payment' in data)) {
+    throw new Error('Не удалось получить статус оплаты.')
+  }
+
+  if (data.payment.status === 'paid') {
+    return 'paid'
+  }
+
+  return 'pending'
 }
 
 function readErrorMessage(data: unknown) {
