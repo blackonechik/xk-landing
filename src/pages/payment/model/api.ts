@@ -6,6 +6,7 @@ type CreatePaymentPayload = {
   email: string
   telegram: string
   productId: PaymentProductId
+  promoCode?: string
 }
 
 type CreatePaymentResponse = {

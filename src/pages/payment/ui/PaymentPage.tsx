@@ -27,6 +27,7 @@ export function PaymentPage() {
   const [nickname, setNickname] = useState('')
   const [email, setEmail] = useState('')
   const [telegram, setTelegram] = useState('')
+  const [promoCode, setPromoCode] = useState('')
   const [productId, setProductId] = useState<PaymentProductId>('smp-pass')
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -41,6 +42,7 @@ export function PaymentPage() {
     const normalizedNickname = nickname.trim()
     const normalizedEmail = email.trim()
     const normalizedTelegram = telegram.trim()
+    const normalizedPromoCode = promoCode.trim().toUpperCase()
 
     if (!nicknamePattern.test(normalizedNickname)) {
       setError('Ник должен быть от 3 до 16 символов: латиница, цифры и подчёркивание.')
@@ -66,6 +68,7 @@ export function PaymentPage() {
         email: normalizedEmail,
         telegram: normalizedTelegram.startsWith('@') ? normalizedTelegram : `@${normalizedTelegram}`,
         productId,
+        promoCode: normalizedPromoCode || undefined,
       })
 
       window.location.href = payment.confirmationUrl
@@ -132,6 +135,18 @@ export function PaymentPage() {
                 </label>
               </div>
 
+              <label className="xk-payment-field">
+                <span>Промокод</span>
+                <input
+                  value={promoCode}
+                  onChange={(event) => setPromoCode(event.target.value.toUpperCase())}
+                  name="promoCode"
+                  autoComplete="off"
+                  placeholder="WELCOME10"
+                  maxLength={32}
+                />
+              </label>
+
               <div className="xk-payment-products" role="radiogroup" aria-label="Товар">
                 {paymentProducts.map((product) => (
                   <label
@@ -178,6 +193,9 @@ export function PaymentPage() {
               <span>Стоимость</span>
               <strong className="xk-payment-summary__value">{selectedProduct.amountRub} руб.</strong>
             </div>
+            {promoCode.trim() ? (
+              <p className="xk-payment-note">Промокод будет проверен при создании платежа.</p>
+            ) : null}
             <p className="xk-payment-note">
               Нажимая кнопку, вы принимаете условия <a href="/offer">публичной оферты</a>.
             </p>
