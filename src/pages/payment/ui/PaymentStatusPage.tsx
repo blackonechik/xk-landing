@@ -123,7 +123,7 @@ export function PaymentStatusPage({ variant }: PaymentStatusPageProps) {
         <div className="xk-payment-status-layout mt-20">
           <LandingCard title={title} tone={tone} contentClassName="xk-payment-card" infoClassName="xk-payment-status">
             {variant === 'success' ? (
-              <p className="xk-payment-status__title">Платёж подтверждён. Заявка отправлена администратору.</p>
+              <p className="xk-payment-status__title">Платёж подтверждён. Цифровая услуга активирована.</p>
             ) : null}
             {variant === 'failed' ? (
               <p className="xk-payment-status__title">Платёж не был подтверждён. Можно попробовать ещё раз.</p>
