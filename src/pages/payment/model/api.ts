@@ -21,7 +21,7 @@ export type PaymentStatus = 'pending' | 'paid' | 'failed'
 type PaymentStatusResponse = {
   payment: {
     id: string
-    status: 'pending' | 'paid'
+    status: PaymentStatus
   }
 }
 
@@ -67,6 +67,10 @@ export async function getPaymentStatus(orderId: string): Promise<PaymentStatus> 
 
   if (data.payment.status === 'paid') {
     return 'paid'
+  }
+
+  if (data.payment.status === 'failed') {
+    return 'failed'
   }
 
   return 'pending'
