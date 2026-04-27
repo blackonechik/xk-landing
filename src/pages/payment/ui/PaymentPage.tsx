@@ -10,6 +10,32 @@ const nicknamePattern = /^[A-Za-z0-9_]{3,16}$/
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const telegramPattern = /^@?[A-Za-z0-9_]{5,32}$/
 
+function PaymentProductIcon({ productId }: { productId: PaymentProductId }) {
+  if (productId === 'life') {
+    return (
+      <span className="xk-payment-product__icon" aria-hidden="true">
+        <svg viewBox="0 0 16 16" focusable="false" aria-hidden="true">
+          <path
+            fill="currentColor"
+            d="M4 2H6V4H7V5H8V4H9V2H12V3H13V5H12V7H11V8H10V9H9V10H8V11H7V10H6V9H5V8H4V7H3V5H4Z"
+          />
+        </svg>
+      </span>
+    )
+  }
+
+  return (
+    <span className="xk-payment-product__icon" aria-hidden="true">
+      <svg viewBox="0 0 16 16" focusable="false" aria-hidden="true">
+        <path
+          fill="currentColor"
+          d="M2 2H8V14H2V3H1V2H2ZM9 2H14V3H15V14H9V2ZM3 3V13H7V3H3ZM10 3V13H14V4H13V3H10Z"
+        />
+      </svg>
+    </span>
+  )
+}
+
 export function PaymentPage() {
   const [nickname, setNickname] = useState('')
   const [email, setEmail] = useState('')
@@ -77,9 +103,9 @@ export function PaymentPage() {
         withEnding
         withLine={false}
       >
-        <div className="xk-payment-layout mt-50">
+        <div className="xk-payment-layout mt-20">
           <LandingCard title="Заказ" contentClassName="xk-payment-card" infoClassName="xk-payment-card__body">
-            <form className="xk-payment-form" onSubmit={handleSubmit}>
+            <form className="xk-payment-form" id="xk-payment-form" onSubmit={handleSubmit}>
               <label className="xk-payment-field">
                 <span>Никнейм</span>
                 <input
@@ -137,7 +163,10 @@ export function PaymentPage() {
                       checked={product.id === productId}
                       onChange={() => setProductId(product.id)}
                     />
-                    <span className="xk-payment-product__name">{product.name}</span>
+                    <div className="xk-payment-product__head">
+                      <PaymentProductIcon productId={product.id} />
+                      <span className="xk-payment-product__name">{product.name}</span>
+                    </div>
                     <span className="xk-payment-product__text">{product.description}</span>
                     <strong>{product.amountRub} руб.</strong>
                   </label>
@@ -145,17 +174,6 @@ export function PaymentPage() {
               </div>
 
               {error ? <p className="xk-payment-error">{error}</p> : null}
-
-              <LandingButton
-                as="button"
-                type="submit"
-                tone="success"
-                contentClassName="text-40"
-                disabled={isSubmitting}
-                arrow
-              >
-                {isSubmitting ? 'Создаём оплату' : 'Перейти к оплате'}
-              </LandingButton>
 
               <p className="xk-payment-note">
                 Нажимая кнопку, вы принимаете условия <a href="/offer">публичной оферты</a>.
@@ -171,12 +189,24 @@ export function PaymentPage() {
           >
             <div className="xk-payment-summary__row">
               <span>Товар</span>
-              <strong>{selectedProduct.name}</strong>
+              <strong className="xk-payment-summary__value">{selectedProduct.name}</strong>
             </div>
             <div className="xk-payment-summary__row">
               <span>Стоимость</span>
-              <strong>{selectedProduct.amountRub} руб.</strong>
+              <strong className="xk-payment-summary__value">{selectedProduct.amountRub} руб.</strong>
             </div>
+            <LandingButton
+              as="button"
+              type="submit"
+              form="xk-payment-form"
+              tone="success"
+              className="xk-payment-summary__submit"
+              contentClassName="xk-payment-summary__submit-content"
+              disabled={isSubmitting}
+              arrow
+            >
+              {isSubmitting ? 'Создаём оплату' : 'Перейти к оплате'}
+            </LandingButton>
             <p>
               После оплаты администратор свяжется с вами по email или в Telegram,
               уточнит заявку и активирует цифровую услугу для указанного никнейма.
