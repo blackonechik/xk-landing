@@ -10,12 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PaymentRouteImport } from './routes/payment'
+import { Route as OfferRouteImport } from './routes/offer'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 
 const PaymentRoute = PaymentRouteImport.update({
   id: '/payment',
   path: '/payment',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OfferRoute = OfferRouteImport.update({
+  id: '/offer',
+  path: '/offer',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -32,30 +38,34 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/offer': typeof OfferRoute
   '/payment': typeof PaymentRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/offer': typeof OfferRoute
   '/payment': typeof PaymentRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/offer': typeof OfferRoute
   '/payment': typeof PaymentRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/payment'
+  fullPaths: '/' | '/about' | '/offer' | '/payment'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/payment'
-  id: '__root__' | '/' | '/about' | '/payment'
+  to: '/' | '/about' | '/offer' | '/payment'
+  id: '__root__' | '/' | '/about' | '/offer' | '/payment'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  OfferRoute: typeof OfferRoute
   PaymentRoute: typeof PaymentRoute
 }
 
@@ -66,6 +76,13 @@ declare module '@tanstack/react-router' {
       path: '/payment'
       fullPath: '/payment'
       preLoaderRoute: typeof PaymentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/offer': {
+      id: '/offer'
+      path: '/offer'
+      fullPath: '/offer'
+      preLoaderRoute: typeof OfferRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -88,6 +105,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  OfferRoute: OfferRoute,
   PaymentRoute: PaymentRoute,
 }
 export const routeTree = rootRouteImport

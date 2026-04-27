@@ -10,14 +10,16 @@ export type PaymentProduct = {
 export const paymentProducts: PaymentProduct[] = [
   {
     id: 'smp-pass',
-    name: 'Проходка',
-    description: 'Доступ на приватный XK HARDCORE и заявка в whitelist.',
+    name: 'Проходка на XK HARDCORE',
+    description:
+      'Цифровая услуга: заявка на доступ к приватному серверу и добавление никнейма в whitelist после связи с администратором.',
     amountRub: 200,
   },
   {
     id: 'life',
-    name: 'Жизнь',
-    description: 'Одна дополнительная RP-жизнь для текущего сезона.',
+    name: 'Дополнительная RP-жизнь',
+    description:
+      'Цифровая услуга: одна дополнительная RP-жизнь для активного игрока текущего сезона после подтверждения администратором.',
     amountRub: 200,
   },
 ]

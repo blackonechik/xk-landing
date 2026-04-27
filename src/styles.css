@@ -1375,6 +1375,12 @@ a {
   gap: 24px;
 }
 
+.xk-payment-contact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
 .xk-payment-field {
   gap: 10px;
   text-align: left;
@@ -1466,6 +1472,28 @@ a {
   text-align: left;
 }
 
+.xk-payment-note {
+  margin: -8px 0 0;
+  font-family: "Minecraft Five", sans-serif !important;
+  font-size: 15px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.72);
+  text-align: center;
+}
+
+.xk-payment-note a,
+.xk-legal-card a,
+.mc-footer a {
+  color: #ffe064;
+  text-decoration: none;
+}
+
+.xk-payment-note a:hover,
+.xk-legal-card a:hover,
+.mc-footer a:hover {
+  text-decoration: underline;
+}
+
 .xk-payment-summary__row {
   display: flex;
   align-items: center;
@@ -1505,6 +1533,73 @@ a {
   color: rgba(255, 255, 255, 0.72);
   font-size: 1rem;
   line-height: 1.8;
+}
+
+.mc-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px 22px;
+  margin-top: 22px;
+  font-family: "Minecraft Five", sans-serif;
+  font-size: 16px;
+}
+
+.xk-legal-page {
+  min-height: 100svh;
+  background:
+    linear-gradient(180deg, rgba(28, 8, 0, 0.92), rgba(2, 2, 6, 0.98)),
+    #1c0800;
+  padding: 96px 0 120px;
+}
+
+.xk-legal-shell {
+  display: grid;
+  gap: 24px;
+}
+
+.xk-legal-lead {
+  max-width: 860px;
+  margin: 0 auto;
+  font-family: "Minecraft Five", sans-serif !important;
+  font-size: 20px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.78);
+  text-align: center;
+  text-shadow: 0 4px 0 rgba(0, 0, 0, 0.44);
+}
+
+.xk-legal-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+  margin-top: 18px;
+}
+
+.xk-legal-card {
+  border: 6px solid #080300;
+  padding: 24px;
+  background:
+    linear-gradient(180deg, rgba(255, 137, 68, 0.14), rgba(0, 0, 0, 0.24)),
+    #160702;
+  box-shadow: 0 10px 0 rgba(0, 0, 0, 0.28);
+}
+
+.xk-legal-card h2 {
+  margin: 0 0 16px;
+  font-family: "Minecraft Ten", sans-serif;
+  font-size: 32px;
+  color: #b2ff00;
+  text-shadow: 0 6px 0 rgba(0, 0, 0, 0.62);
+}
+
+.xk-legal-card p {
+  margin: 12px 0 0;
+  font-family: "Minecraft Five", sans-serif !important;
+  font-size: 17px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.78);
+  text-shadow: 0 4px 0 rgba(0, 0, 0, 0.48);
 }
 
 .xk-start-tags .tycoon-landing-btn {
@@ -1862,7 +1957,9 @@ a {
     padding: 10px;
   }
 
-  .xk-payment-products {
+  .xk-payment-contact-grid,
+  .xk-payment-products,
+  .xk-legal-grid {
     grid-template-columns: 1fr;
   }
 
