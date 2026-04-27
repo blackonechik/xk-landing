@@ -1458,7 +1458,7 @@ a {
   filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.45));
 }
 
-.xk-payment-product__icon svg {
+.xk-payment-product__icon img {
   width: 100%;
   height: 100%;
   display: block;

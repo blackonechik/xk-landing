@@ -11,27 +11,22 @@ const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const telegramPattern = /^@?[A-Za-z0-9_]{5,32}$/
 
 function PaymentProductIcon({ productId }: { productId: PaymentProductId }) {
+  const iconSrc =
+    productId === 'life'
+      ? '/assets/img/general/resized_32_heart.png'
+      : '/assets/img/general/resized_32_written_book.png'
+
   if (productId === 'life') {
     return (
       <span className="xk-payment-product__icon" aria-hidden="true">
-        <svg viewBox="0 0 16 16" focusable="false" aria-hidden="true">
-          <path
-            fill="currentColor"
-            d="M4 2H6V4H7V5H8V4H9V2H12V3H13V5H12V7H11V8H10V9H9V10H8V11H7V10H6V9H5V8H4V7H3V5H4Z"
-          />
-        </svg>
+        <img src={iconSrc} alt="" />
       </span>
     )
   }
 
   return (
     <span className="xk-payment-product__icon" aria-hidden="true">
-      <svg viewBox="0 0 16 16" focusable="false" aria-hidden="true">
-        <path
-          fill="currentColor"
-          d="M2 2H8V14H2V3H1V2H2ZM9 2H14V3H15V14H9V2ZM3 3V13H7V3H3ZM10 3V13H14V4H13V3H10Z"
-        />
-      </svg>
+      <img src={iconSrc} alt="" />
     </span>
   )
 }
@@ -103,7 +98,7 @@ export function PaymentPage() {
         withEnding
         withLine={false}
       >
-        <div className="xk-payment-layout mt-20">
+        <div className="xk-payment-layout mt-10">
           <LandingCard title="Заказ" contentClassName="xk-payment-card" infoClassName="xk-payment-card__body">
             <form className="xk-payment-form" id="xk-payment-form" onSubmit={handleSubmit}>
               <label className="xk-payment-field">
@@ -174,10 +169,6 @@ export function PaymentPage() {
               </div>
 
               {error ? <p className="xk-payment-error">{error}</p> : null}
-
-              <p className="xk-payment-note">
-                Нажимая кнопку, вы принимаете условия <a href="/offer">публичной оферты</a>.
-              </p>
             </form>
           </LandingCard>
 
@@ -195,6 +186,9 @@ export function PaymentPage() {
               <span>Стоимость</span>
               <strong className="xk-payment-summary__value">{selectedProduct.amountRub} руб.</strong>
             </div>
+              <p className="xk-payment-note">
+                Нажимая кнопку, вы принимаете условия <a href="/offer">публичной оферты</a>.
+              </p>
             <LandingButton
               as="button"
               type="submit"
