@@ -12,9 +12,15 @@ export default function Footer() {
         <nav className="mc-footer-links" aria-label="Документы и оплата">
           <a href="/payment">Оплата</a>
           <a href="/offer">Оферта</a>
-          <a href="mailto:surnin.vladislav@gmail.com">surnin.vladislav@gmail.com</a>
+          <a href="/privacy">Политика конфиденциальности</a>
+          <a href="/personal-data-consent">Согласие на обработку ПДн</a>
+          <a href="mailto:surnin.vladislav@gmail.com">
+            surnin.vladislav@gmail.com
+          </a>
         </nav>
-        <p className="mc-footer-copy">&copy; {year} XK HARDCORE. Все права защищены.</p>
+        <p className="mc-footer-copy">
+          &copy; {year} XK HARDCORE. Все права защищены.
+        </p>
       </div>
     </footer>
   )

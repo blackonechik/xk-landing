@@ -9,6 +9,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PersonalDataConsentRouteImport } from './routes/personal-data-consent'
 import { Route as PaymentRouteImport } from './routes/payment'
 import { Route as OfferRouteImport } from './routes/offer'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -18,6 +20,16 @@ import { Route as PaymentSuccessRouteImport } from './routes/payment.success'
 import { Route as PaymentPendingRouteImport } from './routes/payment.pending'
 import { Route as PaymentFailedRouteImport } from './routes/payment.failed'
 
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PersonalDataConsentRoute = PersonalDataConsentRouteImport.update({
+  id: '/personal-data-consent',
+  path: '/personal-data-consent',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PaymentRoute = PaymentRouteImport.update({
   id: '/payment',
   path: '/payment',
@@ -65,6 +77,8 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/offer': typeof OfferRoute
   '/payment': typeof PaymentRouteWithChildren
+  '/personal-data-consent': typeof PersonalDataConsentRoute
+  '/privacy': typeof PrivacyRoute
   '/payment/failed': typeof PaymentFailedRoute
   '/payment/pending': typeof PaymentPendingRoute
   '/payment/success': typeof PaymentSuccessRoute
@@ -75,6 +89,8 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/offer': typeof OfferRoute
   '/payment': typeof PaymentRouteWithChildren
+  '/personal-data-consent': typeof PersonalDataConsentRoute
+  '/privacy': typeof PrivacyRoute
   '/payment/failed': typeof PaymentFailedRoute
   '/payment/pending': typeof PaymentPendingRoute
   '/payment/success': typeof PaymentSuccessRoute
@@ -86,6 +102,8 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/offer': typeof OfferRoute
   '/payment': typeof PaymentRouteWithChildren
+  '/personal-data-consent': typeof PersonalDataConsentRoute
+  '/privacy': typeof PrivacyRoute
   '/payment/failed': typeof PaymentFailedRoute
   '/payment/pending': typeof PaymentPendingRoute
   '/payment/success': typeof PaymentSuccessRoute
@@ -98,6 +116,8 @@ export interface FileRouteTypes {
     | '/admin'
     | '/offer'
     | '/payment'
+    | '/personal-data-consent'
+    | '/privacy'
     | '/payment/failed'
     | '/payment/pending'
     | '/payment/success'
@@ -108,6 +128,8 @@ export interface FileRouteTypes {
     | '/admin'
     | '/offer'
     | '/payment'
+    | '/personal-data-consent'
+    | '/privacy'
     | '/payment/failed'
     | '/payment/pending'
     | '/payment/success'
@@ -118,6 +140,8 @@ export interface FileRouteTypes {
     | '/admin'
     | '/offer'
     | '/payment'
+    | '/personal-data-consent'
+    | '/privacy'
     | '/payment/failed'
     | '/payment/pending'
     | '/payment/success'
@@ -129,10 +153,26 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   OfferRoute: typeof OfferRoute
   PaymentRoute: typeof PaymentRouteWithChildren
+  PersonalDataConsentRoute: typeof PersonalDataConsentRoute
+  PrivacyRoute: typeof PrivacyRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/personal-data-consent': {
+      id: '/personal-data-consent'
+      path: '/personal-data-consent'
+      fullPath: '/personal-data-consent'
+      preLoaderRoute: typeof PersonalDataConsentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/payment': {
       id: '/payment'
       path: '/payment'
@@ -213,6 +253,8 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   OfferRoute: OfferRoute,
   PaymentRoute: PaymentRouteWithChildren,
+  PersonalDataConsentRoute: PersonalDataConsentRoute,
+  PrivacyRoute: PrivacyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

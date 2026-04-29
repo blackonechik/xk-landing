@@ -7,8 +7,6 @@ import { LandingCard } from '@/shared/ui/landing-card'
 import { LandingSection } from '@/shared/ui/landing-section'
 
 const nicknamePattern = /^[A-Za-z0-9_]{3,16}$/
-const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const telegramPattern = /^@?[A-Za-z0-9_]{5,32}$/
 
 function PaymentProductIcon({ productId }: { productId: PaymentProductId }) {
   const iconSrc =
@@ -25,37 +23,33 @@ function PaymentProductIcon({ productId }: { productId: PaymentProductId }) {
 
 export function PaymentPage() {
   const [nickname, setNickname] = useState('')
-  const [email, setEmail] = useState('')
-  const [telegram, setTelegram] = useState('')
   const [promoCode, setPromoCode] = useState('')
   const [productId, setProductId] = useState<PaymentProductId>('smp-pass')
+  const [hasPersonalDataConsent, setHasPersonalDataConsent] = useState(false)
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const selectedProduct = useMemo(
-    () => paymentProducts.find((product) => product.id === productId) ?? paymentProducts[0],
+    () =>
+      paymentProducts.find((product) => product.id === productId) ??
+      paymentProducts[0],
     [productId],
   )
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const normalizedNickname = nickname.trim()
-    const normalizedEmail = email.trim()
-    const normalizedTelegram = telegram.trim()
     const normalizedPromoCode = promoCode.trim().toUpperCase()
 
     if (!nicknamePattern.test(normalizedNickname)) {
-      setError('Ник должен быть от 3 до 16 символов: латиница, цифры и подчёркивание.')
+      setError(
+        'Ник должен быть от 3 до 16 символов: латиница, цифры и подчёркивание.',
+      )
       return
     }
 
-    if (!emailPattern.test(normalizedEmail)) {
-      setError('Укажите корректную почту, чтобы администратор мог связаться с вами.')
-      return
-    }
-
-    if (!telegramPattern.test(normalizedTelegram)) {
-      setError('Укажите Telegram username: от 5 до 32 символов, можно с @ в начале.')
+    if (!hasPersonalDataConsent) {
+      setError('Подтвердите согласие на обработку персональных данных.')
       return
     }
 
@@ -65,15 +59,17 @@ export function PaymentPage() {
     try {
       const payment = await createPayment({
         nickname: normalizedNickname,
-        email: normalizedEmail,
-        telegram: normalizedTelegram.startsWith('@') ? normalizedTelegram : `@${normalizedTelegram}`,
         productId,
         promoCode: normalizedPromoCode || undefined,
       })
 
       window.location.href = payment.confirmationUrl
     } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : 'Не удалось создать оплату.')
+      setError(
+        requestError instanceof Error
+          ? requestError.message
+          : 'Не удалось создать оплату.',
+      )
     } finally {
       setIsSubmitting(false)
     }
@@ -94,8 +90,16 @@ export function PaymentPage() {
         withLine={false}
       >
         <div className="xk-payment-layout mt-10">
-          <LandingCard title="Заказ" contentClassName="xk-payment-card" infoClassName="xk-payment-card__body">
-            <form className="xk-payment-form" id="xk-payment-form" onSubmit={handleSubmit}>
+          <LandingCard
+            title="Заказ"
+            contentClassName="xk-payment-card"
+            infoClassName="xk-payment-card__body"
+          >
+            <form
+              className="xk-payment-form"
+              id="xk-payment-form"
+              onSubmit={handleSubmit}
+            >
               <label className="xk-payment-field">
                 <span>Никнейм</span>
                 <input
@@ -108,38 +112,13 @@ export function PaymentPage() {
                 />
               </label>
 
-              <div className="xk-payment-contact-grid">
-                <label className="xk-payment-field">
-                  <span>Email</span>
-                  <input
-                    value={email}
-                    onChange={(event) => setEmail(event.target.value)}
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    placeholder="player@example.com"
-                    maxLength={120}
-                  />
-                </label>
-
-                <label className="xk-payment-field">
-                  <span>Telegram</span>
-                  <input
-                    value={telegram}
-                    onChange={(event) => setTelegram(event.target.value)}
-                    name="telegram"
-                    autoComplete="username"
-                    placeholder="@username"
-                    maxLength={33}
-                  />
-                </label>
-              </div>
-
               <label className="xk-payment-field">
                 <span>Промокод</span>
                 <input
                   value={promoCode}
-                  onChange={(event) => setPromoCode(event.target.value.toUpperCase())}
+                  onChange={(event) =>
+                    setPromoCode(event.target.value.toUpperCase())
+                  }
                   name="promoCode"
                   autoComplete="off"
                   placeholder="WELCOME10"
@@ -147,13 +126,19 @@ export function PaymentPage() {
                 />
               </label>
 
-              <div className="xk-payment-products" role="radiogroup" aria-label="Товар">
+              <div
+                className="xk-payment-products"
+                role="radiogroup"
+                aria-label="Товар"
+              >
                 {paymentProducts.map((product) => (
                   <label
                     key={product.id}
                     className={[
                       'xk-payment-product',
-                      product.id === productId ? 'xk-payment-product_active' : undefined,
+                      product.id === productId
+                        ? 'xk-payment-product_active'
+                        : undefined,
                     ]
                       .filter(Boolean)
                       .join(' ')}
@@ -167,13 +152,36 @@ export function PaymentPage() {
                     />
                     <div className="xk-payment-product__head">
                       <PaymentProductIcon productId={product.id} />
-                      <span className="xk-payment-product__name">{product.name}</span>
+                      <span className="xk-payment-product__name">
+                        {product.name}
+                      </span>
                     </div>
-                    <span className="xk-payment-product__text">{product.description}</span>
+                    <span className="xk-payment-product__text">
+                      {product.description}
+                    </span>
                     <strong>{product.amountRub} руб.</strong>
                   </label>
                 ))}
               </div>
+
+              <label className="xk-payment-consent">
+                <input
+                  type="checkbox"
+                  checked={hasPersonalDataConsent}
+                  onChange={(event) =>
+                    setHasPersonalDataConsent(event.target.checked)
+                  }
+                  required
+                />
+                <span>
+                  Я принимаю условия <a href="/offer">публичной оферты</a>, даю{' '}
+                  <a href="/personal-data-consent">
+                    согласие на обработку персональных данных
+                  </a>{' '}
+                  и ознакомлен с{' '}
+                  <a href="/privacy">политикой конфиденциальности</a>.
+                </span>
+              </label>
 
               {error ? <p className="xk-payment-error">{error}</p> : null}
             </form>
@@ -187,17 +195,24 @@ export function PaymentPage() {
           >
             <div className="xk-payment-summary__row">
               <span>Товар</span>
-              <strong className="xk-payment-summary__value">{selectedProduct.name}</strong>
+              <strong className="xk-payment-summary__value">
+                {selectedProduct.name}
+              </strong>
             </div>
             <div className="xk-payment-summary__row">
               <span>Стоимость</span>
-              <strong className="xk-payment-summary__value">{selectedProduct.amountRub} руб.</strong>
+              <strong className="xk-payment-summary__value">
+                {selectedProduct.amountRub} руб.
+              </strong>
             </div>
             {promoCode.trim() ? (
-              <p className="xk-payment-note">Промокод будет проверен при создании платежа.</p>
+              <p className="xk-payment-note">
+                Промокод будет проверен при создании платежа.
+              </p>
             ) : null}
             <p className="xk-payment-note">
-              Нажимая кнопку, вы принимаете условия <a href="/offer">публичной оферты</a>.
+              Перед оплатой подтвердите оферту, политику конфиденциальности и
+              согласие на обработку персональных данных в форме заказа.
             </p>
             <LandingButton
               as="button"
@@ -212,7 +227,8 @@ export function PaymentPage() {
               {isSubmitting ? 'Создаём оплату' : 'Перейти к оплате'}
             </LandingButton>
             <p>
-              После оплаты цифровая услуга активируется автоматически для указанного никнейма.
+              После оплаты цифровая услуга активируется автоматически для
+              указанного никнейма.
             </p>
             <p>
               Это не физический товар: доставка не требуется, получение заказа

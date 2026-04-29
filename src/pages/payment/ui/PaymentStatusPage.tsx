@@ -15,10 +15,15 @@ function readOrderIdFromSearch() {
     return ''
   }
 
-  return new URLSearchParams(window.location.search).get('orderId')?.trim() ?? ''
+  return (
+    new URLSearchParams(window.location.search).get('orderId')?.trim() ?? ''
+  )
 }
 
-function goToStatusPage(status: 'pending' | 'paid' | 'failed', orderId: string) {
+function goToStatusPage(
+  status: 'pending' | 'paid' | 'failed',
+  orderId: string,
+) {
   const encodedOrderId = encodeURIComponent(orderId)
 
   if (status === 'paid') {
@@ -94,7 +99,9 @@ export function PaymentStatusPage({ variant }: PaymentStatusPageProps) {
         return
       }
 
-      setHint('Оплата ещё не завершена. Обновите страницу через несколько секунд.')
+      setHint(
+        'Оплата ещё не завершена. Обновите страницу через несколько секунд.',
+      )
     } catch {
       setHint('Не удалось проверить статус. Попробуйте чуть позже.')
     } finally {
@@ -103,8 +110,13 @@ export function PaymentStatusPage({ variant }: PaymentStatusPageProps) {
   }
 
   const title =
-    variant === 'success' ? 'Оплата успешна' : variant === 'failed' ? 'Оплата не прошла' : 'Ожидание оплаты'
-  const tone = variant === 'success' ? 'green' : variant === 'failed' ? 'orange' : 'gold'
+    variant === 'success'
+      ? 'Оплата успешна'
+      : variant === 'failed'
+        ? 'Оплата не прошла'
+        : 'Ожидание оплаты'
+  const tone =
+    variant === 'success' ? 'green' : variant === 'failed' ? 'orange' : 'gold'
 
   return (
     <main className="tycoon-landing xk-payment-page">
@@ -121,15 +133,34 @@ export function PaymentStatusPage({ variant }: PaymentStatusPageProps) {
         withLine={false}
       >
         <div className="xk-payment-status-layout mt-20">
-          <LandingCard title={title} tone={tone} contentClassName="xk-payment-card" infoClassName="xk-payment-status">
+          <LandingCard
+            title={title}
+            tone={tone}
+            contentClassName="xk-payment-card"
+            infoClassName="xk-payment-status"
+          >
             {variant === 'success' ? (
-              <p className="xk-payment-status__title">Платёж подтверждён. Цифровая услуга активирована.</p>
+              <>
+                <p className="xk-payment-status__title">
+                  Платёж подтверждён. Напишите в Telegram администратору, чтобы
+                  активировать цифровую услугу.
+                </p>
+                <p className="xk-payment-status__text">
+                  Отправьте ID заказа и свой Minecraft-ник в{' '}
+                  <a href="https://t.me/blackonechik">@blackonechik</a>.
+                </p>
+              </>
             ) : null}
             {variant === 'failed' ? (
-              <p className="xk-payment-status__title">Платёж не был подтверждён. Можно попробовать ещё раз.</p>
+              <p className="xk-payment-status__title">
+                Платёж не был подтверждён. Можно попробовать ещё раз.
+              </p>
             ) : null}
             {variant === 'pending' ? (
-              <p className="xk-payment-status__title">Мы проверяем статус платежа. Обычно это занимает несколько секунд.</p>
+              <p className="xk-payment-status__title">
+                Мы проверяем статус платежа. Обычно это занимает несколько
+                секунд.
+              </p>
             ) : null}
 
             <p className="xk-payment-status__text">
@@ -159,8 +190,22 @@ export function PaymentStatusPage({ variant }: PaymentStatusPageProps) {
                 contentClassName="xk-payment-summary__submit-content"
                 arrow
               >
-                {variant === 'success' ? 'Оформить ещё покупку' : 'Вернуться к оплате'}
+                {variant === 'success'
+                  ? 'Оформить ещё покупку'
+                  : 'Вернуться к оплате'}
               </LandingButton>
+
+              {variant === 'success' ? (
+                <LandingButton
+                  as="a"
+                  href="https://t.me/blackonechik"
+                  tone="success"
+                  contentClassName="xk-payment-summary__submit-content"
+                  arrow
+                >
+                  Написать в Telegram
+                </LandingButton>
+              ) : null}
 
               <LandingButton
                 as="a"

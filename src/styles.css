@@ -1,57 +1,57 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
-  --font-sans: "Minecraft Rus";
+  --font-sans: 'Minecraft Rus';
 }
 
 @font-face {
-  font-family: "Minecraft Rus";
-  src: url("/assets/font/minecraft/minecraftrus.ttf") format("truetype");
+  font-family: 'Minecraft Rus';
+  src: url('/assets/font/minecraft/minecraftrus.ttf') format('truetype');
   font-style: normal;
   font-weight: 400;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Unbounded";
-  src: url("/assets/font/montserrat/Unbounded-Bold.ttf");
+  font-family: 'Unbounded';
+  src: url('/assets/font/montserrat/Unbounded-Bold.ttf');
   font-style: normal;
   font-weight: 700;
 }
 
 @font-face {
-  font-family: "Montserrat";
-  src: url("/assets/font/montserrat/Montserrat-Regular.ttf") format("truetype");
+  font-family: 'Montserrat';
+  src: url('/assets/font/montserrat/Montserrat-Regular.ttf') format('truetype');
   font-style: normal;
   font-weight: 400;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Montserrat";
-  src: url("/assets/font/montserrat/Montserrat-SemiBold.ttf") format("truetype");
+  font-family: 'Montserrat';
+  src: url('/assets/font/montserrat/Montserrat-SemiBold.ttf') format('truetype');
   font-style: normal;
   font-weight: 600;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Minecraft Five";
-  src: url("/assets/font/minecraft/MinecraftFive-Regular.woff2") format("woff2");
+  font-family: 'Minecraft Five';
+  src: url('/assets/font/minecraft/MinecraftFive-Regular.woff2') format('woff2');
   font-style: normal;
   font-weight: 400;
 }
 
 @font-face {
-  font-family: "Minecraft Five";
-  src: url("/assets/font/minecraft/MinecraftFive-Bold.woff2") format("woff2");
+  font-family: 'Minecraft Five';
+  src: url('/assets/font/minecraft/MinecraftFive-Bold.woff2') format('woff2');
   font-style: normal;
   font-weight: 700;
 }
 
 @font-face {
-  font-family: "Minecraft Ten";
-  src: url("/assets/font/minecraft/MinecraftTen.woff2") format("woff2");
+  font-family: 'Minecraft Ten';
+  src: url('/assets/font/minecraft/MinecraftTen.woff2') format('woff2');
   font-style: normal;
   font-weight: 400;
 }
@@ -75,7 +75,7 @@ body {
   margin: 0;
   background: #000;
   color: #fff;
-  font-family: "Minecraft Rus", sans-serif;
+  font-family: 'Minecraft Rus', sans-serif;
 }
 
 body.xk-loading-active {
@@ -97,7 +97,11 @@ a {
   padding: 24px;
   background:
     linear-gradient(180deg, rgba(7, 13, 35, 0.78), rgba(2, 4, 12, 0.96)),
-    radial-gradient(circle at 50% 18%, rgba(255, 215, 98, 0.2), transparent 24%),
+    radial-gradient(
+      circle at 50% 18%,
+      rgba(255, 215, 98, 0.2),
+      transparent 24%
+    ),
     #050914;
 }
 
@@ -145,7 +149,13 @@ a {
   bottom: 0;
   height: min(30vh, 260px);
   background:
-    linear-gradient(180deg, #64c949 0 24%, #2c8730 24% 38%, #6c4529 38% 72%, #3a2117 72%),
+    linear-gradient(
+      180deg,
+      #64c949 0 24%,
+      #2c8730 24% 38%,
+      #6c4529 38% 72%,
+      #3a2117 72%
+    ),
     #3a2117;
   box-shadow:
     inset 0 16px 0 rgba(255, 255, 255, 0.1),
@@ -180,14 +190,25 @@ a {
   right: 30%;
   animation-delay: 0.2s;
   background:
-    linear-gradient(135deg, transparent 0 42%, rgba(83, 235, 255, 0.9) 42% 54%, transparent 54%),
+    linear-gradient(
+      135deg,
+      transparent 0 42%,
+      rgba(83, 235, 255, 0.9) 42% 54%,
+      transparent 54%
+    ),
     linear-gradient(135deg, #717b8b, #303846);
 }
 
 .xk-loader__block_wood {
   right: 14%;
   animation-delay: 0.3s;
-  background: linear-gradient(90deg, #8b542a 0 22%, #b97535 22% 44%, #6c3d21 44% 64%, #a76831 64%);
+  background: linear-gradient(
+    90deg,
+    #8b542a 0 22%,
+    #b97535 22% 44%,
+    #6c3d21 44% 64%,
+    #a76831 64%
+  );
 }
 
 .xk-loader__content {
@@ -204,7 +225,7 @@ a {
 .xk-loader__eyebrow,
 .xk-loader__subtitle {
   margin: 0;
-  font-family: "Minecraft Five", sans-serif;
+  font-family: 'Minecraft Five', sans-serif;
   text-shadow: 0 5px 0 rgba(0, 0, 0, 0.7);
 }
 
@@ -219,7 +240,7 @@ a {
   align-items: end;
   gap: clamp(10px, 2vw, 18px);
   margin: 16px 0 12px;
-  font-family: "Minecraft Ten", sans-serif;
+  font-family: 'Minecraft Ten', sans-serif;
   font-size: clamp(66px, 15vw, 152px);
   line-height: 0.82;
   color: #f7f7f7;
@@ -265,7 +286,8 @@ a {
   width: 100%;
   height: 100%;
   background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.28) 0 10%, transparent 10% 20%) 0 0 / 42px 100%,
+    linear-gradient(90deg, rgba(255, 255, 255, 0.28) 0 10%, transparent 10% 20%)
+      0 0 / 42px 100%,
     linear-gradient(180deg, #b2ff00, #36b13d);
   transform-origin: left;
   animation: xk-loader-progress 2.1s steps(16, end) forwards;
@@ -281,7 +303,11 @@ a {
 }
 
 .content-panel {
-  background: linear-gradient(to bottom, rgba(28, 17, 73, 0.9), rgba(1, 7, 28, 0.96));
+  background: linear-gradient(
+    to bottom,
+    rgba(28, 17, 73, 0.9),
+    rgba(1, 7, 28, 0.96)
+  );
   padding: 28px;
   box-shadow:
     0 0 0 8px rgba(0, 0, 0, 0.5) inset,
@@ -290,7 +316,7 @@ a {
 
 .xk-overline {
   margin: 0 0 16px;
-  font-family: "Minecraft Ten", sans-serif;
+  font-family: 'Minecraft Ten', sans-serif;
   font-size: 24px;
   color: #f8b2ff;
   text-shadow: 0 6px 0 rgba(0, 0, 0, 0.7);
@@ -298,7 +324,7 @@ a {
 
 .xk-hero-text {
   margin: 20px 0 0;
-  font-family: "Minecraft Five", sans-serif;
+  font-family: 'Minecraft Five', sans-serif;
   font-size: 18px;
   line-height: 1.8;
   color: rgba(255, 255, 255, 0.82);
@@ -336,7 +362,7 @@ a {
 .tycoon-landing a,
 .tycoon-landing div,
 .tycoon-landing p {
-  font-family: "Minecraft Rus", sans-serif;
+  font-family: 'Minecraft Rus', sans-serif;
 }
 
 .tycoon-landing-btn {
@@ -356,7 +382,7 @@ a {
 }
 
 .tycoon-landing-btn::before {
-  content: "";
+  content: '';
   position: absolute;
   width: 120%;
   height: 120%;
@@ -403,8 +429,12 @@ a {
   gap: 8px;
   padding: var(--g-20) var(--g-50);
   white-space: nowrap;
-  background: linear-gradient(to bottom, var(--color-gradient-1), var(--color-gradient-2));
-  font-family: "Minecraft Ten", sans-serif !important;
+  background: linear-gradient(
+    to bottom,
+    var(--color-gradient-1),
+    var(--color-gradient-2)
+  );
+  font-family: 'Minecraft Ten', sans-serif !important;
   font-size: var(--size-32);
   color: var(--color-text);
   box-shadow:
@@ -486,7 +516,7 @@ a {
 
 .xk-header-hero::before,
 .xk-header-hero::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   bottom: 0;
@@ -588,14 +618,14 @@ a {
 }
 
 .xk-header-logo__caption {
-  font-family: "Minecraft Ten", sans-serif;
+  font-family: 'Minecraft Ten', sans-serif;
   font-size: 28px;
   color: #ffb15a;
   text-shadow: 0 6px 0 rgba(0, 0, 0, 0.7);
 }
 
 .xk-header-logo__text strong {
-  font-family: "Unbounded", sans-serif;
+  font-family: 'Unbounded', sans-serif;
   font-size: clamp(3rem, 8vw, 5.7rem);
   line-height: 0.9;
   font-weight: 800;
@@ -606,7 +636,7 @@ a {
 }
 
 .xk-header-logo__text small {
-  font-family: "Minecraft Five", sans-serif;
+  font-family: 'Minecraft Five', sans-serif;
   font-size: 26px;
   color: #ffe895;
   text-shadow: 0 6px 0 rgba(0, 0, 0, 0.7);
@@ -621,7 +651,7 @@ a {
 .xk-header-copy {
   max-width: 560px;
   margin: 0 0 28px;
-  font-family: "Minecraft Five", sans-serif;
+  font-family: 'Minecraft Five', sans-serif;
   font-size: 20px;
   line-height: 1.7;
   color: rgba(255, 255, 255, 0.86);
@@ -635,15 +665,12 @@ a {
   width: 100%;
   height: clamp(84px, 11vw, 160px);
   z-index: 2;
-  background-image: url("/assets/img/landing/wheat.png");
+  background-image: url('/assets/img/landing/wheat.png');
   background-repeat: repeat-x;
   background-position: center bottom;
   background-size: auto 88%;
   image-rendering: pixelated;
-  filter:
-    brightness(1.3)
-    saturate(1.8)
-    contrast(1.05)
+  filter: brightness(1.3) saturate(1.8) contrast(1.05)
     drop-shadow(0 10px 24px rgba(0, 0, 0, 0.25));
   pointer-events: none;
 }
@@ -667,7 +694,11 @@ a {
   position: absolute;
   overflow: hidden;
   background:
-    radial-gradient(circle at 50% 18%, rgba(255, 169, 246, 0.2), transparent 18%),
+    radial-gradient(
+      circle at 50% 18%,
+      rgba(255, 169, 246, 0.2),
+      transparent 18%
+    ),
     linear-gradient(180deg, rgba(3, 10, 33, 0.15), transparent 20%),
     linear-gradient(180deg, #090d20 0%, #121733 40%, #0d101f 100%);
 }
@@ -687,7 +718,11 @@ a {
   width: 46%;
   height: 28%;
   transform: translateX(-50%);
-  background: radial-gradient(circle, rgba(255, 65, 225, 0.22), transparent 62%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 65, 225, 0.22),
+    transparent 62%
+  );
   filter: blur(18px);
 }
 
@@ -715,8 +750,12 @@ a {
   right: 0;
   bottom: 0;
   height: 23%;
-  background:
-    linear-gradient(180deg, #56c543 0 22%, #2f7f2a 22% 38%, #5b3a22 38% 100%);
+  background: linear-gradient(
+    180deg,
+    #56c543 0 22%,
+    #2f7f2a 22% 38%,
+    #5b3a22 38% 100%
+  );
   box-shadow: inset 0 16px 22px rgba(0, 0, 0, 0.35);
 }
 
@@ -726,8 +765,12 @@ a {
   width: 24%;
   height: 28%;
   transform: translateX(-50%);
-  background:
-    linear-gradient(90deg, #28303a 0 14%, #657188 14% 86%, #232a34 86% 100%);
+  background: linear-gradient(
+    90deg,
+    #28303a 0 14%,
+    #657188 14% 86%,
+    #232a34 86% 100%
+  );
   box-shadow:
     0 0 0 6px rgba(0, 0, 0, 0.22),
     0 0 0 2px rgba(255, 255, 255, 0.08) inset;
@@ -735,7 +778,7 @@ a {
 
 .xk-minecraft-hero__castle::before,
 .xk-minecraft-hero__castle::after {
-  content: "";
+  content: '';
   position: absolute;
   top: -18%;
   width: 22%;
@@ -818,24 +861,24 @@ a {
 }
 
 .tycoon-landing-section_style-green {
-  --line-texture: url("/assets/img/general/section-green-line.png");
-  --background-texture: url("/assets/img/general/section-green-background.png");
+  --line-texture: url('/assets/img/general/section-green-line.png');
+  --background-texture: url('/assets/img/general/section-green-background.png');
   --background-color: #064e2f;
   --effect-color-1: rgba(0, 255, 115, 0.2);
   --effect-color-2: rgba(178, 255, 0, 0.2);
 }
 
 .tycoon-landing-section_style-brown {
-  --line-texture: url("/assets/img/general/section-brown-line.png");
-  --background-texture: url("/assets/img/general/section-brown-background.png");
+  --line-texture: url('/assets/img/general/section-brown-line.png');
+  --background-texture: url('/assets/img/general/section-brown-background.png');
   --background-color: #1c0800;
   --effect-color-1: rgba(255, 111, 0, 0.15);
   --effect-color-2: rgba(255, 66, 0, 0.15);
 }
 
 .tycoon-landing-section_style-gradient-1 {
-  --line-texture: url("/assets/img/general/section-gradient-1-line.png");
-  --background-texture: url("/assets/img/general/section-gradient-1-background.png");
+  --line-texture: url('/assets/img/general/section-gradient-1-line.png');
+  --background-texture: url('/assets/img/general/section-gradient-1-background.png');
   --background-color: #07080c;
   --effect-color-1: rgba(140, 148, 160, 0.25);
   --effect-color-2: rgba(80, 88, 100, 0.3);
@@ -865,7 +908,7 @@ a {
 }
 
 .tycoon-landing-section__line::before {
-  content: "";
+  content: '';
   display: block;
   position: relative;
   width: 100%;
@@ -881,7 +924,7 @@ a {
 
 .tycoon-landing-section__effect::before,
 .tycoon-landing-section__effect::after {
-  content: "";
+  content: '';
   position: absolute;
   width: 60vw;
   height: 80vh;
@@ -928,7 +971,7 @@ a {
 
 .tycoon-landing-section__header-icon::before,
 .tycoon-landing-section__header-icon::after {
-  content: "";
+  content: '';
   position: absolute;
   width: 90%;
   height: 150%;
@@ -953,7 +996,7 @@ a {
   position: relative;
   z-index: 2;
   margin: 0;
-  font-family: "Minecraft Ten", sans-serif !important;
+  font-family: 'Minecraft Ten', sans-serif !important;
   font-weight: 400;
   font-size: var(--size-48);
   line-height: 1.4;
@@ -965,7 +1008,7 @@ a {
 
 .tycoon-landing-section__header-mark {
   --drop-shadow-y: calc(var(--g-10) * 1.2);
-  font-family: "Minecraft Ten", sans-serif !important;
+  font-family: 'Minecraft Ten', sans-serif !important;
   font-weight: 400;
   font-size: var(--size-80);
   filter: drop-shadow(0 var(--drop-shadow-y) 0 rgba(0, 0, 0, 0.7));
@@ -1003,7 +1046,7 @@ a {
 }
 
 .index-start__subheading {
-  font-family: "Minecraft Ten", sans-serif !important;
+  font-family: 'Minecraft Ten', sans-serif !important;
   font-size: var(--size-32);
   color: #8a9aaa;
 }
@@ -1032,10 +1075,14 @@ a {
 }
 
 .index-start__trailer-frame::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent 40%);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1),
+    transparent 40%
+  );
   pointer-events: none;
 }
 
@@ -1063,7 +1110,11 @@ a {
   inset: 0;
   z-index: 1;
   background:
-    radial-gradient(circle at center, rgba(0, 0, 0, 0.12) 0, rgba(0, 0, 0, 0.5) 72%),
+    radial-gradient(
+      circle at center,
+      rgba(0, 0, 0, 0.12) 0,
+      rgba(0, 0, 0, 0.5) 72%
+    ),
     linear-gradient(180deg, rgba(15, 18, 26, 0.08), rgba(0, 0, 0, 0.3));
 }
 
@@ -1089,10 +1140,11 @@ a {
   width: clamp(96px, 10vw, 152px);
   height: auto;
   display: block;
-  filter:
-    drop-shadow(0 0 16px rgba(0, 0, 0, 0.45))
+  filter: drop-shadow(0 0 16px rgba(0, 0, 0, 0.45))
     drop-shadow(0 0 24px rgba(255, 255, 255, 0.08));
-  transition: transform 0.18s ease, filter 0.18s ease;
+  transition:
+    transform 0.18s ease,
+    filter 0.18s ease;
 }
 
 .index-start__trailer-embed {
@@ -1161,7 +1213,7 @@ a {
 }
 
 .tycoon-landing-card::before {
-  content: "";
+  content: '';
   position: absolute;
   width: 120%;
   height: 115%;
@@ -1176,13 +1228,22 @@ a {
 .tycoon-landing-card__wrapper {
   position: relative;
   background: var(--card-color-3)
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8) 90%, rgba(0, 0, 0, 0.9));
+    linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.4),
+      rgba(0, 0, 0, 0.8) 90%,
+      rgba(0, 0, 0, 0.9)
+    );
   padding: var(--g-25);
 }
 
 .tycoon-landing-card__wrapper-inner {
   padding: var(--g-15);
-  background: linear-gradient(to bottom, var(--card-color-1), var(--card-color-2));
+  background: linear-gradient(
+    to bottom,
+    var(--card-color-1),
+    var(--card-color-2)
+  );
 }
 
 .tycoon-landing-card__content {
@@ -1211,15 +1272,22 @@ a {
   --badge-color-background: #510102;
   --badge-color-shadow: #2b0708;
   --badge-color-text: #ffe895;
-  background: linear-gradient(to bottom, var(--badge-color-1), var(--badge-color-2));
+  background: linear-gradient(
+    to bottom,
+    var(--badge-color-1),
+    var(--badge-color-2)
+  );
   padding: 0 var(--border-size);
   box-shadow:
-    0 calc(var(--border-size) * -2) 0 calc(var(--border-size) * -1) var(--badge-color-1),
-    0 calc(var(--border-size) * 2) 0 calc(var(--border-size) * -1) var(--badge-color-2),
+    0 calc(var(--border-size) * -2) 0 calc(var(--border-size) * -1)
+      var(--badge-color-1),
+    0 calc(var(--border-size) * 2) 0 calc(var(--border-size) * -1)
+      var(--badge-color-2),
     0 var(--border-size) 0 0 var(--badge-color-shadow),
-    0 calc(var(--border-size) * 2) 0 calc(var(--border-size) * -1) var(--badge-color-shadow),
-    0 calc(var(--border-size) * 3) calc(var(--border-size) * 4) var(--border-size)
-      var(--badge-color-shadow);
+    0 calc(var(--border-size) * 2) 0 calc(var(--border-size) * -1)
+      var(--badge-color-shadow),
+    0 calc(var(--border-size) * 3) calc(var(--border-size) * 4)
+      var(--border-size) var(--badge-color-shadow);
 }
 
 .tycoon-landing-feature__badge_style-violet {
@@ -1255,7 +1323,7 @@ a {
   padding: var(--g-10) var(--g-25);
   background: var(--badge-color-background);
   box-shadow: 0 0 0 6px inset rgba(0, 0, 0, 0.3);
-  font-family: "Minecraft Five", sans-serif !important;
+  font-family: 'Minecraft Five', sans-serif !important;
   font-weight: 700;
   font-size: var(--size-24);
   color: var(--badge-color-text);
@@ -1267,7 +1335,7 @@ a {
   padding: var(--g-15);
   width: 100%;
   background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), transparent);
-  font-family: "Minecraft Five", sans-serif !important;
+  font-family: 'Minecraft Five', sans-serif !important;
   font-size: var(--size-22);
   text-align: center;
   text-shadow: 0 6px 0 rgba(0, 0, 0, 0.6);
@@ -1394,7 +1462,7 @@ a {
 
 .xk-payment-field span,
 .xk-payment-summary__row span {
-  font-family: "Minecraft Five", sans-serif !important;
+  font-family: 'Minecraft Five', sans-serif !important;
   font-size: 16px;
   color: #ffe895;
   text-shadow: 0 5px 0 rgba(0, 0, 0, 0.58);
@@ -1488,7 +1556,7 @@ a {
 }
 
 .xk-payment-product__name {
-  font-family: "Minecraft Five", sans-serif !important;
+  font-family: 'Minecraft Five', sans-serif !important;
   font-size: 16px;
   color: #ffe895;
   text-shadow: 0 4px 0 rgba(0, 0, 0, 0.54);
@@ -1505,14 +1573,51 @@ a {
 
 .xk-payment-product strong,
 .xk-payment-summary__row strong {
-  font-family: "Minecraft Ten", sans-serif !important;
+  font-family: 'Minecraft Ten', sans-serif !important;
   font-size: 24px;
   color: #b2ff00;
   text-shadow: 0 6px 0 rgba(0, 0, 0, 0.62);
 }
 
+.xk-payment-consent {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: start;
+  padding: 14px;
+  border: 4px solid #080300;
+  background: rgba(0, 0, 0, 0.18);
+  text-align: left;
+  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.22);
+}
+
+.xk-payment-consent input {
+  width: 22px;
+  height: 22px;
+  margin: 2px 0 0;
+  accent-color: #b2ff00;
+}
+
+.xk-payment-consent span {
+  margin: 0;
+  font-family: 'Minecraft Five', sans-serif !important;
+  font-size: 13px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.72);
+  text-shadow: 0 3px 0 rgba(0, 0, 0, 0.44);
+}
+
+.xk-payment-consent a {
+  color: #ffe064;
+  text-decoration: none;
+}
+
+.xk-payment-consent a:hover {
+  text-decoration: underline;
+}
+
 .xk-payment-summary__value {
-  font-family: "Minecraft Five", sans-serif !important;
+  font-family: 'Minecraft Five', sans-serif !important;
   font-size: 20px !important;
   color: #ffd57a !important;
   text-shadow: 0 4px 0 rgba(0, 0, 0, 0.56) !important;
@@ -1523,14 +1628,14 @@ a {
   padding: 14px 16px;
   border: 4px solid #080300;
   background: rgba(153, 0, 3, 0.56);
-  font-family: "Minecraft Five", sans-serif !important;
+  font-family: 'Minecraft Five', sans-serif !important;
   color: #ffe895;
   text-align: left;
 }
 
 .xk-payment-note {
   margin: -8px 0 0;
-  font-family: "Minecraft Five", sans-serif !important;
+  font-family: 'Minecraft Five', sans-serif !important;
   font-size: 13px;
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.58);
@@ -1581,7 +1686,7 @@ a {
 
 .xk-payment-status__title {
   margin: 0;
-  font-family: "Minecraft Five", sans-serif !important;
+  font-family: 'Minecraft Five', sans-serif !important;
   font-size: 20px;
   line-height: 1.5;
   color: #fff0b5;
@@ -1595,7 +1700,7 @@ a {
 }
 
 .xk-payment-status__text strong {
-  font-family: "Minecraft Five", sans-serif !important;
+  font-family: 'Minecraft Five', sans-serif !important;
   color: #ffe895;
 }
 
@@ -1642,7 +1747,7 @@ a {
   border: 0;
   background: transparent;
   color: #9dd6ff;
-  font-family: "Minecraft Five", sans-serif !important;
+  font-family: 'Minecraft Five', sans-serif !important;
   font-size: 12px;
   cursor: pointer;
   text-decoration: underline;
@@ -1654,7 +1759,7 @@ a {
 
 .xk-admin-stats p {
   margin: 0;
-  font-family: "Minecraft Five", sans-serif !important;
+  font-family: 'Minecraft Five', sans-serif !important;
   font-size: 15px;
   color: rgba(255, 255, 255, 0.82);
 }
@@ -1687,7 +1792,7 @@ a {
 }
 
 .xk-admin-table th {
-  font-family: "Minecraft Five", sans-serif !important;
+  font-family: 'Minecraft Five', sans-serif !important;
   color: #ffe895;
 }
 
@@ -1714,7 +1819,7 @@ a {
 
 .mc-footer-title {
   margin: 0;
-  font-family: "Unbounded", sans-serif;
+  font-family: 'Unbounded', sans-serif;
   font-size: clamp(1.4rem, 4vw, 2.2rem);
   font-weight: 700;
 }
@@ -1733,15 +1838,14 @@ a {
   justify-content: center;
   gap: 14px 22px;
   margin-top: 22px;
-  font-family: "Minecraft Five", sans-serif;
+  font-family: 'Minecraft Five', sans-serif;
   font-size: 16px;
 }
 
 .xk-legal-page {
   min-height: 100svh;
   background:
-    linear-gradient(180deg, rgba(28, 8, 0, 0.92), rgba(2, 2, 6, 0.98)),
-    #1c0800;
+    linear-gradient(180deg, rgba(28, 8, 0, 0.92), rgba(2, 2, 6, 0.98)), #1c0800;
   padding: 96px 0 120px;
 }
 
@@ -1753,7 +1857,7 @@ a {
 .xk-legal-lead {
   max-width: 860px;
   margin: 0 auto;
-  font-family: "Minecraft Five", sans-serif !important;
+  font-family: 'Minecraft Five', sans-serif !important;
   font-size: 20px;
   line-height: 1.7;
   color: rgba(255, 255, 255, 0.78);
@@ -1779,7 +1883,7 @@ a {
 
 .xk-legal-card h2 {
   margin: 0 0 16px;
-  font-family: "Minecraft Ten", sans-serif;
+  font-family: 'Minecraft Ten', sans-serif;
   font-size: 32px;
   color: #b2ff00;
   text-shadow: 0 6px 0 rgba(0, 0, 0, 0.62);
@@ -1787,7 +1891,7 @@ a {
 
 .xk-legal-card p {
   margin: 12px 0 0;
-  font-family: "Minecraft Five", sans-serif !important;
+  font-family: 'Minecraft Five', sans-serif !important;
   font-size: 17px;
   line-height: 1.7;
   color: rgba(255, 255, 255, 0.78);

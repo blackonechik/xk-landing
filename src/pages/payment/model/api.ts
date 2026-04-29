@@ -3,8 +3,6 @@ import type { PaymentProductId } from './products'
 
 type CreatePaymentPayload = {
   nickname: string
-  email: string
-  telegram: string
   productId: PaymentProductId
   promoCode?: string
 }
@@ -50,7 +48,9 @@ export async function createPayment(payload: CreatePaymentPayload) {
   return data.payment
 }
 
-export async function getPaymentStatus(orderId: string): Promise<PaymentStatus> {
+export async function getPaymentStatus(
+  orderId: string,
+): Promise<PaymentStatus> {
   const response = await fetch(`${apiBaseUrl}/api/payments/${orderId}`)
   const data = (await response.json().catch(() => undefined)) as
     | PaymentStatusResponse

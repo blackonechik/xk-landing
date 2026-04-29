@@ -19,6 +19,18 @@ export const Route = createRootRoute({
       {
         title: 'XK HARDCORE',
       },
+      {
+        name: 'robots',
+        content: 'noindex, nofollow, noarchive, nosnippet, noimageindex',
+      },
+      {
+        name: 'googlebot',
+        content: 'noindex, nofollow, noarchive, nosnippet, noimageindex',
+      },
+      {
+        name: 'yandex',
+        content: 'noindex, nofollow, noarchive, nosnippet, noimageindex',
+      },
     ],
     links: [
       {
