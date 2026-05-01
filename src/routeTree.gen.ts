@@ -13,6 +13,7 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PersonalDataConsentRouteImport } from './routes/personal-data-consent'
 import { Route as PaymentRouteImport } from './routes/payment'
 import { Route as OfferRouteImport } from './routes/offer'
+import { Route as MineRouteImport } from './routes/mine'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
@@ -38,6 +39,11 @@ const PaymentRoute = PaymentRouteImport.update({
 const OfferRoute = OfferRouteImport.update({
   id: '/offer',
   path: '/offer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MineRoute = MineRouteImport.update({
+  id: '/mine',
+  path: '/mine',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
+  '/mine': typeof MineRoute
   '/offer': typeof OfferRoute
   '/payment': typeof PaymentRouteWithChildren
   '/personal-data-consent': typeof PersonalDataConsentRoute
@@ -87,6 +94,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
+  '/mine': typeof MineRoute
   '/offer': typeof OfferRoute
   '/payment': typeof PaymentRouteWithChildren
   '/personal-data-consent': typeof PersonalDataConsentRoute
@@ -100,6 +108,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
+  '/mine': typeof MineRoute
   '/offer': typeof OfferRoute
   '/payment': typeof PaymentRouteWithChildren
   '/personal-data-consent': typeof PersonalDataConsentRoute
@@ -114,6 +123,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
+    | '/mine'
     | '/offer'
     | '/payment'
     | '/personal-data-consent'
@@ -126,6 +136,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
+    | '/mine'
     | '/offer'
     | '/payment'
     | '/personal-data-consent'
@@ -138,6 +149,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
+    | '/mine'
     | '/offer'
     | '/payment'
     | '/personal-data-consent'
@@ -151,6 +163,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRoute
+  MineRoute: typeof MineRoute
   OfferRoute: typeof OfferRoute
   PaymentRoute: typeof PaymentRouteWithChildren
   PersonalDataConsentRoute: typeof PersonalDataConsentRoute
@@ -185,6 +198,13 @@ declare module '@tanstack/react-router' {
       path: '/offer'
       fullPath: '/offer'
       preLoaderRoute: typeof OfferRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mine': {
+      id: '/mine'
+      path: '/mine'
+      fullPath: '/mine'
+      preLoaderRoute: typeof MineRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -251,6 +271,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AdminRoute: AdminRoute,
+  MineRoute: MineRoute,
   OfferRoute: OfferRoute,
   PaymentRoute: PaymentRouteWithChildren,
   PersonalDataConsentRoute: PersonalDataConsentRoute,
