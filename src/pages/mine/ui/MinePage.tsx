@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from 'react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   Battery,
   ChevronsDown,
@@ -7,8 +7,6 @@ import {
   Coins,
   Gem,
   Gift,
-  Hammer,
-  Pickaxe,
   Sparkles,
   Trophy,
   Zap,
@@ -43,6 +41,16 @@ type HitEffect = {
   crit: boolean
 }
 
+type RewardPop = {
+  id: string
+  blockId: string
+  coins: number
+  count: number
+  rare: boolean
+}
+
+type MineTab = 'mine' | 'pickaxe' | 'energy' | 'rating'
+
 const gridSize = {
   columns: 6,
   rows: 7,
@@ -51,6 +59,34 @@ const minDepth = 0
 const depthStep = 6
 const descendCost = 8
 const ascendCost = 4
+const maxEnergy = 60
+const energyRegenSeconds = 180
+const soundBase =
+  'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/26.1.2/assets/minecraft/sounds'
+
+const mineSounds = {
+  break: `${soundBase}/dig/stone2.ogg`,
+  click: `${soundBase}/random/click.ogg`,
+  energy: `${soundBase}/mob/villager/no1.ogg`,
+  hit: `${soundBase}/dig/stone1.ogg`,
+  reward: `${soundBase}/random/orb.ogg`,
+  upgrade: `${soundBase}/random/levelup.ogg`,
+}
+
+const leaderboard = [
+  { name: 'Notch', depth: 126, coins: 18420, pickaxe: 'Алмазная' },
+  { name: 'jeb_', depth: 114, coins: 15180, pickaxe: 'Золотая' },
+  { name: 'Vlad', depth: 96, coins: 12840, pickaxe: 'Железная' },
+  { name: 'Dinnerbone', depth: 78, coins: 9340, pickaxe: 'Железная' },
+  { name: 'Steve', depth: 54, coins: 7420, pickaxe: 'Каменная' },
+]
+
+const energyTasks = [
+  { title: 'Зайти на сервер', reward: '+20 энергии', done: false },
+  { title: 'Подписаться на Telegram', reward: '+15 энергии', done: false },
+  { title: 'Забрать дневной бонус', reward: '+18 энергии', done: true },
+  { title: 'Пригласить друга', reward: '+25 энергии', done: false },
+]
 
 const seededIndex = (seed: number, index: number, salt = 0) => {
   const value = Math.sin(seed * 42.7 + index * 19.13 + salt * 7.77) * 10000
@@ -82,8 +118,9 @@ const initialRewards: Array<Reward> = [
 ]
 
 export function MinePage() {
-  const [coins, setCoins] = useState(640)
+  const [coins, setCoins] = useState(10040)
   const [energy, setEnergy] = useState(37)
+  const [energyTimer, setEnergyTimer] = useState(energyRegenSeconds)
   const [depth, setDepth] = useState(12)
   const [tierIndex, setTierIndex] = useState(1)
   const [selectedId, setSelectedId] = useState('12-14')
@@ -91,14 +128,42 @@ export function MinePage() {
   const [rewards, setRewards] = useState<Array<Reward>>(initialRewards)
   const [blocks, setBlocks] = useState(() => createMine(12))
   const [hitEffect, setHitEffect] = useState<HitEffect | null>(null)
+  const [rewardPop, setRewardPop] = useState<RewardPop | null>(null)
+  const [showEnergyModal, setShowEnergyModal] = useState(false)
+  const [activeTab, setActiveTab] = useState<MineTab>('mine')
 
   const pickaxe = pickaxeTiers[tierIndex]
-  const selectedBlock = blocks.find((block) => block.id === selectedId) ?? blocks[0]
-  const selectedConfig = blockConfigs[selectedBlock.kind]
   const intactBlocks = blocks.filter((block) => !block.broken).length
   const nextUpgrade = pickaxe.upgradeCost
+  const isEnergyEmpty = energy <= 0
+  const nextPickaxeName =
+    tierIndex < pickaxeTiers.length - 1
+      ? pickaxeTiers[tierIndex + 1].name
+      : 'максимум достигнут'
 
-  const depthLabel = useMemo(() => `${depth} м`, [depth])
+  const energyCountdown = useMemo(() => formatTimer(energyTimer), [energyTimer])
+
+  useEffect(() => {
+    if (energy >= maxEnergy) {
+      setEnergyTimer(energyRegenSeconds)
+
+      return
+    }
+
+    const timerId = window.setInterval(() => {
+      setEnergyTimer((current) => {
+        if (current > 1) {
+          return current - 1
+        }
+
+        setEnergy((energyValue) => Math.min(maxEnergy, energyValue + 1))
+
+        return energyRegenSeconds
+      })
+    }, 1000)
+
+    return () => window.clearInterval(timerId)
+  }, [energy])
 
   const pushReward = (reward: Reward) => {
     setRewards((current) => [reward, ...current].slice(0, 5))
@@ -107,16 +172,46 @@ export function MinePage() {
   const mineBlock = (targetId = selectedId) => {
     const target = blocks.find((block) => block.id === targetId)
 
-    if (!target || target.broken || energy <= 0) {
+    if (!target || target.broken) {
+      return
+    }
+
+    const config = blockConfigs[target.kind]
+
+    if (tierIndex < config.requiredTier) {
+      setSelectedId(targetId)
+      playMineSound('energy')
+      pushReward({
+        id: `${target.id}-locked-${Date.now()}`,
+        text: `Нужна кирка: ${pickaxeTiers[config.requiredTier].name}`,
+      })
+
+      return
+    }
+
+    if (energy <= 0) {
+      setSelectedId(targetId)
+      setShowEnergyModal(true)
+      playMineSound('energy')
+
       return
     }
 
     setSelectedId(targetId)
-    setEnergy((current) => Math.max(0, current - 1))
+    setEnergy((current) => {
+      const nextEnergy = Math.max(0, current - 1)
+
+      if (nextEnergy === 0) {
+        setShowEnergyModal(true)
+      }
+
+      return nextEnergy
+    })
 
     const chanceSeed = target.id.length + target.hp + coins + depth + tierIndex
     const isCrit = chanceSeed % Math.ceil(1 / pickaxe.critChance) === 0
     const damage = pickaxe.damage + (isCrit ? Math.ceil(pickaxe.damage * 0.75) : 0)
+    const willBreak = target.hp - damage <= 0
 
     setHitEffect((current) => ({
       id: targetId,
@@ -141,16 +236,25 @@ export function MinePage() {
       }),
     )
 
-    if (target.hp - damage <= 0) {
-      const config = blockConfigs[target.kind]
+    playMineSound(willBreak ? 'break' : 'hit')
+
+    if (willBreak) {
       const isDouble = chanceSeed % Math.ceil(1 / pickaxe.doubleChance) === 1
       const earned = Math.round(config.coins * pickaxe.coinBonus * (isDouble ? 2 : 1))
 
       setCoins((current) => current + earned)
+      playMineSound('reward', 0.55)
+      setRewardPop((current) => ({
+        id: `${target.id}-${Date.now()}`,
+        blockId: target.id,
+        coins: earned,
+        count: (current?.count ?? 0) + 1,
+        rare: ['diamond', 'emerald', 'netherite'].includes(target.kind),
+      }))
       pushReward({
         id: `${target.id}-${Date.now()}`,
         text: `+${earned} монет / ${config.resource}${isDouble ? ' x2' : ''}`,
-        rare: ['diamond', 'emerald', 'chest'].includes(target.kind),
+        rare: ['diamond', 'emerald', 'netherite'].includes(target.kind),
       })
     } else if (isCrit) {
       pushReward({
@@ -163,11 +267,14 @@ export function MinePage() {
 
   const upgradePickaxe = () => {
     if (nextUpgrade === null || coins < nextUpgrade) {
+      playMineSound('energy')
+
       return
     }
 
     setCoins((current) => current - nextUpgrade)
     setTierIndex((current) => Math.min(current + 1, pickaxeTiers.length - 1))
+    playMineSound('upgrade')
     pushReward({
       id: `upgrade-${Date.now()}`,
       text: `Кирка улучшена: ${pickaxeTiers[tierIndex + 1].name}`,
@@ -183,6 +290,8 @@ export function MinePage() {
         : Math.max(minDepth, depth - depthStep)
 
     if (energy < cost || nextDepth === depth) {
+      playMineSound('energy')
+
       return
     }
 
@@ -190,6 +299,8 @@ export function MinePage() {
     setEnergy((current) => current - cost)
     setBlocks(createMine(nextDepth))
     setSelectedId(`${nextDepth}-14`)
+    setActiveTab('mine')
+    playMineSound('click')
     pushReward({
       id: `depth-${Date.now()}`,
       text:
@@ -205,8 +316,10 @@ export function MinePage() {
     }
 
     setDailyClaimed(true)
+    setShowEnergyModal(false)
     setCoins((current) => current + 220)
-    setEnergy((current) => Math.min(60, current + 18))
+    setEnergy((current) => Math.min(maxEnergy, current + 18))
+    playMineSound('reward')
     pushReward({
       id: `daily-${Date.now()}`,
       text: '+220 монет / +18 энергии',
@@ -219,7 +332,7 @@ export function MinePage() {
       <section className="mine-shell" aria-label="Шахта">
         <div className="mine-topbar">
           <div>
-            <p className="mine-eyebrow">Telegram WebApp</p>
+            <p className="mine-eyebrow">XK HARDCORE</p>
             <h1>Шахта</h1>
           </div>
           <div className="mine-day">
@@ -229,201 +342,419 @@ export function MinePage() {
         </div>
 
         <div className="mine-stats">
-          <Stat icon={<Coins size={18} />} label="Баланс" value={coins.toLocaleString('ru-RU')} />
-          <Stat icon={<Battery size={18} />} label="Энергия" value={`${energy}/60`} />
           <Stat
+            active={activeTab === 'mine'}
+            icon={<AssetIcon alt="" className="mine-stat__asset" src={blockConfigs.diamond.itemIcon} />}
+            label="Шахта"
+            onClick={() => {
+              setActiveTab('mine')
+              playMineSound('click', 0.45)
+            }}
+            value={`${depth} м`}
+          />
+          <Stat
+            active={activeTab === 'energy'}
+            hint="+1 энергия / 3 мин"
+            icon={<AssetIcon alt="" className="mine-stat__asset" src={blockConfigs.redstone.itemIcon} />}
+            label="Энергия"
+            onClick={() => {
+              setActiveTab('energy')
+              playMineSound('click', 0.45)
+            }}
+            tone={isEnergyEmpty ? 'danger' : undefined}
+            value={`${energy}/${maxEnergy}`}
+          />
+          <Stat
+            active={activeTab === 'pickaxe'}
             icon={<AssetIcon alt="" className="mine-stat__asset" src={pickaxe.icon} />}
             label="Кирка"
+            onClick={() => {
+              setActiveTab('pickaxe')
+              playMineSound('click', 0.45)
+            }}
             value={pickaxe.name}
           />
-          <Stat icon={<ChevronsDown size={18} />} label="Глубина" value={depthLabel} />
+          <Stat
+            active={activeTab === 'rating'}
+            icon={<AssetIcon alt="" className="mine-stat__asset" src={blockConfigs.emerald.itemIcon} />}
+            label="Рейтинг"
+            onClick={() => {
+              setActiveTab('rating')
+              playMineSound('click', 0.45)
+            }}
+            value="#3"
+          />
         </div>
 
-        <section className="mine-board-panel">
-          <div className="mine-board-head">
-            <span>Разрез шахты</span>
-            <strong>{intactBlocks}/42 блоков</strong>
-          </div>
+        {activeTab === 'mine' ? (
+          <MineBoard
+            blocks={blocks}
+            depth={depth}
+            energy={energy}
+            hitEffect={hitEffect}
+            mineBlock={mineBlock}
+            moveDepth={moveDepth}
+            coins={coins}
+            nextUpgrade={nextUpgrade}
+            pickaxeIcon={pickaxe.icon}
+            pickaxeTierIndex={tierIndex}
+            rewards={rewards}
+            rewardPop={rewardPop}
+            selectedId={selectedId}
+            upgradePickaxe={upgradePickaxe}
+          />
+        ) : null}
 
+        {activeTab === 'pickaxe' ? (
+          <PickaxePage
+            coins={coins}
+            nextPickaxeName={nextPickaxeName}
+            nextUpgrade={nextUpgrade}
+            pickaxe={pickaxe}
+            upgradePickaxe={upgradePickaxe}
+          />
+        ) : null}
+
+        {activeTab === 'energy' ? (
+          <EnergyPage
+            claimDaily={claimDaily}
+            dailyClaimed={dailyClaimed}
+            energy={energy}
+            energyCountdown={energyCountdown}
+          />
+        ) : null}
+
+        {activeTab === 'rating' ? <RatingPage /> : null}
+
+        {showEnergyModal ? (
           <div
-            className="mine-grid"
-            style={{
-              gridTemplateColumns: `repeat(${gridSize.columns}, minmax(0, 1fr))`,
-            }}
+            aria-labelledby="mine-energy-modal-title"
+            aria-modal="true"
+            className="mine-modal-backdrop"
+            role="dialog"
           >
-            {blocks.map((block) => {
-              const config = blockConfigs[block.kind]
-              const damageLevel = 1 - block.hp / block.maxHp
-              const damageStage =
-                damageLevel > 0
-                  ? Math.min(9, Math.max(0, Math.floor(damageLevel * 10)))
-                  : null
-
-              return (
+            <div className="mine-modal">
+              <div className="mine-modal__gem">
+                <AssetIcon alt="" src={blockConfigs.redstone.itemIcon} />
+              </div>
+              <h2 id="mine-energy-modal-title">Энергия закончилась</h2>
+              <p>
+                Шахтеру нужен отдых. Следующая энергия восстановится через
+                <strong> {energyCountdown}</strong>.
+              </p>
+              <div className="mine-modal__actions">
                 <button
-                  aria-label={`${config.name}, прочность ${block.hp}`}
-                  className={[
-                    'mine-block',
-                    selectedId === block.id ? 'mine-block_selected' : '',
-                    hitEffect?.id === block.id ? 'mine-block_hit' : '',
-                    hitEffect?.id === block.id && hitEffect.crit ? 'mine-block_crit' : '',
-                    block.broken ? 'mine-block_broken' : '',
-                    damageStage !== null ? 'mine-block_damaged' : '',
-                  ].join(' ')}
-                  key={`${block.id}-${block.lastHit}`}
-                  onClick={() => mineBlock(block.id)}
-                  style={
-                    {
-                      '--block-texture': `url("${config.texture}")`,
-                      '--break-texture':
-                        damageStage === null
-                          ? 'none'
-                          : `url("${destroyStageTextures[damageStage]}")`,
-                      '--hit-count': block.lastHit,
-                    } as CSSProperties
-                  }
+                  className="mine-modal-button mine-modal-button_primary"
+                  onClick={claimDaily}
+                  disabled={dailyClaimed}
                   type="button"
                 >
-                  <span className="mine-block__shine" />
-                  {damageStage !== null ? <span className="mine-block__break" /> : null}
-                  {hitEffect?.id === block.id ? (
-                    <>
-                      <img
-                        alt=""
-                        className="mine-hit-pickaxe"
-                        key={`pickaxe-${hitEffect.id}-${hitEffect.count}`}
-                        src={pickaxe.icon}
-                      />
-                      <span
-                        className="mine-hit-sparks"
-                        key={`sparks-${hitEffect.id}-${hitEffect.count}`}
-                      />
-                    </>
-                  ) : null}
-                  <span className="mine-block__hp">
-                    {block.broken ? ' ' : `${block.hp}/${block.maxHp}`}
-                  </span>
+                  <Gift size={18} />
+                  {dailyClaimed ? 'Бонус уже получен' : 'Забрать дневной бонус'}
                 </button>
-              )
-            })}
-          </div>
-        </section>
-
-        <section className="mine-selected">
-          <div
-            className="mine-selected__texture"
-            style={{
-              backgroundImage: `url("${selectedConfig.texture}")`,
-            }}
-          />
-          <div className="mine-selected__content">
-            <span>Выбранный блок</span>
-            <strong>{selectedConfig.name}</strong>
-            <div className="mine-progress" aria-label="Прочность блока">
-              <i
-                style={{
-                  width: `${Math.max(0, (selectedBlock.hp / selectedBlock.maxHp) * 100)}%`,
-                }}
-              />
-            </div>
-            <small>
-              Прочность {selectedBlock.hp}/{selectedBlock.maxHp} · награда ~
-              {Math.round(selectedConfig.coins * pickaxe.coinBonus)}
-            </small>
-            <div className="mine-resource-preview">
-              <AssetIcon alt="" src={selectedConfig.itemIcon} />
-              <span>{selectedConfig.resource}</span>
-            </div>
-          </div>
-        </section>
-
-        <section className="mine-actions">
-          <button className="mine-button mine-button_primary" onClick={() => mineBlock()} type="button">
-            <Hammer size={18} />
-            Ударить киркой
-          </button>
-          <button
-            className="mine-button"
-            disabled={nextUpgrade === null || coins < nextUpgrade}
-            onClick={upgradePickaxe}
-            type="button"
-          >
-            <Pickaxe size={18} />
-            {nextUpgrade === null ? 'Макс. кирка' : `Улучшить · ${nextUpgrade}`}
-          </button>
-          <button
-            className="mine-button"
-            disabled={depth <= minDepth || energy < ascendCost}
-            onClick={() => moveDepth('up')}
-            type="button"
-          >
-            <ChevronsUp size={18} />
-            Подняться выше
-          </button>
-          <button className="mine-button" disabled={energy < descendCost} onClick={() => moveDepth('down')} type="button">
-            <ChevronsDown size={18} />
-            Спуститься глубже
-          </button>
-        </section>
-
-        <section className="mine-pickaxe-panel">
-          <div className="mine-pickaxe-rank" style={{ color: pickaxe.color }}>
-            <img alt="" src={pickaxe.icon} />
-            <small>{pickaxe.material}</small>
-          </div>
-          <div>
-            <span>Уровень кирки</span>
-            <strong>{pickaxe.name}</strong>
-            <div className="mine-perks">
-              <span>
-                <Zap size={14} /> Урон {pickaxe.damage}
-              </span>
-              <span>
-                <Trophy size={14} /> Крит {Math.round(pickaxe.critChance * 100)}%
-              </span>
-              <span>
-                <Gem size={14} /> x2 {Math.round(pickaxe.doubleChance * 100)}%
-              </span>
-            </div>
-          </div>
-        </section>
-
-        <section className="mine-assets-panel" aria-label="Добыча">
-          {Object.values(blockConfigs)
-            .filter((block) => block.kind !== 'stone' && block.kind !== 'dirt')
-            .slice(0, 10)
-            .map((block) => (
-              <div className="mine-asset-cell" key={block.kind}>
-                <AssetIcon alt="" src={block.itemIcon} />
+                <button
+                  className="mine-modal-button"
+                  onClick={() => setShowEnergyModal(false)}
+                  type="button"
+                >
+                  Понятно
+                </button>
               </div>
-            ))}
-        </section>
-
-        <section className="mine-bottom">
-          <div className="mine-rewards">
-            <div className="mine-section-title">Последние награды</div>
-            {rewards.map((reward) => (
-              <div className={reward.rare ? 'mine-reward mine-reward_rare' : 'mine-reward'} key={reward.id}>
-                <span />
-                {reward.text}
-              </div>
-            ))}
+            </div>
           </div>
-
-          <button
-            className={dailyClaimed ? 'mine-daily mine-daily_claimed' : 'mine-daily'}
-            onClick={claimDaily}
-            type="button"
-          >
-            <Gift size={22} />
-            <span>
-              <strong>{dailyClaimed ? 'Бонус получен' : 'Дневной бонус'}</strong>
-              <small>{dailyClaimed ? 'Возвращайся завтра' : '+220 монет и +18 энергии'}</small>
-            </span>
-          </button>
-        </section>
+        ) : null}
       </section>
     </main>
+  )
+}
+
+function MineBoard({
+  blocks,
+  coins,
+  depth,
+  energy,
+  hitEffect,
+  mineBlock,
+  moveDepth,
+  nextUpgrade,
+  pickaxeIcon,
+  pickaxeTierIndex,
+  rewards,
+  rewardPop,
+  selectedId,
+  upgradePickaxe,
+}: {
+  blocks: Array<MineBlock>
+  coins: number
+  depth: number
+  energy: number
+  hitEffect: HitEffect | null
+  mineBlock: (targetId?: string) => void
+  moveDepth: (direction: 'up' | 'down') => void
+  nextUpgrade: number | null
+  pickaxeIcon: string
+  pickaxeTierIndex: number
+  rewards: Array<Reward>
+  rewardPop: RewardPop | null
+  selectedId: string
+  upgradePickaxe: () => void
+}) {
+  const intactBlocks = blocks.filter((block) => !block.broken).length
+
+  return (
+    <>
+      <section className="mine-balance-panel">
+        <Coins size={20} />
+        <span>Баланс</span>
+        <strong>{coins.toLocaleString('ru-RU')} монет</strong>
+      </section>
+
+      <section className="mine-board-panel">
+        <div className="mine-board-head">
+          <span>Разрез шахты · {depth} м</span>
+          <strong>{intactBlocks}/42 блоков</strong>
+        </div>
+
+        <div
+          className="mine-grid"
+          style={{
+            gridTemplateColumns: `repeat(${gridSize.columns}, minmax(0, 1fr))`,
+          }}
+        >
+          {blocks.map((block) => {
+            const config = blockConfigs[block.kind]
+            const canMine = pickaxeTierIndex >= config.requiredTier
+            const damageLevel = 1 - block.hp / block.maxHp
+            const damageStage =
+              damageLevel > 0
+                ? Math.min(9, Math.max(0, Math.floor(damageLevel * 10)))
+                : null
+
+            return (
+              <button
+                aria-label={`${config.name}, прочность ${block.hp}`}
+                className={[
+                  'mine-block',
+                  selectedId === block.id && !block.broken ? 'mine-block_selected' : '',
+                  hitEffect?.id === block.id ? 'mine-block_hit' : '',
+                  hitEffect?.id === block.id && hitEffect.crit ? 'mine-block_crit' : '',
+                  block.broken ? 'mine-block_broken' : '',
+                  !canMine && !block.broken ? 'mine-block_locked' : '',
+                  damageStage !== null && !block.broken ? 'mine-block_damaged' : '',
+                ].join(' ')}
+                key={`${block.id}-${block.lastHit}`}
+                onClick={() => mineBlock(block.id)}
+                style={
+                  {
+                    '--block-texture': `url("${config.texture}")`,
+                    '--break-texture':
+                      damageStage === null
+                        ? 'none'
+                        : `url("${destroyStageTextures[damageStage]}")`,
+                    '--hit-count': block.lastHit,
+                  } as CSSProperties
+                }
+                type="button"
+              >
+                <span className="mine-block__shine" />
+                {!canMine && !block.broken ? (
+                  <span className="mine-block__lock" aria-hidden="true" />
+                ) : null}
+                {damageStage !== null ? <span className="mine-block__break" /> : null}
+                {hitEffect?.id === block.id ? (
+                  <>
+                    <img
+                      alt=""
+                      className="mine-hit-pickaxe"
+                      key={`pickaxe-${hitEffect.id}-${hitEffect.count}`}
+                      src={pickaxeIcon}
+                    />
+                    <span
+                      className="mine-hit-sparks"
+                      key={`sparks-${hitEffect.id}-${hitEffect.count}`}
+                    />
+                  </>
+                ) : null}
+                {rewardPop?.blockId === block.id ? (
+                  <span
+                    className={
+                      rewardPop.rare
+                        ? 'mine-reward-pop mine-reward-pop_rare'
+                        : 'mine-reward-pop'
+                    }
+                    key={`reward-${rewardPop.id}-${rewardPop.count}`}
+                  >
+                    +{rewardPop.coins}
+                  </span>
+                ) : null}
+                <span className="mine-block__hp">
+                  {block.broken ? ' ' : `${block.hp}/${block.maxHp}`}
+                </span>
+              </button>
+            )
+          })}
+        </div>
+      </section>
+
+      <section className="mine-actions">
+        <button
+          className="mine-button mine-button_primary"
+          disabled={nextUpgrade === null || coins < nextUpgrade}
+          onClick={upgradePickaxe}
+          type="button"
+        >
+          <AssetIcon alt="" className="mine-button__asset" src={pickaxeIcon} />
+          {nextUpgrade === null
+            ? 'Максимальная кирка'
+            : `Улучшить кирку · ${nextUpgrade} монет`}
+        </button>
+        <button
+          className="mine-button"
+          disabled={depth <= minDepth || energy < ascendCost}
+          onClick={() => moveDepth('up')}
+          type="button"
+        >
+          <ChevronsUp size={18} />
+          Подняться выше
+        </button>
+        <button
+          className="mine-button"
+          disabled={energy < descendCost}
+          onClick={() => moveDepth('down')}
+          type="button"
+        >
+          <ChevronsDown size={18} />
+          Спуститься глубже
+        </button>
+      </section>
+
+    </>
+  )
+}
+
+function PickaxePage({
+  coins,
+  nextPickaxeName,
+  nextUpgrade,
+  pickaxe,
+  upgradePickaxe,
+}: {
+  coins: number
+  nextPickaxeName: string
+  nextUpgrade: number | null
+  pickaxe: (typeof pickaxeTiers)[number]
+  upgradePickaxe: () => void
+}) {
+  return (
+    <section className="mine-subpage">
+      <div className="mine-subpage-title">Кирка</div>
+      <div className="mine-pickaxe-panel">
+        <div className="mine-pickaxe-rank" style={{ color: pickaxe.color }}>
+          <img alt="" src={pickaxe.icon} />
+          <small>{pickaxe.material}</small>
+        </div>
+        <div>
+          <span>Уровень кирки</span>
+          <strong>{pickaxe.name}</strong>
+          <p className="mine-next-pickaxe">Следующая: {nextPickaxeName}</p>
+          <div className="mine-perks">
+            <span>
+              <Zap size={14} /> Урон {pickaxe.damage}
+            </span>
+            <span>
+              <Trophy size={14} /> Крит {Math.round(pickaxe.critChance * 100)}%
+            </span>
+            <span>
+              <Gem size={14} /> x2 {Math.round(pickaxe.doubleChance * 100)}%
+            </span>
+          </div>
+        </div>
+      </div>
+      <button
+        className="mine-button mine-button_primary"
+        disabled={nextUpgrade === null || coins < nextUpgrade}
+        onClick={upgradePickaxe}
+        type="button"
+      >
+        <AssetIcon alt="" className="mine-button__asset" src={pickaxe.icon} />
+        {nextUpgrade === null
+          ? 'Максимальная кирка'
+          : `Улучшить кирку · ${nextUpgrade} монет`}
+      </button>
+    </section>
+  )
+}
+
+function EnergyPage({
+  claimDaily,
+  dailyClaimed,
+  energy,
+  energyCountdown,
+}: {
+  claimDaily: () => void
+  dailyClaimed: boolean
+  energy: number
+  energyCountdown: string
+}) {
+  return (
+    <section className="mine-subpage">
+      <div className="mine-subpage-title">Энергия</div>
+      <div className="mine-energy-card">
+        <Battery size={20} />
+        <span>{energy}/{maxEnergy}</span>
+        <strong>+1 энергия каждые 3 минуты</strong>
+        <small>Следующая энергия через {energyCountdown}</small>
+      </div>
+      <div className="mine-task-list">
+        {energyTasks.map((task) => (
+          <div className="mine-task" key={task.title}>
+            <span>{task.title}</span>
+            <strong>{task.done ? 'Получено' : task.reward}</strong>
+          </div>
+        ))}
+      </div>
+      <button
+        className={dailyClaimed ? 'mine-daily mine-daily_claimed' : 'mine-daily'}
+        onClick={claimDaily}
+        type="button"
+      >
+        <Gift size={22} />
+        <span>
+          <strong>{dailyClaimed ? 'Бонус получен' : 'Дневной бонус'}</strong>
+          <small>{dailyClaimed ? 'Возвращайся завтра' : '+220 монет и +18 энергии'}</small>
+        </span>
+      </button>
+    </section>
+  )
+}
+
+function RatingPage() {
+  return (
+    <section className="mine-subpage">
+      <div className="mine-subpage-title">Рейтинг</div>
+      <div className="mine-leaderboard">
+        {leaderboard.map((player, index) => (
+          <div
+            className={player.name === 'Vlad' ? 'mine-leader mine-leader_self' : 'mine-leader'}
+            key={player.name}
+          >
+            <span>#{index + 1}</span>
+            <img
+              alt=""
+              className="mine-leader__avatar"
+              onError={(event) => {
+                event.currentTarget.src = minecraftHeadUrl('Steve')
+              }}
+              src={minecraftHeadUrl(player.name)}
+            />
+            <strong>{player.name}</strong>
+            <small>
+              {player.depth} м · {player.coins.toLocaleString('ru-RU')} монет · {player.pickaxe}
+            </small>
+          </div>
+        ))}
+      </div>
+    </section>
   )
 }
 
@@ -440,19 +771,55 @@ function AssetIcon({
 }
 
 function Stat({
+  active,
+  hint,
   icon,
   label,
+  onClick,
+  tone,
   value,
 }: {
+  active?: boolean
+  hint?: string
   icon: ReactNode
   label: string
+  onClick?: () => void
+  tone?: 'danger'
   value: string
 }) {
+  const className = [
+    'mine-stat',
+    tone === 'danger' ? 'mine-stat_danger' : '',
+    active ? 'mine-stat_active' : '',
+  ].join(' ')
+
   return (
-    <div className="mine-stat">
+    <button className={className} onClick={onClick} type="button">
       {icon}
       <span>{label}</span>
       <strong>{value}</strong>
-    </div>
+      {hint ? <small>{hint}</small> : null}
+    </button>
   )
+}
+
+function formatTimer(totalSeconds: number) {
+  const minutes = Math.floor(totalSeconds / 60)
+  const seconds = totalSeconds % 60
+
+  return `${minutes}:${seconds.toString().padStart(2, '0')}`
+}
+
+function minecraftHeadUrl(nickname: string) {
+  return `https://api.mcheads.org/head/${encodeURIComponent(nickname)}/64`
+}
+
+function playMineSound(name: keyof typeof mineSounds, volume = 0.38) {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  const audio = new Audio(mineSounds[name])
+  audio.volume = volume
+  void audio.play().catch(() => undefined)
 }
