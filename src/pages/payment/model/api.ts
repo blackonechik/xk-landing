@@ -4,6 +4,7 @@ import type { PaymentProductId } from './products'
 type CreatePaymentPayload = {
   nickname: string
   email: string
+  telegram: string
   productId: PaymentProductId
   promoCode?: string
 }

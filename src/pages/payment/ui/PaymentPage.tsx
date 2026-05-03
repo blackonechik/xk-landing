@@ -8,6 +8,7 @@ import { LandingSection } from '@/shared/ui/landing-section'
 
 const nicknamePattern = /^[A-Za-z0-9_]{3,16}$/
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const telegramPattern = /^@?[A-Za-z0-9_]{5,32}$/
 
 function PaymentProductIcon({ productId }: { productId: PaymentProductId }) {
   const iconSrc =
@@ -25,6 +26,7 @@ function PaymentProductIcon({ productId }: { productId: PaymentProductId }) {
 export function PaymentPage() {
   const [nickname, setNickname] = useState('')
   const [email, setEmail] = useState('')
+  const [telegram, setTelegram] = useState('')
   const [promoCode, setPromoCode] = useState('')
   const [productId, setProductId] = useState<PaymentProductId>('smp-pass')
   const [hasPersonalDataConsent, setHasPersonalDataConsent] = useState(false)
@@ -42,6 +44,7 @@ export function PaymentPage() {
     event.preventDefault()
     const normalizedNickname = nickname.trim()
     const normalizedEmail = email.trim()
+    const normalizedTelegram = telegram.trim()
     const normalizedPromoCode = promoCode.trim().toUpperCase()
 
     if (!nicknamePattern.test(normalizedNickname)) {
@@ -53,6 +56,11 @@ export function PaymentPage() {
 
     if (!emailPattern.test(normalizedEmail)) {
       setError('Укажите корректную почту для связи с администратором.')
+      return
+    }
+
+    if (!telegramPattern.test(normalizedTelegram)) {
+      setError('Укажите Telegram для связи с администратором.')
       return
     }
 
@@ -68,6 +76,9 @@ export function PaymentPage() {
       const payment = await createPayment({
         nickname: normalizedNickname,
         email: normalizedEmail,
+        telegram: normalizedTelegram.startsWith('@')
+          ? normalizedTelegram
+          : `@${normalizedTelegram}`,
         productId,
         promoCode: normalizedPromoCode || undefined,
       })
@@ -130,6 +141,17 @@ export function PaymentPage() {
                   name="email"
                   autoComplete="email"
                   placeholder="name@example.com"
+                />
+              </label>
+
+              <label className="xk-payment-field">
+                <span>Telegram</span>
+                <input
+                  value={telegram}
+                  onChange={(event) => setTelegram(event.target.value)}
+                  name="telegram"
+                  autoComplete="off"
+                  placeholder="@Steve2026"
                 />
               </label>
 
