@@ -12,7 +12,7 @@ type LandingSectionProps = {
   mark?: string
   titleClassName?: string
   markClassName?: string
-  iconSrc?: string
+  iconSrc?: string | Array<string>
   className?: string
   wrapperClassName?: string
   revealInitial?: false | 'hidden'
@@ -56,15 +56,26 @@ export function LandingSection({
       <div className={['tycoon-landing-wrapper', wrapperClassName].filter(Boolean).join(' ')}>
         {title ? (
           <motion.div
-            className="tycoon-landing-section__header"
-            variants={sectionReveal}
-            initial={revealInitial}
-            whileInView="show"
-            viewport={viewportReveal}
-          >
+          className="tycoon-landing-section__header"
+          variants={sectionReveal}
+          initial={revealInitial}
+          whileInView="show"
+          viewport={viewportReveal}
+        >
             {iconSrc ? (
-              <div className="tycoon-landing-section__header-icon _absolution">
-                <img src={iconSrc} alt="" />
+              <div
+                className={[
+                  'tycoon-landing-section__header-icon',
+                  Array.isArray(iconSrc)
+                    ? 'tycoon-landing-section__header-icon-group'
+                    : '_absolution',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+              >
+                {(Array.isArray(iconSrc) ? iconSrc : [iconSrc]).map((src, index) => (
+                  <img key={`${src}-${index}`} src={src} alt="" />
+                ))}
               </div>
             ) : null}
             <h2

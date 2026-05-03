@@ -3,6 +3,7 @@ import type { TargetAndTransition } from 'motion/react'
 import { ApplySection } from './ApplySection'
 import { FloatingActions } from './FloatingActions'
 import { HeroSection } from './HeroSection'
+import { LifeSection } from './LifeSection'
 import { ReasonsSection } from './ReasonsSection'
 import { TrailerSection } from './TrailerSection'
 
@@ -21,6 +22,10 @@ export function HomePage() {
       <FloatingActions />
       <HeroSection shouldReduceMotion={Boolean(shouldReduceMotion)} />
       <TrailerSection revealInitial={revealInitial} tapPress={tapPress} />
+      <LifeSection
+        revealInitial={revealInitial}
+        shouldReduceMotion={Boolean(shouldReduceMotion)}
+      />
       <ReasonsSection revealInitial={revealInitial} cardHover={cardHover} />
       <ApplySection revealInitial={revealInitial} cardHover={cardHover} />
     </main>

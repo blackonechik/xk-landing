@@ -331,7 +331,8 @@ a {
 }
 
 .tycoon-landing {
-  overflow: hidden;
+  overflow-x: clip;
+  overflow-y: visible;
   --white_alpha-20: hsla(0, 0%, 100%, 0.2);
   --white_alpha-30: hsla(0, 0%, 100%, 0.3);
   --white_alpha-60: hsla(0, 0%, 100%, 0.6);
@@ -963,10 +964,21 @@ a {
   width: calc(var(--g-50) * 5);
 }
 
+.tycoon-landing-section__header-icon-group {
+  align-items: center;
+  gap: 12px;
+  width: auto;
+}
+
 .tycoon-landing-section__header-icon img {
   position: relative;
   max-width: 80%;
   z-index: 2;
+}
+
+.tycoon-landing-section__header-icon-group img {
+  max-width: none;
+  width: calc(var(--g-20) * 2.2);
 }
 
 .tycoon-landing-section__header-icon::before,
@@ -1154,6 +1166,102 @@ a {
   height: 100%;
   border: 0;
   display: block;
+}
+
+.xk-life-section__copy {
+  max-width: 920px;
+  margin-inline: auto;
+  margin-top: var(--g-30);
+  text-align: center;
+}
+
+.xk-life-section__copy p {
+  margin: 18px auto 0;
+  max-width: 760px;
+  font-family: 'Minecraft Five', sans-serif !important;
+  font-size: var(--size-24);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.82);
+  text-shadow: 0 4px 0 rgba(0, 0, 0, 0.5);
+}
+
+.parallax-video {
+  position: relative;
+  width: 100vw;
+  height: 200vh;
+  margin: 0;
+  overflow: visible;
+  background: transparent;
+  z-index: 0;
+}
+
+.parallax-video__sticky {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100svh;
+  overflow: hidden;
+  background: #000;
+}
+
+.parallax-video__layer {
+  position: absolute;
+  inset: 0;
+}
+
+.parallax-video__media {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.parallax-video__caption {
+  position: absolute;
+  left: clamp(18px, 4vw, 56px);
+  bottom: clamp(18px, 4vw, 48px);
+  z-index: 2;
+  max-width: min(680px, calc(100% - 36px));
+  margin: 0;
+  color: #fff;
+  font-family: 'Minecraft Five', sans-serif !important;
+  font-size: clamp(18px, 2vw, 26px);
+  line-height: 1.35;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.66);
+  opacity: 0;
+  transform: translate3d(-260px, 0, 0);
+  will-change: transform, opacity;
+}
+
+.xk-life-media .parallax-video__sticky::before,
+.xk-life-media .parallax-video__sticky::after {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+}
+
+.xk-life-media .parallax-video__sticky::before {
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.42), transparent 30%, transparent 68%, rgba(0, 0, 0, 0.58)),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.46), transparent 48%);
+}
+
+.xk-life-media .parallax-video__sticky::after {
+  box-shadow:
+    inset 0 0 0 10px rgba(0, 0, 0, 0.72),
+    inset 0 24px 70px rgba(0, 0, 0, 0.48),
+    inset 0 -24px 80px rgba(0, 0, 0, 0.62);
+}
+
+.xk-life-media--static {
+  height: 78vh;
+}
+
+.xk-life-media--static .parallax-video__sticky {
+  position: relative;
+  height: 100%;
 }
 
 .xk-launcher-frame {
@@ -2195,6 +2303,14 @@ a {
   .index-start__layout {
     grid-template-columns: 1fr;
   }
+
+  .parallax-video {
+    height: 200vh;
+  }
+
+  .parallax-video__sticky {
+    height: 100svh;
+  }
 }
 
 @media (max-width: 640px) {
@@ -2253,6 +2369,33 @@ a {
     padding: 10px;
   }
 
+  .xk-life-section__copy {
+    margin-top: 30px;
+  }
+
+  .xk-life-section__copy p {
+    margin-top: 14px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .parallax-video {
+    height: 200svh;
+  }
+
+  .parallax-video__caption {
+    font-size: 15px;
+    line-height: 1.4;
+  }
+
+  .tycoon-landing-section__header-icon-group {
+    gap: 8px;
+  }
+
+  .tycoon-landing-section__header-icon-group img {
+    width: 28px;
+  }
+
   .xk-payment-contact-grid,
   .xk-payment-products,
   .xk-legal-grid {
@@ -2301,6 +2444,15 @@ a {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .parallax-video__layer {
+    transform: none !important;
+  }
+
+  .parallax-video__caption {
+    opacity: 1;
+    transform: none;
+  }
+
   .xk-loader,
   .xk-loader__stars,
   .xk-loader__block,
