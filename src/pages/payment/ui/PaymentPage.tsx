@@ -7,6 +7,7 @@ import { LandingCard } from '@/shared/ui/landing-card'
 import { LandingSection } from '@/shared/ui/landing-section'
 
 const nicknamePattern = /^[A-Za-z0-9_]{3,16}$/
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 function PaymentProductIcon({ productId }: { productId: PaymentProductId }) {
   const iconSrc =
@@ -23,6 +24,7 @@ function PaymentProductIcon({ productId }: { productId: PaymentProductId }) {
 
 export function PaymentPage() {
   const [nickname, setNickname] = useState('')
+  const [email, setEmail] = useState('')
   const [promoCode, setPromoCode] = useState('')
   const [productId, setProductId] = useState<PaymentProductId>('smp-pass')
   const [hasPersonalDataConsent, setHasPersonalDataConsent] = useState(false)
@@ -39,12 +41,18 @@ export function PaymentPage() {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const normalizedNickname = nickname.trim()
+    const normalizedEmail = email.trim()
     const normalizedPromoCode = promoCode.trim().toUpperCase()
 
     if (!nicknamePattern.test(normalizedNickname)) {
       setError(
         'Ник должен быть от 3 до 16 символов: латиница, цифры и подчёркивание.',
       )
+      return
+    }
+
+    if (!emailPattern.test(normalizedEmail)) {
+      setError('Укажите корректную почту для связи с администратором.')
       return
     }
 
@@ -59,6 +67,7 @@ export function PaymentPage() {
     try {
       const payment = await createPayment({
         nickname: normalizedNickname,
+        email: normalizedEmail,
         productId,
         promoCode: normalizedPromoCode || undefined,
       })
@@ -109,6 +118,18 @@ export function PaymentPage() {
                   autoComplete="nickname"
                   placeholder="Steve_2026"
                   maxLength={16}
+                />
+              </label>
+
+              <label className="xk-payment-field">
+                <span>Электронная почта</span>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  name="email"
+                  autoComplete="email"
+                  placeholder="name@example.com"
                 />
               </label>
 

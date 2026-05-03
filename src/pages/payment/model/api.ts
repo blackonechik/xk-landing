@@ -3,6 +3,7 @@ import type { PaymentProductId } from './products'
 
 type CreatePaymentPayload = {
   nickname: string
+  email: string
   productId: PaymentProductId
   promoCode?: string
 }

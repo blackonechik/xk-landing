@@ -43,6 +43,10 @@ function PrivacyPage() {
               .
             </p>
             <p>
+              Telegram:{' '}
+              <a href="https://t.me/blackonechik">@blackonechik</a>.
+            </p>
+            <p>
               Телефон: <a href="tel:+79186618809">+7 918 661-88-09</a>.
             </p>
             <p>Почтовый адрес: г. Анапа, ул. Ленина 180А.</p>
@@ -115,6 +119,8 @@ function PrivacyPage() {
               <a href="mailto:surnin.vladislav@gmail.com">
                 surnin.vladislav@gmail.com
               </a>
+              {' '}или в Telegram{' '}
+              <a href="https://t.me/blackonechik">@blackonechik</a>
               .
             </p>
           </article>

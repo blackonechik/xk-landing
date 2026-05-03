@@ -42,6 +42,10 @@ function PersonalDataConsentPage() {
               </a>
               .
             </p>
+            <p>
+              Telegram:{' '}
+              <a href="https://t.me/blackonechik">@blackonechik</a>.
+            </p>
             <p>Почтовый адрес: г. Анапа, ул. Ленина 180А.</p>
           </article>
 
@@ -93,6 +97,8 @@ function PersonalDataConsentPage() {
               <a href="mailto:surnin.vladislav@gmail.com">
                 surnin.vladislav@gmail.com
               </a>
+              {' '}или в Telegram{' '}
+              <a href="https://t.me/blackonechik">@blackonechik</a>
               . После получения отзыва оператор прекратит обработку данных,
               кроме случаев, когда дальнейшая обработка разрешена законом.
             </p>
