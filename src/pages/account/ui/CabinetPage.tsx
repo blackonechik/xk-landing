@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { LogOut, Shield, Signal, Swords } from 'lucide-react'
+import { LogOut, Shield, Signal, Swords, UserRound } from 'lucide-react'
 import { useNavigate } from '@tanstack/react-router'
 import { LandingButton } from '@/shared/ui/landing-button'
 import { fetchAccount, logout, type AccountPayload } from '../model/api'
@@ -44,14 +44,19 @@ export function CabinetPage() {
 
   const totalDiamonds = useMemo(
     () =>
-      account?.bank.cards.reduce((sum, card) => sum + card.balanceDiamonds, 0) ?? 0,
+      account?.bank.cards.reduce(
+        (sum, card) => sum + card.balanceDiamonds,
+        0,
+      ) ?? 0,
     [account],
   )
 
   if (!account) {
     return (
       <main className="xk-cabinet-page">
-        <section className="page-wrap xk-cabinet-loading">Загружаем кабинет...</section>
+        <section className="page-wrap xk-cabinet-loading">
+          Загружаем кабинет...
+        </section>
       </main>
     )
   }
@@ -64,11 +69,35 @@ export function CabinetPage() {
         <div className="xk-cabinet-copy">
           <p className="xk-overline">Игровой профиль</p>
           <h2 className="xk-cabinet-name">{account.player.nickname}</h2>
+          <div className="xk-cabinet-hero-stats">
+            <div>
+              <span>Жизни</span>
+              <strong>{account.player.lives}</strong>
+            </div>
+            <div>
+              <span>Карты</span>
+              <strong>{account.bank.cards.length}</strong>
+            </div>
+            <div>
+              <span>Алмазы</span>
+              <strong>{totalDiamonds}</strong>
+            </div>
+          </div>
           <div className="xk-cabinet-actions">
-            <LandingButton href="/cabinet/bank" tone="success" arrow className="xk-cabinet-cta">
+            <LandingButton
+              href="/cabinet/bank"
+              tone="success"
+              arrow
+              className="xk-cabinet-cta"
+            >
               Открыть XK Bank
             </LandingButton>
-            <LandingButton href="/payment" tone="primary" arrow className="xk-cabinet-cta">
+            <LandingButton
+              href="/payment"
+              tone="primary"
+              arrow
+              className="xk-cabinet-cta"
+            >
               Пополнить аккаунт
             </LandingButton>
           </div>
@@ -89,6 +118,13 @@ export function CabinetPage() {
 
       <section className="page-wrap xk-cabinet-grid">
         <div className="xk-profile-panel">
+          <div className="xk-panel-heading">
+            <div>
+              <p className="xk-overline">Скин</p>
+              <h2>Персонаж</h2>
+            </div>
+            <UserRound size={30} />
+          </div>
           <SkinViewer nickname={account.player.nickname} uuid={skinUuid} />
           <div className="xk-profile-facts">
             <div>
@@ -123,23 +159,39 @@ export function CabinetPage() {
             <Shield size={30} />
           </div>
 
-          <div className="xk-stat-grid">
-            <span>Жизни</span>
-            <strong>{account.player.lives}</strong>
-            <span>Discord</span>
-            <strong>связан</strong>
-            <span>UUID</span>
-            <strong>{account.player.premiumUuid ?? 'offline'}</strong>
-            <span>Алмазы на картах</span>
-            <strong>{totalDiamonds}</strong>
+          <div className="xk-profile-facts">
+            <div>
+              <span>Жизни</span>
+              <strong>{account.player.lives}</strong>
+            </div>
+            <div>
+              <span>Discord</span>
+              <strong>связан</strong>
+            </div>
+            <div>
+              <span>UUID</span>
+              <strong>{account.player.premiumUuid ?? 'offline'}</strong>
+            </div>
+            <div>
+              <span>Алмазы на картах</span>
+              <strong>{totalDiamonds}</strong>
+            </div>
           </div>
 
           <div className="xk-bank-teaser">
             <div>
               <p className="xk-overline">XK Bank</p>
               <h3>{account.bank.cards.length} карт в системе</h3>
+              <p className="xk-muted">
+                {totalDiamonds} алмазов доступно на активных картах.
+              </p>
             </div>
-            <LandingButton href="/cabinet/bank" tone="success" arrow className="xk-cabinet-cta xk-cabinet-cta_small">
+            <LandingButton
+              href="/cabinet/bank"
+              tone="success"
+              arrow
+              className="xk-cabinet-cta xk-cabinet-cta_small"
+            >
               Открыть банк
             </LandingButton>
           </div>
@@ -161,7 +213,9 @@ export function CabinetPage() {
         </div>
       </section>
 
-      {error ? <section className="page-wrap xk-cabinet-error">{error}</section> : null}
+      {error ? (
+        <section className="page-wrap xk-cabinet-error">{error}</section>
+      ) : null}
     </main>
   )
 }

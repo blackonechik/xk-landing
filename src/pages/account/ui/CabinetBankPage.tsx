@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { CreditCard, History, Plus, Send, Trash2 } from 'lucide-react'
+import { CreditCard, Diamond, History, Plus, Send, Trash2 } from 'lucide-react'
 import { useNavigate } from '@tanstack/react-router'
 import {
   closeCard,
@@ -69,17 +69,25 @@ export function CabinetBankPage() {
 
   const totalDiamonds = useMemo(
     () =>
-      account?.bank.cards.reduce((sum, card) => sum + card.balanceDiamonds, 0) ?? 0,
+      account?.bank.cards.reduce(
+        (sum, card) => sum + card.balanceDiamonds,
+        0,
+      ) ?? 0,
     [account],
   )
 
   if (!account) {
     return (
       <main className="xk-bank-page">
-        <section className="page-wrap xk-bank-loading">Загружаем XK Bank...</section>
+        <section className="page-wrap xk-bank-loading">
+          Загружаем XK Bank...
+        </section>
       </main>
     )
   }
+
+  const selectedDesign =
+    cardDesigns.find((design) => design.id === cardDesign) ?? cardDesigns[0]
 
   return (
     <main className="xk-bank-page">
@@ -93,7 +101,12 @@ export function CabinetBankPage() {
               операций.
             </p>
             <div className="xk-bank-actions">
-              <LandingButton href="/cabinet" tone="primary" arrow className="xk-cabinet-cta xk-cabinet-cta_small">
+              <LandingButton
+                href="/cabinet"
+                tone="primary"
+                arrow
+                className="xk-cabinet-cta xk-cabinet-cta_small"
+              >
                 Назад в профиль
               </LandingButton>
             </div>
@@ -113,22 +126,37 @@ export function CabinetBankPage() {
 
         <div className="xk-bank-summary">
           <div className="xk-bank-summary__item">
-            <span>Баланс на картах</span>
-            <strong>{totalDiamonds} алмазов</strong>
+            <Diamond size={22} />
+            <div>
+              <span>Баланс на картах</span>
+              <strong>{totalDiamonds} алмазов</strong>
+            </div>
           </div>
           <div className="xk-bank-summary__item">
-            <span>Карты</span>
-            <strong>
-              {account.bank.cards.length}/{account.bank.limits.maxCardsPerPlayer}
-            </strong>
+            <CreditCard size={22} />
+            <div>
+              <span>Карты</span>
+              <strong>
+                {account.bank.cards.length}/
+                {account.bank.limits.maxCardsPerPlayer}
+              </strong>
+            </div>
           </div>
           <div className="xk-bank-summary__item">
-            <span>Перевод за раз</span>
-            <strong>{account.bank.limits.maxTransferDiamonds} алм.</strong>
+            <Send size={22} />
+            <div>
+              <span>Перевод за раз</span>
+              <strong>{account.bank.limits.maxTransferDiamonds} алм.</strong>
+            </div>
           </div>
           <div className="xk-bank-summary__item">
-            <span>Дневной лимит</span>
-            <strong>{account.bank.limits.dailyTransferDiamondsLimit} алм.</strong>
+            <History size={22} />
+            <div>
+              <span>Дневной лимит</span>
+              <strong>
+                {account.bank.limits.dailyTransferDiamondsLimit} алм.
+              </strong>
+            </div>
           </div>
         </div>
 
@@ -144,6 +172,16 @@ export function CabinetBankPage() {
               </div>
 
               <div className="xk-card-create">
+                <div
+                  className={`xk-bank-card xk-bank-card_preview xk-bank-card_${cardDesign}`}
+                >
+                  <div>
+                    <CreditCard size={18} />
+                    <span>{cardTitle || 'Алмазная карта'}</span>
+                  </div>
+                  <strong>4408 **** **** ****</strong>
+                  <p>{selectedDesign.title}</p>
+                </div>
                 <input
                   value={cardTitle}
                   onChange={(event) => setCardTitle(event.target.value)}
@@ -174,7 +212,8 @@ export function CabinetBankPage() {
                           ? createError.message
                           : 'CARD_CREATE_FAILED'
                       setError(
-                        errorMessages[message] ?? 'Не получилось создать карту.',
+                        errorMessages[message] ??
+                          'Не получилось создать карту.',
                       )
                     }
                   }}
@@ -271,7 +310,8 @@ export function CabinetBankPage() {
                         ? transferError.message
                         : 'TRANSFER_FAILED'
                     setError(
-                      errorMessages[message] ?? 'Не получилось выполнить перевод.',
+                      errorMessages[message] ??
+                        'Не получилось выполнить перевод.',
                     )
                   }
                 }}

@@ -2939,14 +2939,34 @@ a {
 }
 
 .xk-profile-panel,
+.xk-profile-summary-panel,
 .xk-bank-panel,
 .xk-stat-panel,
 .xk-history-panel {
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 8px;
-  background: rgba(10, 15, 11, 0.82);
-  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.42);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.075), transparent 34%),
+    rgba(10, 15, 11, 0.8);
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(18px);
+}
+
+.xk-profile-panel::before,
+.xk-profile-summary-panel::before,
+.xk-bank-panel::before,
+.xk-stat-panel::before,
+.xk-history-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: linear-gradient(90deg, #d8ff66, rgba(88, 101, 242, 0.55));
+  opacity: 0.82;
 }
 
 .xk-cabinet-tags span {
@@ -3046,18 +3066,36 @@ a {
 .xk-cabinet-page {
   padding-bottom: 76px;
   background:
-    linear-gradient(180deg, rgba(88, 88, 88, 0.82), rgba(28, 28, 28, 0.96)),
-    radial-gradient(circle at top, rgba(255, 255, 255, 0.1), transparent 42%),
-    #2c2c2c;
+    linear-gradient(180deg, rgba(33, 39, 34, 0.9), rgba(11, 13, 12, 0.98)),
+    radial-gradient(
+      circle at 20% 0%,
+      rgba(216, 255, 102, 0.14),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at 85% 10%,
+      rgba(88, 101, 242, 0.12),
+      transparent 34%
+    ),
+    #101310;
   background-attachment: fixed;
 }
 
 .xk-bank-page {
   padding-bottom: 90px;
   background:
-    linear-gradient(180deg, rgba(12, 16, 20, 0.76), rgba(6, 8, 12, 0.96)),
-    radial-gradient(circle at top, rgba(216, 255, 102, 0.08), transparent 42%),
-    #0d1117;
+    linear-gradient(180deg, rgba(9, 13, 16, 0.82), rgba(4, 6, 8, 0.98)),
+    radial-gradient(
+      circle at 20% 0%,
+      rgba(216, 255, 102, 0.13),
+      transparent 36%
+    ),
+    radial-gradient(
+      circle at 88% 8%,
+      rgba(48, 197, 204, 0.12),
+      transparent 35%
+    ),
+    #070a0d;
   background-attachment: fixed;
 }
 
@@ -3105,7 +3143,35 @@ a {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-top: 22px;
+  margin-top: 18px;
+}
+
+.xk-cabinet-hero-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(92px, max-content));
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.xk-cabinet-hero-stats div {
+  min-width: 104px;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.22);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.xk-cabinet-hero-stats span {
+  display: block;
+  margin-bottom: 5px;
+  color: #aab59f;
+  font-size: 12px;
+}
+
+.xk-cabinet-hero-stats strong {
+  color: #f6ffd5;
+  font-size: 20px;
 }
 
 .xk-cabinet-tags {
@@ -3124,8 +3190,9 @@ a {
 
 .xk-cabinet-grid {
   display: grid;
-  grid-template-columns: minmax(280px, 0.9fr) minmax(360px, 1.1fr);
+  grid-template-columns: minmax(320px, 0.92fr) minmax(360px, 1.08fr);
   gap: 18px;
+  align-items: start;
 }
 
 .xk-bank-shell {
@@ -3140,10 +3207,22 @@ a {
 }
 
 .xk-bank-summary__item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 104px;
   padding: 16px;
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.06);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent),
+    rgba(255, 255, 255, 0.055);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.xk-bank-summary__item > svg {
+  flex: 0 0 auto;
+  color: #d8ff66;
 }
 
 .xk-bank-summary__item span {
@@ -3188,14 +3267,22 @@ a {
 }
 
 .xk-skin-viewer {
-  min-height: 430px;
+  min-height: 456px;
   display: grid;
   place-items: center;
   overflow: hidden;
   border-radius: 8px;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0)),
-    rgba(0, 0, 0, 0.28);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.1), transparent 34%),
+    linear-gradient(
+      135deg,
+      rgba(216, 255, 102, 0.08),
+      rgba(88, 101, 242, 0.08)
+    ),
+    rgba(0, 0, 0, 0.3);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    inset 0 -34px 80px rgba(0, 0, 0, 0.32);
 }
 
 .xk-skin-viewer canvas {
@@ -3210,12 +3297,19 @@ a {
   gap: 12px;
 }
 
+.xk-profile-summary-panel .xk-profile-facts {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .xk-profile-facts div,
 .xk-stat-grid,
 .xk-transfer-row {
   padding: 14px;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.07);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.055), transparent),
+    rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .xk-profile-facts span,
@@ -3232,6 +3326,7 @@ a {
 .xk-transfer-row strong {
   font-family: 'Minecraft Five', sans-serif;
   font-size: 15px;
+  overflow-wrap: anywhere;
 }
 
 .xk-panel-heading {
@@ -3240,6 +3335,13 @@ a {
   justify-content: space-between;
   gap: 14px;
   color: #eaffae;
+  position: relative;
+  z-index: 1;
+}
+
+.xk-panel-heading svg {
+  color: #d8ff66;
+  filter: drop-shadow(0 8px 18px rgba(216, 255, 102, 0.16));
 }
 
 .xk-panel-heading h2 {
@@ -3253,7 +3355,13 @@ a {
   gap: 18px;
   padding: 18px;
   border-radius: 8px;
-  background: rgba(216, 255, 102, 0.08);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(216, 255, 102, 0.13),
+      rgba(88, 101, 242, 0.08)
+    ),
+    rgba(216, 255, 102, 0.06);
   border: 1px solid rgba(216, 255, 102, 0.18);
 }
 
@@ -3276,6 +3384,12 @@ a {
 .xk-card-create {
   grid-template-columns: 1fr 48px;
   margin: 16px 0;
+}
+
+.xk-bank-card_preview {
+  grid-column: 1 / -1;
+  min-height: 132px;
+  margin-bottom: 2px;
 }
 
 .xk-card-create input,
@@ -3333,12 +3447,13 @@ a {
 .xk-bank-cards {
   display: grid;
   gap: 12px;
-  margin-bottom: 18px;
 }
 
 .xk-bank-card {
   --card-accent: rgba(216, 255, 102, 0.28);
   --card-accent-2: rgba(88, 101, 242, 0.24);
+  position: relative;
+  overflow: hidden;
   min-height: 150px;
   display: grid;
   align-content: space-between;
@@ -3346,9 +3461,27 @@ a {
   padding: 18px;
   border-radius: 8px;
   background:
-    linear-gradient(135deg, var(--card-accent), var(--card-accent-2)),
-    #11180e;
+    linear-gradient(135deg, var(--card-accent), var(--card-accent-2)), #11180e;
   border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 18px 34px rgba(0, 0, 0, 0.28);
+}
+
+.xk-bank-card::after {
+  content: '';
+  position: absolute;
+  right: -32px;
+  top: -32px;
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.11);
+}
+
+.xk-bank-card > * {
+  position: relative;
+  z-index: 1;
 }
 
 .xk-bank-card_creeper {
@@ -3403,6 +3536,7 @@ a {
   font-family: 'Minecraft Five', sans-serif;
   font-size: clamp(17px, 2vw, 24px);
   letter-spacing: 0;
+  text-shadow: 0 3px 0 rgba(0, 0, 0, 0.28);
 }
 
 .xk-bank-card p {
@@ -3420,6 +3554,11 @@ a {
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 6px;
   box-shadow: none;
+}
+
+.xk-bank-card__close:hover {
+  background: rgba(255, 113, 113, 0.24);
+  border-color: rgba(255, 113, 113, 0.42);
 }
 
 .xk-transfer-form {
@@ -3509,6 +3648,11 @@ a {
   }
 
   .xk-bank-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .xk-profile-summary-panel .xk-profile-facts,
+  .xk-cabinet-hero-stats {
     grid-template-columns: 1fr;
   }
 }
