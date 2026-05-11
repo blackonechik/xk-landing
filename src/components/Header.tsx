@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import AnimatedLink from './AnimatedLink'
 
 export default function Header() {
   const [isHidden, setIsHidden] = useState(false)
@@ -25,12 +26,12 @@ export default function Header() {
   return (
     <header className={['xk-site-header', isHidden ? 'is-hidden' : ''].filter(Boolean).join(' ')}>
       <div className="page-wrap xk-site-header__inner">
-        <a className="xk-site-header__brand" href="/">
+        <AnimatedLink className="xk-site-header__brand" to="/">
           XK HARDCORE
-        </a>
+        </AnimatedLink>
         <nav className="xk-site-header__nav" aria-label="Основная навигация">
-          <a href="/payment">Оплата</a>
-          <a href="/rules">Правила</a>
+          <AnimatedLink to="/payment">Оплата</AnimatedLink>
+          <AnimatedLink to="/rules">Правила</AnimatedLink>
         </nav>
       </div>
     </header>

@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { createPayment } from '../model/api'
 import { paymentProducts } from '../model/products'
 import type { PaymentProductId } from '../model/products'
+import AnimatedLink from '@/components/AnimatedLink'
 import { LandingButton } from '@/shared/ui/landing-button'
 import { LandingCard } from '@/shared/ui/landing-card'
 import { LandingSection } from '@/shared/ui/landing-section'
@@ -217,12 +218,16 @@ export function PaymentPage() {
                   required
                 />
                 <span>
-                  Я принимаю условия <a href="/offer">публичной оферты</a>, даю{' '}
-                  <a href="/personal-data-consent">
+                  Я принимаю условия{' '}
+                  <AnimatedLink to="/offer">публичной оферты</AnimatedLink>, даю{' '}
+                  <AnimatedLink to="/personal-data-consent">
                     согласие на обработку персональных данных
-                  </a>{' '}
+                  </AnimatedLink>{' '}
                   и ознакомлен с{' '}
-                  <a href="/privacy">политикой конфиденциальности</a>.
+                  <AnimatedLink to="/privacy">
+                    политикой конфиденциальности
+                  </AnimatedLink>
+                  .
                 </span>
               </label>
 

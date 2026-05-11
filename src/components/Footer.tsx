@@ -1,3 +1,5 @@
+import AnimatedLink from './AnimatedLink'
+
 export default function Footer() {
   const year = new Date().getFullYear()
 
@@ -13,11 +15,13 @@ export default function Footer() {
             </p>
           </div>
           <nav className="mc-footer-links" aria-label="Документы и оплата">
-            <a href="/payment">Оплата</a>
-            <a href="/rules">Правила</a>
-            <a href="/offer">Оферта</a>
-            <a href="/privacy">Политика конфиденциальности</a>
-            <a href="/personal-data-consent">Согласие на обработку ПДн</a>
+            <AnimatedLink to="/payment">Оплата</AnimatedLink>
+            <AnimatedLink to="/rules">Правила</AnimatedLink>
+            <AnimatedLink to="/offer">Оферта</AnimatedLink>
+            <AnimatedLink to="/privacy">Политика конфиденциальности</AnimatedLink>
+            <AnimatedLink to="/personal-data-consent">
+              Согласие на обработку ПДн
+            </AnimatedLink>
           </nav>
         </div>
         <p className="mc-footer-copy">

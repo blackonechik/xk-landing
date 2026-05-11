@@ -1,5 +1,6 @@
 import { motion } from 'motion/react'
-import type { ComponentProps, ReactNode } from 'react'
+import { usePageTransitionNavigation } from '@/components/PageTransition'
+import type { ComponentProps, MouseEvent, ReactNode } from 'react'
 
 type LandingButtonTone = 'default' | 'success' | 'primary'
 
@@ -17,6 +18,7 @@ type LandingButtonProps =
   | (SharedLandingButtonProps & ComponentProps<typeof motion.button> & { as: 'button' })
 
 export function LandingButton(props: LandingButtonProps) {
+  const transitionNavigation = usePageTransitionNavigation()
   const {
     children,
     tone = 'default',
@@ -62,10 +64,32 @@ export function LandingButton(props: LandingButtonProps) {
     )
   }
 
-  const { as: _as, children: _children, tone: _tone, contentClassName: _contentClassName, beforeContent: _beforeContent, arrow: _arrow, arrowTone: _arrowTone, className: _className, ...anchorProps } = props
+  const { as: _as, children: _children, tone: _tone, contentClassName: _contentClassName, beforeContent: _beforeContent, arrow: _arrow, arrowTone: _arrowTone, className: _className, onClick, ...anchorProps } = props
+  const href = typeof anchorProps.href === 'string' ? anchorProps.href : undefined
+  const isInternalRoute = href?.startsWith('/') === true
+
+  function handleAnchorClick(event: MouseEvent<HTMLAnchorElement>) {
+    onClick?.(event)
+
+    if (
+      event.defaultPrevented ||
+      !isInternalRoute ||
+      !transitionNavigation ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey ||
+      anchorProps.target
+    ) {
+      return
+    }
+
+    event.preventDefault()
+    transitionNavigation.navigateWithTransition({ to: href })
+  }
 
   return (
-    <motion.a className={buttonClassName} {...anchorProps}>
+    <motion.a className={buttonClassName} onClick={handleAnchorClick} {...anchorProps}>
       {content}
     </motion.a>
   )
