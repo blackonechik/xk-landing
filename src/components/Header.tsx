@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import AnimatedLink from './AnimatedLink'
+import { LandingButton } from '@/shared/ui/landing-button'
 
 export default function Header() {
   const [isHidden, setIsHidden] = useState(false)
@@ -34,11 +35,19 @@ export default function Header() {
           XK HARDCORE
         </AnimatedLink>
         <nav className="xk-site-header__nav" aria-label="Основная навигация">
-          <AnimatedLink to="/payment">Оплата</AnimatedLink>
-          <AnimatedLink to="/rules">Правила</AnimatedLink>
-          <AnimatedLink className="xk-site-header__login" to="/login">
-            Войти
+          <AnimatedLink className="xk-site-header__nav-link" to="/payment">
+            Оплата
           </AnimatedLink>
+          <AnimatedLink className="xk-site-header__nav-link" to="/rules">
+            Правила
+          </AnimatedLink>
+          <LandingButton
+            href="/login"
+            tone="success"
+            size="small"
+          >
+            Войти
+          </LandingButton>
         </nav>
       </div>
     </header>

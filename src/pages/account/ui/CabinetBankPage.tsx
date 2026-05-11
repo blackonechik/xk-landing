@@ -93,7 +93,7 @@ export function CabinetBankPage() {
               операций.
             </p>
             <div className="xk-bank-actions">
-              <LandingButton href="/cabinet" tone="primary" arrow>
+              <LandingButton href="/cabinet" tone="primary" arrow className="xk-cabinet-cta xk-cabinet-cta_small">
                 Назад в профиль
               </LandingButton>
             </div>

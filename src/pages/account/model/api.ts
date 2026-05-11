@@ -55,6 +55,10 @@ export function getDiscordLoginUrl() {
   return `${apiBaseUrl}/api/auth/discord`
 }
 
+export function getSkinProxyUrl(identifier: string) {
+  return `${apiBaseUrl}/api/account/skins/${encodeURIComponent(identifier)}`
+}
+
 export async function fetchAccount() {
   const response = await fetch(`${apiBaseUrl}/api/account/me`, {
     credentials: 'include',

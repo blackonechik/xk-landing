@@ -1,13 +1,16 @@
 import { motion } from 'motion/react'
 import { usePageTransitionNavigation } from '@/components/PageTransition'
-import type { ComponentProps, MouseEvent, ReactNode } from 'react'
+import type { CSSProperties, ComponentProps, MouseEvent, ReactNode } from 'react'
 
 type LandingButtonTone = 'default' | 'success' | 'primary'
+type LandingButtonSize = 'small' | 'base' | 'large'
 
 type SharedLandingButtonProps = {
   children: ReactNode
   tone?: LandingButtonTone
+  size?: LandingButtonSize
   contentClassName?: string
+  contentStyle?: CSSProperties
   beforeContent?: ReactNode
   arrow?: boolean
   arrowTone?: LandingButtonTone
@@ -22,14 +25,17 @@ export function LandingButton(props: LandingButtonProps) {
   const {
     children,
     tone = 'default',
+    size = 'base',
     className,
     contentClassName,
+    contentStyle,
     beforeContent,
     arrow = false,
     arrowTone = tone,
   } = props
   const toneClass = tone === 'default' ? '' : `tycoon-landing-btn_style-${tone}`
-  const buttonClassName = ['tycoon-landing-btn', toneClass, className].filter(Boolean).join(' ')
+  const sizeClass = `tycoon-landing-btn_size-${size}`
+  const buttonClassName = ['tycoon-landing-btn', toneClass, sizeClass, className].filter(Boolean).join(' ')
   const content = (
     <>
       {beforeContent}
@@ -37,6 +43,7 @@ export function LandingButton(props: LandingButtonProps) {
         className={['tycoon-landing-btn__content', contentClassName]
           .filter(Boolean)
           .join(' ')}
+        style={contentStyle}
       >
         {children}
         {arrow ? (
@@ -55,7 +62,7 @@ export function LandingButton(props: LandingButtonProps) {
   )
 
   if (props.as === 'button') {
-    const { as: _as, children: _children, tone: _tone, contentClassName: _contentClassName, beforeContent: _beforeContent, arrow: _arrow, arrowTone: _arrowTone, className: _className, ...buttonProps } = props
+    const { as: _as, children: _children, tone: _tone, size: _size, contentClassName: _contentClassName, contentStyle: _contentStyle, beforeContent: _beforeContent, arrow: _arrow, arrowTone: _arrowTone, className: _className, ...buttonProps } = props
 
     return (
       <motion.button className={buttonClassName} {...buttonProps}>
@@ -64,7 +71,7 @@ export function LandingButton(props: LandingButtonProps) {
     )
   }
 
-  const { as: _as, children: _children, tone: _tone, contentClassName: _contentClassName, beforeContent: _beforeContent, arrow: _arrow, arrowTone: _arrowTone, className: _className, onClick, ...anchorProps } = props
+  const { as: _as, children: _children, tone: _tone, size: _size, contentClassName: _contentClassName, contentStyle: _contentStyle, beforeContent: _beforeContent, arrow: _arrow, arrowTone: _arrowTone, className: _className, onClick, ...anchorProps } = props
   const href = typeof anchorProps.href === 'string' ? anchorProps.href : undefined
   const isInternalRoute = href?.startsWith('/') === true
 

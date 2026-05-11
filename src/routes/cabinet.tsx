@@ -5,7 +5,7 @@ export const Route = createFileRoute('/cabinet')({
   head: () => ({
     meta: [
       {
-        title: 'Личный кабинет | XK HARDCORE',
+        title: 'Профиль | XK HARDCORE',
       },
     ],
   }),

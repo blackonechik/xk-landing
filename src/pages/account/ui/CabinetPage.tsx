@@ -63,16 +63,12 @@ export function CabinetPage() {
       <section className="page-wrap xk-cabinet-hero">
         <div className="xk-cabinet-copy">
           <p className="xk-overline">Игровой профиль</p>
-          <h1>{account.player.nickname}</h1>
-          <p className="xk-cabinet-lead">
-            Это главная страница профиля. Здесь видно персонажа, статус аккаунта и
-            быстрый переход в отдельный XK Bank.
-          </p>
+          <h2 className="xk-cabinet-name">{account.player.nickname}</h2>
           <div className="xk-cabinet-actions">
-            <LandingButton href="/cabinet/bank" tone="success" arrow>
+            <LandingButton href="/cabinet/bank" tone="success" arrow className="xk-cabinet-cta">
               Открыть XK Bank
             </LandingButton>
-            <LandingButton href="/payment" tone="primary" arrow>
+            <LandingButton href="/payment" tone="primary" arrow className="xk-cabinet-cta">
               Пополнить аккаунт
             </LandingButton>
           </div>
@@ -142,11 +138,8 @@ export function CabinetPage() {
             <div>
               <p className="xk-overline">XK Bank</p>
               <h3>{account.bank.cards.length} карт в системе</h3>
-              <p className="xk-muted">
-                Переводы, выпуск карт и история вынесены на отдельную страницу.
-              </p>
             </div>
-            <LandingButton href="/cabinet/bank" tone="success" arrow>
+            <LandingButton href="/cabinet/bank" tone="success" arrow className="xk-cabinet-cta xk-cabinet-cta_small">
               Открыть банк
             </LandingButton>
           </div>

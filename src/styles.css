@@ -164,14 +164,14 @@ a {
   font-size: 14px;
 }
 
-.xk-site-header__nav a {
+.xk-site-header__nav-link {
   position: relative;
   padding: 6px 0;
   color: #ffe895;
   text-shadow: 0 3px 0 rgba(0, 0, 0, 0.58);
 }
 
-.xk-site-header__nav a::after {
+.xk-site-header__nav-link::after {
   content: '';
   position: absolute;
   left: 0;
@@ -184,30 +184,13 @@ a {
   transition: transform 0.18s ease;
 }
 
-.xk-site-header__nav a:hover {
+.xk-site-header__nav-link:hover {
   color: #ffffff;
 }
 
-.xk-site-header__nav a:hover::after {
+.xk-site-header__nav-link:hover::after {
   transform: scaleX(1);
   transform-origin: left;
-}
-
-.xk-site-header__login {
-  min-height: 38px;
-  display: inline-flex;
-  align-items: center;
-  padding: 8px 14px !important;
-  color: #10150e !important;
-  background: linear-gradient(180deg, #d8ff66, #7ed321);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 6px;
-  box-shadow: 0 5px 0 rgba(22, 53, 13, 0.75);
-  text-shadow: none !important;
-}
-
-.xk-site-header__login::after {
-  display: none;
 }
 
 .xk-page-transition {
@@ -472,7 +455,7 @@ a {
 }
 
 .page-wrap {
-  width: min(1100px, calc(100% - 2rem));
+  width: min(1280px, calc(100% - 2rem));
   margin-inline: auto;
 }
 
@@ -550,14 +533,40 @@ a {
   --color-light: #6c64a2;
   --color-shadow: #2b2c58;
   --color-text: #fff;
-  --stroke: calc(var(--g-10) * 0.8);
+  --stroke: calc(var(--g-10, 10px) * 0.8);
+  --btn-wrapper-pad: calc(var(--g-10, 10px) * 1.5);
+  --btn-pad-y: calc(var(--g-20, 20px) * 0.75);
+  --btn-pad-x: calc(var(--g-50, 50px) * 0.75);
+  --btn-font-size: calc(var(--size-32, 32px) * 0.75);
   display: inline-block;
   position: relative;
-  padding: calc(var(--g-10) * 1.5);
+  padding: var(--btn-wrapper-pad);
   transition: all 0.2s var(--timing-function_default);
   border: 0;
   background: transparent;
   cursor: pointer;
+}
+
+.tycoon-landing-btn_size-small {
+  --stroke: calc(var(--g-10, 10px) * 0.55);
+  --btn-wrapper-pad: calc(var(--g-10, 10px) * 0.65);
+  --btn-pad-y: calc(var(--g-20, 20px) * 0.34);
+  --btn-pad-x: calc(var(--g-50, 50px) * 0.34);
+  --btn-font-size: calc(var(--size-32, 32px) * 0.48);
+}
+
+.tycoon-landing-btn_size-base {
+  --btn-wrapper-pad: calc(var(--g-10, 10px) * 1.5);
+  --btn-pad-y: calc(var(--g-20, 20px) * 0.75);
+  --btn-pad-x: calc(var(--g-50, 50px) * 0.75);
+  --btn-font-size: calc(var(--size-32, 32px) * 0.75);
+}
+
+.tycoon-landing-btn_size-large {
+  --btn-wrapper-pad: calc(var(--g-10, 10px) * 1.9);
+  --btn-pad-y: calc(var(--g-20, 20px) * 0.95);
+  --btn-pad-x: calc(var(--g-50, 50px) * 0.95);
+  --btn-font-size: var(--size-40, 40px);
 }
 
 .tycoon-landing-btn::before {
@@ -606,15 +615,15 @@ a {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: calc(var(--g-20) * 0.75) calc(var(--g-50) * 0.75);
+  padding: var(--btn-pad-y) var(--btn-pad-x);
   white-space: nowrap;
   background: linear-gradient(
     to bottom,
     var(--color-gradient-1),
     var(--color-gradient-2)
   );
-  font-family: 'Minecraft Ten', sans-serif !important;
-  font-size: calc(var(--size-32) * 0.75);
+  font-family: 'Minecraft Rus', sans-serif !important;
+  font-size: var(--btn-font-size);
   color: var(--color-text);
   box-shadow:
     0 calc(var(--stroke) * -1) var(--color-light),
@@ -2877,6 +2886,12 @@ a {
       center / cover fixed;
 }
 
+.xk-login-page {
+  background:
+    linear-gradient(180deg, rgba(5, 9, 6, 0.4), rgba(5, 9, 6, 0.94)),
+    url('/assets/img/general/login.webp') center / cover fixed;
+}
+
 .xk-login-page,
 .xk-cabinet-page,
 .xk-bank-page {
@@ -2885,32 +2900,44 @@ a {
 
 .xk-login-shell {
   min-height: calc(100svh - 112px);
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(320px, 460px);
-  align-items: center;
-  gap: clamp(28px, 6vw, 80px);
-  padding-bottom: 70px;
+  display: flex;
 }
 
-.xk-login-copy h1,
-.xk-cabinet-hero h1 {
-  margin: 10px 0 18px;
-  font-family: 'Minecraft Ten', sans-serif;
-  font-size: clamp(48px, 8vw, 116px);
-  line-height: 0.92;
-  letter-spacing: 0;
-  text-shadow: 0 8px 0 rgba(0, 0, 0, 0.45);
+.xk-login-brand {
+  width: fit-content;
+  margin-top: 4px;
+  font-size: clamp(16px, 2.4vw, 22px);
+  font-weight: 700;
+  color: #fff;
 }
 
-.xk-login-copy p:not(.xk-overline) {
-  max-width: 680px;
+.xk-login-card {
+  width: min(560px, 100%);
+  margin: auto 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(24px, 4vw, 38px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  background: rgba(10, 15, 11, 0.82);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(18px);
+  text-align: center;
+}
+
+.xk-login-card__title {
+  font-size: 40px;
+}
+
+.xk-login-card p {
+  max-width: 34ch;
+  margin: 0 auto 22px;
   color: #f8ffd8;
-  font-family: 'Minecraft Five', sans-serif;
-  font-size: clamp(15px, 2vw, 19px);
+  font-size: clamp(15px, 1.8vw, 18px);
   line-height: 1.6;
 }
 
-.xk-login-panel,
 .xk-profile-panel,
 .xk-bank-panel,
 .xk-stat-panel,
@@ -2922,11 +2949,6 @@ a {
   backdrop-filter: blur(18px);
 }
 
-.xk-login-panel {
-  padding: clamp(24px, 4vw, 38px);
-}
-
-.xk-login-panel__badge,
 .xk-cabinet-tags span {
   width: fit-content;
   display: inline-flex;
@@ -2941,7 +2963,6 @@ a {
   font-size: 12px;
 }
 
-.xk-login-panel h2,
 .xk-panel-heading h2 {
   margin: 18px 0 10px;
   font-family: 'Minecraft Five', sans-serif;
@@ -2949,7 +2970,6 @@ a {
   letter-spacing: 0;
 }
 
-.xk-login-panel p,
 .xk-muted {
   color: #cdd6c3;
   font-family: 'Minecraft Five', sans-serif;
@@ -2970,12 +2990,15 @@ a {
   cursor: pointer;
 }
 
-.xk-discord-button {
-  width: 100%;
-  margin-top: 22px;
-  color: #fff;
-  background: #5865f2;
-  box-shadow: 0 6px 0 #2630a8;
+.xk-cabinet-cta.tycoon-landing-btn {
+  min-height: 38px;
+  padding-inline: 12px;
+  transform: translateY(0);
+}
+
+.xk-cabinet-cta_small.tycoon-landing-btn {
+  min-height: 36px;
+  padding-inline: 12px;
 }
 
 .xk-login-error {
@@ -2983,6 +3006,10 @@ a {
   padding: 12px;
   border: 1px solid rgba(255, 113, 113, 0.45);
   border-radius: 6px;
+  color: #ffe2e2;
+  background: rgba(111, 22, 22, 0.32);
+  font-family: 'Minecraft Five', sans-serif;
+}
 
 .xk-login-status,
 .xk-cabinet-error {
@@ -2999,16 +3026,45 @@ a {
   border-color: rgba(255, 113, 113, 0.35);
   background: rgba(111, 22, 22, 0.32);
 }
+
+.xk-login-terms {
+  display: inline-block;
+  margin-top: 16px;
+  color: rgba(248, 255, 216, 0.82);
+  font-size: 13px;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
 }
 
-.xk-cabinet-loading {
-  min-height: 70svh;
-  display: grid;
+.xk-login-page {
+  background:
+    linear-gradient(180deg, rgba(5, 9, 6, 0.4), rgba(5, 9, 6, 0.94)),
+    url('/assets/img/general/login.webp') center / cover fixed;
+}
+
+.xk-cabinet-page {
+  padding-bottom: 76px;
+  background:
+    linear-gradient(180deg, rgba(88, 88, 88, 0.82), rgba(28, 28, 28, 0.96)),
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.1), transparent 42%),
+    #2c2c2c;
+  background-attachment: fixed;
+}
 
 .xk-bank-page {
   padding-bottom: 90px;
+  background:
+    linear-gradient(180deg, rgba(12, 16, 20, 0.76), rgba(6, 8, 12, 0.96)),
+    radial-gradient(circle at top, rgba(216, 255, 102, 0.08), transparent 42%),
+    #0d1117;
   background-attachment: fixed;
 }
+
+.xk-cabinet-loading,
+.xk-bank-loading {
+  min-height: 70svh;
+  display: grid;
   place-items: center;
   font-family: 'Minecraft Five', sans-serif;
 }
@@ -3016,21 +3072,10 @@ a {
 .xk-cabinet-hero {
   display: flex;
   align-items: flex-end;
-
-.xk-bank-loading {
-  min-height: 70svh;
-  display: grid;
-  place-items: center;
-  font-family: 'Minecraft Five', sans-serif;
-}
   justify-content: space-between;
   gap: 24px;
   padding-bottom: 30px;
 }
-
-.xk-cabinet-tags {
-  display: flex;
-  flex-wrap: wrap;
 
 .xk-bank-hero {
   display: flex;
@@ -3042,17 +3087,17 @@ a {
 
 .xk-cabinet-copy,
 .xk-bank-hero > div:first-child {
-  max-width: 780px;
+  max-width: 860px;
 }
 
-.xk-cabinet-lead,
-.xk-bank-lead {
-  max-width: 760px;
-  margin: 0;
-  color: #f8ffd8;
-  font-family: 'Minecraft Five', sans-serif;
-  font-size: clamp(15px, 1.9vw, 19px);
-  line-height: 1.65;
+.xk-cabinet-name,
+.xk-bank-page h1 {
+  margin: 10px 0 18px;
+  font-family: 'Minecraft Ten', sans-serif;
+  font-size: clamp(42px, 6vw, 86px);
+  line-height: 0.94;
+  letter-spacing: 0;
+  text-shadow: 0 8px 0 rgba(0, 0, 0, 0.45);
 }
 
 .xk-cabinet-actions,
@@ -3062,6 +3107,10 @@ a {
   gap: 12px;
   margin-top: 22px;
 }
+
+.xk-cabinet-tags {
+  display: flex;
+  flex-wrap: wrap;
   gap: 10px;
 }
 
@@ -3359,7 +3408,7 @@ a {
 .xk-bank-card p {
   margin: 0;
   color: #eaffae;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Minecraft Five', sans-serif;
 }
 
 .xk-bank-card__close {
@@ -3419,6 +3468,11 @@ a {
     align-items: flex-start;
     flex-direction: column;
   }
+
+  .xk-cabinet-name,
+  .xk-bank-page h1 {
+    font-size: clamp(34px, 10vw, 64px);
+  }
 }
 
 @media (max-width: 620px) {
@@ -3431,15 +3485,23 @@ a {
     font-size: 12px;
   }
 
-  .xk-site-header__login {
-    min-height: 34px;
-    padding-inline: 10px !important;
-  }
-
   .xk-login-page,
   .xk-cabinet-page,
   .xk-bank-page {
     padding-top: 96px;
+  }
+
+  .xk-login-shell {
+    gap: 20px;
+  }
+
+  .xk-login-card {
+    width: 100%;
+  }
+
+  .xk-cabinet-actions .tycoon-landing-btn,
+  .xk-bank-actions .tycoon-landing-btn {
+    width: 100%;
   }
 
   .xk-transfer-form {
