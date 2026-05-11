@@ -90,10 +90,13 @@ export async function createCard(payload: { title: string; design: string }) {
 }
 
 export async function closeCard(cardId: string) {
-  const response = await fetch(`${apiBaseUrl}/api/account/bank/cards/${cardId}`, {
-    method: 'DELETE',
-    credentials: 'include',
-  })
+  const response = await fetch(
+    `${apiBaseUrl}/api/account/bank/cards/${cardId}`,
+    {
+      method: 'DELETE',
+      credentials: 'include',
+    },
+  )
 
   if (!response.ok) {
     const body = (await response.json().catch(() => ({}))) as { error?: string }
@@ -103,7 +106,8 @@ export async function closeCard(cardId: string) {
 
 export async function transferDiamonds(payload: {
   fromCardId: string
-  toCardNumber: string
+  toCardNumber?: string
+  toOwnerNickname?: string
   amountDiamonds: string
   comment: string
 }) {

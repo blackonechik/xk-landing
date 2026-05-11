@@ -1711,14 +1711,14 @@ a {
 
 .xk-payment-wrapper {
   width: min(1440px, calc(100% - 2rem));
-  padding-top: 56px;
-  padding-bottom: 110px;
+  padding-top: 34px;
+  padding-bottom: 74px;
 }
 
 .xk-payment-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
-  gap: 28px;
+  gap: 20px;
   align-items: start;
 }
 
@@ -1728,13 +1728,13 @@ a {
 }
 
 .xk-payment-card {
-  padding: 18px;
+  padding: 12px;
 }
 
 .xk-payment-card__body,
 .xk-payment-summary {
   display: grid;
-  gap: 18px;
+  gap: 14px;
   margin-top: 0;
   background: transparent;
 }
@@ -1747,7 +1747,7 @@ a {
 }
 
 .xk-payment-form {
-  gap: 18px;
+  gap: 14px;
 }
 
 .xk-payment-contact-grid {
@@ -1772,7 +1772,7 @@ a {
 .xk-payment-field input {
   width: 100%;
   border: 4px solid #080300;
-  padding: 11px 14px;
+  padding: 8px 12px;
   background: #210b03;
   box-shadow:
     inset 0 5px 0 rgba(255, 255, 255, 0.08),
@@ -1785,7 +1785,7 @@ a {
 .xk-payment-field select {
   width: 100%;
   border: 4px solid #080300;
-  padding: 11px 14px;
+  padding: 8px 12px;
   background: #210b03;
   box-shadow:
     inset 0 5px 0 rgba(255, 255, 255, 0.08),
@@ -1811,8 +1811,8 @@ a {
 .xk-payment-product {
   display: grid;
   gap: 8px;
-  min-height: 165px;
-  padding: 14px;
+  min-height: 132px;
+  padding: 11px;
   border: 4px solid #080300;
   background:
     linear-gradient(180deg, rgba(255, 137, 68, 0.16), rgba(0, 0, 0, 0.3)),
@@ -1885,7 +1885,7 @@ a {
   grid-template-columns: auto 1fr;
   gap: 12px;
   align-items: start;
-  padding: 14px;
+  padding: 11px;
   border: 4px solid #080300;
   background: rgba(0, 0, 0, 0.18);
   text-align: left;
@@ -1961,7 +1961,7 @@ a {
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  padding-bottom: 14px;
+  padding-bottom: 10px;
   border-bottom: 4px solid rgba(255, 255, 255, 0.12);
 }
 
@@ -3589,11 +3589,123 @@ a {
   gap: 10px;
 }
 
+.xk-bank-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.xk-bank-tabs button,
+.xk-transfer-recipient-mode button {
+  min-height: 44px;
+  border: 4px solid #080300;
+  background: #210b03;
+  color: #ffe895;
+  font-family: 'Minecraft Five', sans-serif;
+  cursor: pointer;
+  box-shadow:
+    inset 0 5px 0 rgba(255, 255, 255, 0.08),
+    0 8px 0 rgba(0, 0, 0, 0.26);
+}
+
+.xk-bank-tabs button.is-active,
+.xk-transfer-recipient-mode button.is-active {
+  background:
+    linear-gradient(180deg, rgba(178, 255, 0, 0.22), rgba(0, 0, 0, 0.18)),
+    #14340c;
+  color: #d8ff66;
+  border-color: #ffe064;
+}
+
+.xk-bank-onboarding {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.75fr) minmax(360px, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.xk-bank-onboarding__copy {
+  padding: clamp(20px, 4vw, 34px);
+  border: 4px solid #080300;
+  background:
+    linear-gradient(180deg, rgba(255, 224, 100, 0.11), rgba(0, 0, 0, 0.28)),
+    #160702;
+  box-shadow:
+    inset 0 5px 0 rgba(255, 255, 255, 0.08),
+    0 10px 0 rgba(0, 0, 0, 0.28);
+}
+
+.xk-bank-onboarding__copy h2 {
+  margin: 10px 0 14px;
+  font-family: 'Minecraft Ten', sans-serif;
+  font-size: clamp(34px, 5vw, 58px);
+  line-height: 0.96;
+  color: #ffe895;
+  text-shadow: 0 6px 0 rgba(0, 0, 0, 0.58);
+}
+
+.xk-bank-onboarding__copy p:not(.xk-overline) {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.68);
+  line-height: 1.55;
+}
+
+.xk-bank-field {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 6px;
+}
+
+.xk-bank-field span {
+  color: #ffe895;
+  text-shadow: 0 4px 0 rgba(0, 0, 0, 0.52);
+}
+
+.xk-bank-field input {
+  min-height: 46px;
+  width: 100%;
+  border: 4px solid #080300;
+  padding: 8px 12px;
+  background: #210b03;
+  color: #fff;
+  font-family: 'Minecraft Five', sans-serif;
+  box-shadow:
+    inset 0 5px 0 rgba(255, 255, 255, 0.08),
+    0 8px 0 rgba(0, 0, 0, 0.22);
+}
+
+.xk-bank-field input:disabled {
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.xk-transfer-recipient-mode {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.xk-transfer-form__wide {
+  grid-column: 1 / -1;
+}
+
+.xk-transfer-form button:disabled,
+.xk-card-create button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  filter: grayscale(0.4);
+}
+
+.xk-bank-grid_single {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 @media (max-width: 920px) {
   .xk-login-shell,
   .xk-cabinet-grid,
   .xk-bank-grid,
-  .xk-bank-summary {
+  .xk-bank-summary,
+  .xk-bank-onboarding {
     grid-template-columns: 1fr;
   }
 
@@ -3648,6 +3760,11 @@ a {
   }
 
   .xk-bank-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .xk-bank-tabs,
+  .xk-transfer-recipient-mode {
     grid-template-columns: 1fr;
   }
 

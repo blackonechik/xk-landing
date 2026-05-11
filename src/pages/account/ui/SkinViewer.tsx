@@ -46,7 +46,7 @@ export function SkinViewer({ nickname, uuid }: SkinViewerProps) {
 
     const controller = new AbortController()
 
-    void fetch(getSkinProxyUrl(uuid ?? nickname), {
+    void fetch(getSkinProxyUrl(nickname), {
       signal: controller.signal,
     })
       .then(async (response) => {
