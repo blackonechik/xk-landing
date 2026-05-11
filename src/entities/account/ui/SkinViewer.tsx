@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { SkinViewer as MinecraftSkinViewer, WalkingAnimation } from 'skinview3d'
-import { getSkinProxyUrl } from '../model/api'
+import { getSkinProxyUrl } from '../api/account-api'
 
 type SkinViewerProps = {
   nickname: string

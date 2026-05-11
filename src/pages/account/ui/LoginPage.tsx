@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { fetchAccount, getDiscordLoginUrl } from '../model/api'
+import { fetchAccount, getDiscordLoginUrl } from '@/entities/account'
 import { LandingButton } from '@/shared/ui/landing-button'
 import AnimatedLink from '@/components/AnimatedLink'
 
@@ -33,10 +33,14 @@ export function LoginPage() {
     <main className="xk-login-page">
       <section className="xk-login-shell page-wrap">
         <div className="xk-login-card">
-          <h1 className='xk-login-card__title'>Авторизация</h1>
+          <h1 className="xk-login-card__title">Авторизация</h1>
           <p>Авторизуйтесь на сайте, чтобы управлять своим аккаунтом.</p>
-          <LandingButton href={getDiscordLoginUrl()} tone="success" size="small">
-            Вход чероез дискорд
+          <LandingButton
+            href={getDiscordLoginUrl()}
+            tone="success"
+            size="small"
+          >
+            Вход через Discord
           </LandingButton>
           <AnimatedLink className="xk-login-terms" to="/offer">
             Условия использования
