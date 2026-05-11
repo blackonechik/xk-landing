@@ -2,6 +2,8 @@ import { CreditCard, Plus } from 'lucide-react'
 import type { AccountPayload } from '@/entities/account'
 import { BankCardPreview, mapBankCardToPreview } from '@/entities/bank'
 import { CreateBankCardForm } from '@/features/bank/create-card'
+import { SectionHeader } from '@/shared/ui/section-header'
+import { SurfaceCard } from '@/shared/ui/surface-card'
 
 type BankCardsViewProps = {
   account: AccountPayload
@@ -19,30 +21,26 @@ export function BankCardsView({
   return (
     <div className="xk-bank-grid xk-bank-grid_single">
       <div className="xk-bank-stack">
-        <section className="xk-bank-panel">
-          <div className="xk-panel-heading">
-            <div>
-              <p className="xk-overline">Новая карта</p>
-              <h2>Выпуск карты</h2>
-            </div>
-            <Plus size={28} />
-          </div>
+        <SurfaceCard as="section" className="xk-bank-panel">
+          <SectionHeader
+            eyebrow="Новая карта"
+            title="Выпуск карты"
+            icon={<Plus size={28} />}
+          />
 
           <CreateBankCardForm
             ownerNickname={account.player.nickname}
             canCreateCard={canCreateCard}
             onCreate={onCreateCard}
           />
-        </section>
+        </SurfaceCard>
 
-        <section className="xk-bank-panel">
-          <div className="xk-panel-heading">
-            <div>
-              <p className="xk-overline">Мои карты</p>
-              <h2>Портфель карт</h2>
-            </div>
-            <CreditCard size={28} />
-          </div>
+        <SurfaceCard as="section" className="xk-bank-panel">
+          <SectionHeader
+            eyebrow="Мои карты"
+            title="Портфель карт"
+            icon={<CreditCard size={28} />}
+          />
 
           <div className="xk-bank-cards">
             {account.bank.cards.map((card) => (
@@ -53,7 +51,7 @@ export function BankCardsView({
               />
             ))}
           </div>
-        </section>
+        </SurfaceCard>
       </div>
     </div>
   )

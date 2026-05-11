@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Send } from 'lucide-react'
 import type { AccountPayload } from '@/entities/account'
+import { TabSwitcher } from '@/shared/ui/tab-switcher'
 
 type TransferDiamondsFormProps = {
   account: AccountPayload
@@ -76,28 +77,23 @@ export function TransferDiamondsForm({
         ))}
       </select>
 
-      <div className="xk-transfer-recipient-mode">
-        <button
-          className={recipientMode === 'nickname' ? 'is-active' : ''}
-          type="button"
-          onClick={() => {
-            setRecipientMode('nickname')
-            setForm((current) => ({ ...current, toCardNumber: '' }))
-          }}
-        >
-          По нику
-        </button>
-        <button
-          className={recipientMode === 'card' ? 'is-active' : ''}
-          type="button"
-          onClick={() => {
-            setRecipientMode('card')
-            setForm((current) => ({ ...current, toOwnerNickname: '' }))
-          }}
-        >
-          По карте
-        </button>
-      </div>
+      <TabSwitcher
+        activeId={recipientMode}
+        items={[
+          { id: 'nickname', label: 'По нику' },
+          { id: 'card', label: 'По карте' },
+        ]}
+        onChange={(nextMode) => {
+          setRecipientMode(nextMode)
+          setForm((current) => ({
+            ...current,
+            toCardNumber: nextMode === 'nickname' ? '' : current.toCardNumber,
+            toOwnerNickname: nextMode === 'card' ? '' : current.toOwnerNickname,
+          }))
+        }}
+        className="xk-transfer-recipient-mode"
+        ariaLabel="Способ перевода"
+      />
 
       {recipientMode === 'nickname' ? (
         <>

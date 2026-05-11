@@ -1,6 +1,7 @@
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import { BankCardPreview, cardDesigns } from '@/entities/bank'
+import { FormField } from '@/shared/ui/form-field'
 
 type CreateBankCardFormProps = {
   ownerNickname: string
@@ -14,7 +15,7 @@ export function CreateBankCardForm({
   ownerNickname,
   canCreateCard,
   showOwnerField = false,
-  submitLabel,
+  submitLabel = 'Выпустить карту',
   onCreate,
 }: CreateBankCardFormProps) {
   const [title, setTitle] = useState('Алмазная карта')
@@ -31,33 +32,35 @@ export function CreateBankCardForm({
       </div>
 
       {showOwnerField ? (
-        <label className="xk-bank-field">
-          <span>Имя владельца</span>
-          <input value={ownerNickname} disabled />
-        </label>
+        <FormField
+          label="Имя владельца"
+          inputProps={{ value: ownerNickname, disabled: true }}
+        />
       ) : null}
 
-      <label className="xk-bank-field">
-        <span>Название карты</span>
-        <input
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
-        />
-      </label>
+      <FormField
+        label="Название карты"
+        inputProps={{
+          value: title,
+          onChange: (event) => setTitle(event.target.value),
+        }}
+      />
 
-      <div className="xk-card-designs" aria-label="Дизайн карты">
-        {cardDesigns.map((cardDesign) => (
-          <button
-            className={design === cardDesign.id ? 'is-active' : ''}
-            key={cardDesign.id}
-            type="button"
-            title={cardDesign.title}
-            onClick={() => setDesign(cardDesign.id)}
-          >
-            {cardDesign.mark}
-          </button>
-        ))}
-      </div>
+      <FormField label="Выбор дизайна">
+        <div className="xk-card-designs" aria-label="Дизайн карты">
+          {cardDesigns.map((cardDesign) => (
+            <button
+              className={design === cardDesign.id ? 'is-active' : ''}
+              key={cardDesign.id}
+              type="button"
+              title={cardDesign.title}
+              onClick={() => setDesign(cardDesign.id)}
+            >
+              {cardDesign.title}
+            </button>
+          ))}
+        </div>
+      </FormField>
 
       <button
         type="button"

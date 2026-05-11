@@ -52,8 +52,6 @@ export function CabinetPage() {
   return (
     <main className="xk-cabinet-page">
       <ProfileHero
-        account={account}
-        totalDiamonds={totalDiamonds}
         onLogout={async () => {
           await logout()
           await navigate({ to: '/' })

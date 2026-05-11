@@ -1,6 +1,10 @@
-import { Shield, Signal, Swords } from 'lucide-react'
+import { Shield } from 'lucide-react'
 import type { AccountPayload } from '@/entities/account'
-import { LandingButton } from '@/shared/ui/landing-button'
+import { formatDate } from '@/shared/lib/date/format-date'
+import { InfoTile } from '@/shared/ui/info-tile'
+import { ActionButtons } from '@/shared/ui/action-buttons'
+import { SectionHeader } from '@/shared/ui/section-header'
+import { SurfaceCard } from '@/shared/ui/surface-card'
 
 type ProfileStatusPanelProps = {
   account: AccountPayload
@@ -12,33 +16,35 @@ export function ProfileStatusPanel({
   totalDiamonds,
 }: ProfileStatusPanelProps) {
   return (
-    <div className="xk-profile-summary-panel">
-      <div className="xk-panel-heading">
-        <div>
-          <p className="xk-overline">Кратко</p>
-          <h2>Статус аккаунта</h2>
-        </div>
-        <Shield size={30} />
-      </div>
+    <SurfaceCard className="xk-profile-summary-panel">
+      <SectionHeader
+        eyebrow="Кратко"
+        title="Статус аккаунта"
+        icon={<Shield size={30} />}
+      />
 
       <div className="xk-profile-facts">
-        <div>
-          <span>Жизни</span>
-          <strong>{account.player.lives}</strong>
-        </div>
-        <div>
-          <span>Discord</span>
-          <strong>связан</strong>
-        </div>
-        <div>
-          <span>UUID</span>
-          <strong>{account.player.premiumUuid ?? 'offline'}</strong>
-        </div>
-        <div>
-          <span>Алмазы на картах</span>
-          <strong>{totalDiamonds}</strong>
-        </div>
+        <InfoTile label="Ник" value={account.player.nickname} />
+        <InfoTile label="Жизни" value={account.player.lives} />
+        <InfoTile
+          label="Последний вход"
+          value={formatDate(account.player.lastLoginAt)}
+        />
+        <InfoTile label="Discord" value="связан" />
+        <InfoTile
+          label="UUID"
+          value={account.player.premiumUuid ?? 'offline'}
+        />
+        <InfoTile label="Алмазы на картах" value={totalDiamonds} />
       </div>
+
+      <ActionButtons
+        className="xk-cabinet-actions_compact"
+        items={[
+          { href: '/cabinet/bank', label: 'XK Bank', tone: 'success' },
+          { href: '/payment', label: 'Пополнить', tone: 'primary' },
+        ]}
+      />
 
       <div className="xk-bank-teaser">
         <div>
@@ -48,30 +54,7 @@ export function ProfileStatusPanel({
             {totalDiamonds} алмазов доступно на активных картах.
           </p>
         </div>
-        <LandingButton
-          href="/cabinet/bank"
-          tone="success"
-          arrow
-          className="xk-cabinet-cta xk-cabinet-cta_small"
-        >
-          Открыть банк
-        </LandingButton>
       </div>
-
-      <div className="xk-cabinet-tags">
-        <span>
-          <Swords size={16} /> Жизни: {account.player.lives}
-        </span>
-        <span>
-          <Shield size={16} />{' '}
-          {account.player.premiumUuid
-            ? 'Premium UUID привязан'
-            : 'Offline профиль'}
-        </span>
-        <span>
-          <Signal size={16} /> Discord связан
-        </span>
-      </div>
-    </div>
+    </SurfaceCard>
   )
 }

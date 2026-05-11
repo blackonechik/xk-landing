@@ -1,6 +1,8 @@
 import { Send } from 'lucide-react'
 import type { AccountPayload } from '@/entities/account'
 import { TransferDiamondsForm } from '@/features/bank/transfer-diamonds'
+import { SectionHeader } from '@/shared/ui/section-header'
+import { SurfaceCard } from '@/shared/ui/surface-card'
 
 type BankTransferViewProps = {
   account: AccountPayload
@@ -19,17 +21,15 @@ export function BankTransferView({
 }: BankTransferViewProps) {
   return (
     <div className="xk-bank-stack">
-      <section className="xk-bank-panel">
-        <div className="xk-panel-heading">
-          <div>
-            <p className="xk-overline">Перевод</p>
-            <h2>Отправить алмазы</h2>
-          </div>
-          <Send size={28} />
-        </div>
+      <SurfaceCard as="section" className="xk-bank-panel">
+        <SectionHeader
+          eyebrow="Перевод"
+          title="Отправить алмазы"
+          icon={<Send size={28} />}
+        />
 
         <TransferDiamondsForm account={account} onTransfer={onTransfer} />
-      </section>
+      </SurfaceCard>
     </div>
   )
 }
