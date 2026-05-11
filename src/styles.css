@@ -120,11 +120,7 @@ a {
       rgba(2, 2, 6, 0.62) 44%,
       rgba(2, 2, 6, 0) 100%
     ),
-    linear-gradient(
-      90deg,
-      rgba(178, 255, 0, 0.08),
-      rgba(255, 224, 100, 0.08)
-    );
+    linear-gradient(90deg, rgba(178, 255, 0, 0.08), rgba(255, 224, 100, 0.08));
   -webkit-mask-image: linear-gradient(
     180deg,
     #000 0%,
@@ -195,6 +191,23 @@ a {
 .xk-site-header__nav a:hover::after {
   transform: scaleX(1);
   transform-origin: left;
+}
+
+.xk-site-header__login {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px !important;
+  color: #10150e !important;
+  background: linear-gradient(180deg, #d8ff66, #7ed321);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 6px;
+  box-shadow: 0 5px 0 rgba(22, 53, 13, 0.75);
+  text-shadow: none !important;
+}
+
+.xk-site-header__login::after {
+  display: none;
 }
 
 .xk-page-transition {
@@ -1409,7 +1422,13 @@ a {
 
 .xk-life-media .parallax-video__sticky::before {
   background:
-    linear-gradient(180deg, rgba(0, 0, 0, 0.42), transparent 30%, transparent 68%, rgba(0, 0, 0, 0.58)),
+    linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.42),
+      transparent 30%,
+      transparent 68%,
+      rgba(0, 0, 0, 0.58)
+    ),
     linear-gradient(90deg, rgba(0, 0, 0, 0.46), transparent 48%);
 }
 
@@ -2197,8 +2216,7 @@ a {
   min-height: 100svh;
   padding: 96px 0 120px;
   background:
-    linear-gradient(180deg, rgba(9, 31, 16, 0.94), rgba(2, 2, 6, 0.98)),
-    #06150a;
+    linear-gradient(180deg, rgba(9, 31, 16, 0.94), rgba(2, 2, 6, 0.98)), #06150a;
 }
 
 .xk-rules-shell {
@@ -2212,8 +2230,7 @@ a {
   border: 6px solid #050900;
   padding: clamp(18px, 3vw, 28px);
   background:
-    linear-gradient(180deg, rgba(178, 255, 0, 0.1), rgba(0, 0, 0, 0.3)),
-    #071107;
+    linear-gradient(180deg, rgba(178, 255, 0, 0.1), rgba(0, 0, 0, 0.3)), #071107;
   box-shadow: 0 10px 0 rgba(0, 0, 0, 0.32);
 }
 
@@ -2846,5 +2863,447 @@ a {
   .xk-loader__bar span {
     animation-duration: 0.01ms;
     animation-iteration-count: 1;
+  }
+}
+
+.xk-login-page,
+.xk-cabinet-page {
+  min-height: 100svh;
+  padding-top: 112px;
+  background:
+    linear-gradient(180deg, rgba(5, 9, 6, 0.48), rgba(5, 9, 6, 0.96)),
+    url('https://images.unsplash.com/photo-1607513746994-51f730a44832?auto=format&fit=crop&w=2400&q=85')
+      center / cover fixed;
+}
+
+.xk-login-shell {
+  min-height: calc(100svh - 112px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 460px);
+  align-items: center;
+  gap: clamp(28px, 6vw, 80px);
+  padding-bottom: 70px;
+}
+
+.xk-login-copy h1,
+.xk-cabinet-hero h1 {
+  margin: 10px 0 18px;
+  font-family: 'Minecraft Ten', sans-serif;
+  font-size: clamp(48px, 8vw, 116px);
+  line-height: 0.92;
+  letter-spacing: 0;
+  text-shadow: 0 8px 0 rgba(0, 0, 0, 0.45);
+}
+
+.xk-login-copy p:not(.xk-overline) {
+  max-width: 680px;
+  color: #f8ffd8;
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(17px, 2vw, 22px);
+  line-height: 1.6;
+}
+
+.xk-login-panel,
+.xk-profile-panel,
+.xk-bank-panel,
+.xk-stat-panel,
+.xk-history-panel {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  background: rgba(10, 15, 11, 0.82);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(18px);
+}
+
+.xk-login-panel {
+  padding: clamp(24px, 4vw, 38px);
+}
+
+.xk-login-panel__badge,
+.xk-cabinet-tags span {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid rgba(216, 255, 102, 0.35);
+  border-radius: 6px;
+  color: #d8ff66;
+  background: rgba(126, 211, 33, 0.12);
+  font-family: 'Minecraft Five', sans-serif;
+  font-size: 12px;
+}
+
+.xk-login-panel h2,
+.xk-panel-heading h2 {
+  margin: 18px 0 10px;
+  font-family: 'Minecraft Five', sans-serif;
+  font-size: clamp(22px, 3vw, 34px);
+  letter-spacing: 0;
+}
+
+.xk-login-panel p,
+.xk-muted {
+  color: #cdd6c3;
+  font-family: 'Montserrat', sans-serif;
+  line-height: 1.55;
+}
+
+.xk-discord-button,
+.xk-transfer-form button,
+.xk-card-create button,
+.xk-cabinet-logout {
+  min-height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 0;
+  border-radius: 6px;
+  font-family: 'Minecraft Five', sans-serif;
+  cursor: pointer;
+}
+
+.xk-discord-button {
+  width: 100%;
+  margin-top: 22px;
+  color: #fff;
+  background: #5865f2;
+  box-shadow: 0 6px 0 #2630a8;
+}
+
+.xk-login-error {
+  margin-top: 16px;
+  padding: 12px;
+  border: 1px solid rgba(255, 113, 113, 0.45);
+  border-radius: 6px;
+  color: #ffe2e2;
+  background: rgba(111, 22, 22, 0.42);
+  font-family: 'Montserrat', sans-serif;
+}
+
+.xk-cabinet-page {
+  padding-bottom: 76px;
+  background-attachment: fixed;
+}
+
+.xk-cabinet-loading {
+  min-height: 70svh;
+  display: grid;
+  place-items: center;
+  font-family: 'Minecraft Five', sans-serif;
+}
+
+.xk-cabinet-hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 30px;
+}
+
+.xk-cabinet-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.xk-cabinet-logout {
+  flex: 0 0 auto;
+  padding: 0 16px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.xk-cabinet-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.9fr) minmax(360px, 1.1fr);
+  gap: 18px;
+}
+
+.xk-profile-panel,
+.xk-bank-panel,
+.xk-stat-panel,
+.xk-history-panel {
+  padding: clamp(18px, 3vw, 28px);
+}
+
+.xk-profile-panel {
+  display: grid;
+  gap: 20px;
+}
+
+.xk-skin-viewer {
+  min-height: 430px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0)),
+    rgba(0, 0, 0, 0.28);
+}
+
+.xk-skin-viewer canvas {
+  width: min(100%, 360px);
+  height: auto;
+  display: block;
+}
+
+.xk-profile-facts,
+.xk-stat-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.xk-profile-facts div,
+.xk-stat-grid,
+.xk-transfer-row {
+  padding: 14px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.xk-profile-facts span,
+.xk-stat-grid span {
+  display: block;
+  margin-bottom: 5px;
+  color: #9eaa93;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+}
+
+.xk-profile-facts strong,
+.xk-stat-grid strong,
+.xk-transfer-row strong {
+  font-family: 'Minecraft Five', sans-serif;
+  font-size: 15px;
+}
+
+.xk-panel-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  color: #eaffae;
+}
+
+.xk-panel-heading h2 {
+  margin-top: 6px;
+}
+
+.xk-card-create,
+.xk-transfer-form {
+  display: grid;
+  gap: 10px;
+}
+
+.xk-card-create {
+  grid-template-columns: 1fr 48px;
+  margin: 16px 0;
+}
+
+.xk-card-create input,
+.xk-card-designs {
+  grid-column: 1 / -1;
+}
+
+.xk-card-create input,
+.xk-transfer-form input,
+.xk-transfer-form select {
+  min-height: 46px;
+  width: 100%;
+  padding: 0 13px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.34);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 6px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.xk-card-create button,
+.xk-transfer-form button {
+  color: #11170c;
+  background: #d8ff66;
+  box-shadow: 0 5px 0 #5b7d19;
+}
+
+.xk-bank-limit {
+  display: block;
+  color: #cdd6c3;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+}
+
+.xk-card-designs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.xk-card-designs button {
+  min-height: 38px;
+  color: #dfead0;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: none;
+}
+
+.xk-card-designs button.is-active {
+  color: #11170c;
+  background: #d8ff66;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.xk-bank-cards {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.xk-bank-card {
+  --card-accent: rgba(216, 255, 102, 0.28);
+  --card-accent-2: rgba(88, 101, 242, 0.24);
+  min-height: 150px;
+  display: grid;
+  align-content: space-between;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, var(--card-accent), var(--card-accent-2)),
+    #11180e;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.xk-bank-card_creeper {
+  --card-accent: rgba(88, 206, 85, 0.5);
+  --card-accent-2: rgba(10, 58, 26, 0.8);
+}
+
+.xk-bank-card_panda {
+  --card-accent: rgba(255, 255, 245, 0.42);
+  --card-accent-2: rgba(20, 24, 20, 0.88);
+}
+
+.xk-bank-card_warden {
+  --card-accent: rgba(45, 197, 204, 0.42);
+  --card-accent-2: rgba(16, 41, 52, 0.92);
+}
+
+.xk-bank-card_enderman {
+  --card-accent: rgba(173, 95, 255, 0.44);
+  --card-accent-2: rgba(19, 11, 30, 0.9);
+}
+
+.xk-bank-card_fox {
+  --card-accent: rgba(243, 112, 35, 0.48);
+  --card-accent-2: rgba(47, 23, 15, 0.9);
+}
+
+.xk-bank-card_bee {
+  --card-accent: rgba(255, 218, 68, 0.52);
+  --card-accent-2: rgba(39, 31, 9, 0.9);
+}
+
+.xk-bank-card_axolotl {
+  --card-accent: rgba(255, 128, 184, 0.5);
+  --card-accent-2: rgba(64, 24, 54, 0.9);
+}
+
+.xk-bank-card_skeleton {
+  --card-accent: rgba(226, 231, 217, 0.48);
+  --card-accent-2: rgba(75, 83, 76, 0.8);
+}
+
+.xk-bank-card div,
+.xk-transfer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.xk-bank-card strong {
+  font-family: 'Minecraft Five', sans-serif;
+  font-size: clamp(17px, 2vw, 24px);
+  letter-spacing: 0;
+}
+
+.xk-bank-card p {
+  margin: 0;
+  color: #eaffae;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.xk-bank-card__close {
+  width: 34px;
+  min-height: 34px;
+  padding: 0;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 6px;
+  box-shadow: none;
+}
+
+.xk-transfer-form {
+  grid-template-columns: 1fr 1fr;
+}
+
+.xk-transfer-form select,
+.xk-transfer-form button {
+  grid-column: 1 / -1;
+}
+
+.xk-stat-panel,
+.xk-history-panel {
+  min-height: 240px;
+}
+
+.xk-stat-grid {
+  grid-template-columns: 1fr auto;
+}
+
+.xk-transfer-row {
+  margin-top: 10px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+@media (max-width: 920px) {
+  .xk-login-shell,
+  .xk-cabinet-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .xk-cabinet-hero {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 620px) {
+  .xk-site-header__inner {
+    align-items: flex-start;
+  }
+
+  .xk-site-header__nav {
+    gap: 10px;
+    font-size: 12px;
+  }
+
+  .xk-site-header__login {
+    min-height: 34px;
+    padding-inline: 10px !important;
+  }
+
+  .xk-login-page,
+  .xk-cabinet-page {
+    padding-top: 96px;
+  }
+
+  .xk-transfer-form {
+    grid-template-columns: 1fr;
   }
 }

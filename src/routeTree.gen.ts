@@ -15,6 +15,8 @@ import { Route as PersonalDataConsentRouteImport } from './routes/personal-data-
 import { Route as PaymentRouteImport } from './routes/payment'
 import { Route as OfferRouteImport } from './routes/offer'
 import { Route as MineRouteImport } from './routes/mine'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as CabinetRouteImport } from './routes/cabinet'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
@@ -52,6 +54,16 @@ const MineRoute = MineRouteImport.update({
   path: '/mine',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CabinetRoute = CabinetRouteImport.update({
+  id: '/cabinet',
+  path: '/cabinet',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -87,6 +99,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
+  '/cabinet': typeof CabinetRoute
+  '/login': typeof LoginRoute
   '/mine': typeof MineRoute
   '/offer': typeof OfferRoute
   '/payment': typeof PaymentRouteWithChildren
@@ -101,6 +115,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
+  '/cabinet': typeof CabinetRoute
+  '/login': typeof LoginRoute
   '/mine': typeof MineRoute
   '/offer': typeof OfferRoute
   '/payment': typeof PaymentRouteWithChildren
@@ -116,6 +132,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
+  '/cabinet': typeof CabinetRoute
+  '/login': typeof LoginRoute
   '/mine': typeof MineRoute
   '/offer': typeof OfferRoute
   '/payment': typeof PaymentRouteWithChildren
@@ -132,6 +150,8 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
+    | '/cabinet'
+    | '/login'
     | '/mine'
     | '/offer'
     | '/payment'
@@ -146,6 +166,8 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
+    | '/cabinet'
+    | '/login'
     | '/mine'
     | '/offer'
     | '/payment'
@@ -160,6 +182,8 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
+    | '/cabinet'
+    | '/login'
     | '/mine'
     | '/offer'
     | '/payment'
@@ -175,6 +199,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRoute
+  CabinetRoute: typeof CabinetRoute
+  LoginRoute: typeof LoginRoute
   MineRoute: typeof MineRoute
   OfferRoute: typeof OfferRoute
   PaymentRoute: typeof PaymentRouteWithChildren
@@ -225,6 +251,20 @@ declare module '@tanstack/react-router' {
       path: '/mine'
       fullPath: '/mine'
       preLoaderRoute: typeof MineRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cabinet': {
+      id: '/cabinet'
+      path: '/cabinet'
+      fullPath: '/cabinet'
+      preLoaderRoute: typeof CabinetRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -291,6 +331,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AdminRoute: AdminRoute,
+  CabinetRoute: CabinetRoute,
+  LoginRoute: LoginRoute,
   MineRoute: MineRoute,
   OfferRoute: OfferRoute,
   PaymentRoute: PaymentRouteWithChildren,

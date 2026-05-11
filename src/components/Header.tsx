@@ -24,7 +24,11 @@ export default function Header() {
   }, [])
 
   return (
-    <header className={['xk-site-header', isHidden ? 'is-hidden' : ''].filter(Boolean).join(' ')}>
+    <header
+      className={['xk-site-header', isHidden ? 'is-hidden' : '']
+        .filter(Boolean)
+        .join(' ')}
+    >
       <div className="page-wrap xk-site-header__inner">
         <AnimatedLink className="xk-site-header__brand" to="/">
           XK HARDCORE
@@ -32,6 +36,9 @@ export default function Header() {
         <nav className="xk-site-header__nav" aria-label="Основная навигация">
           <AnimatedLink to="/payment">Оплата</AnimatedLink>
           <AnimatedLink to="/rules">Правила</AnimatedLink>
+          <AnimatedLink className="xk-site-header__login" to="/login">
+            Войти
+          </AnimatedLink>
         </nav>
       </div>
     </header>
