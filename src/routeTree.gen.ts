@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RulesRouteImport } from './routes/rules'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PersonalDataConsentRouteImport } from './routes/personal-data-consent'
 import { Route as PaymentRouteImport } from './routes/payment'
@@ -21,6 +22,11 @@ import { Route as PaymentSuccessRouteImport } from './routes/payment.success'
 import { Route as PaymentPendingRouteImport } from './routes/payment.pending'
 import { Route as PaymentFailedRouteImport } from './routes/payment.failed'
 
+const RulesRoute = RulesRouteImport.update({
+  id: '/rules',
+  path: '/rules',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
@@ -86,6 +92,7 @@ export interface FileRoutesByFullPath {
   '/payment': typeof PaymentRouteWithChildren
   '/personal-data-consent': typeof PersonalDataConsentRoute
   '/privacy': typeof PrivacyRoute
+  '/rules': typeof RulesRoute
   '/payment/failed': typeof PaymentFailedRoute
   '/payment/pending': typeof PaymentPendingRoute
   '/payment/success': typeof PaymentSuccessRoute
@@ -99,6 +106,7 @@ export interface FileRoutesByTo {
   '/payment': typeof PaymentRouteWithChildren
   '/personal-data-consent': typeof PersonalDataConsentRoute
   '/privacy': typeof PrivacyRoute
+  '/rules': typeof RulesRoute
   '/payment/failed': typeof PaymentFailedRoute
   '/payment/pending': typeof PaymentPendingRoute
   '/payment/success': typeof PaymentSuccessRoute
@@ -113,6 +121,7 @@ export interface FileRoutesById {
   '/payment': typeof PaymentRouteWithChildren
   '/personal-data-consent': typeof PersonalDataConsentRoute
   '/privacy': typeof PrivacyRoute
+  '/rules': typeof RulesRoute
   '/payment/failed': typeof PaymentFailedRoute
   '/payment/pending': typeof PaymentPendingRoute
   '/payment/success': typeof PaymentSuccessRoute
@@ -128,6 +137,7 @@ export interface FileRouteTypes {
     | '/payment'
     | '/personal-data-consent'
     | '/privacy'
+    | '/rules'
     | '/payment/failed'
     | '/payment/pending'
     | '/payment/success'
@@ -141,6 +151,7 @@ export interface FileRouteTypes {
     | '/payment'
     | '/personal-data-consent'
     | '/privacy'
+    | '/rules'
     | '/payment/failed'
     | '/payment/pending'
     | '/payment/success'
@@ -154,6 +165,7 @@ export interface FileRouteTypes {
     | '/payment'
     | '/personal-data-consent'
     | '/privacy'
+    | '/rules'
     | '/payment/failed'
     | '/payment/pending'
     | '/payment/success'
@@ -168,10 +180,18 @@ export interface RootRouteChildren {
   PaymentRoute: typeof PaymentRouteWithChildren
   PersonalDataConsentRoute: typeof PersonalDataConsentRoute
   PrivacyRoute: typeof PrivacyRoute
+  RulesRoute: typeof RulesRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/rules': {
+      id: '/rules'
+      path: '/rules'
+      fullPath: '/rules'
+      preLoaderRoute: typeof RulesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
@@ -276,6 +296,7 @@ const rootRouteChildren: RootRouteChildren = {
   PaymentRoute: PaymentRouteWithChildren,
   PersonalDataConsentRoute: PersonalDataConsentRoute,
   PrivacyRoute: PrivacyRoute,
+  RulesRoute: RulesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

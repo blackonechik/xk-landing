@@ -87,6 +87,109 @@ a {
   text-decoration: none;
 }
 
+.xk-site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 80;
+  padding: 14px 0 22px;
+  background: transparent;
+  isolation: isolate;
+  transition:
+    transform 0.24s ease,
+    background 0.24s ease;
+}
+
+.xk-site-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(2, 2, 6, 0.84) 0%,
+      rgba(2, 2, 6, 0.62) 44%,
+      rgba(2, 2, 6, 0) 100%
+    ),
+    linear-gradient(
+      90deg,
+      rgba(178, 255, 0, 0.08),
+      rgba(255, 224, 100, 0.08)
+    );
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    #000 0%,
+    rgba(0, 0, 0, 0.9) 56%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    180deg,
+    #000 0%,
+    rgba(0, 0, 0, 0.9) 56%,
+    transparent 100%
+  );
+}
+
+.xk-site-header.is-hidden {
+  transform: translateY(-100%);
+}
+
+.xk-site-header__inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.xk-site-header__brand {
+  font-family: 'Unbounded', sans-serif;
+  font-size: clamp(16px, 3vw, 22px);
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 4px 0 rgba(0, 0, 0, 0.58);
+}
+
+.xk-site-header__nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 3vw, 30px);
+  font-family: 'Minecraft Five', sans-serif;
+  font-size: 14px;
+}
+
+.xk-site-header__nav a {
+  position: relative;
+  padding: 6px 0;
+  color: #ffe895;
+  text-shadow: 0 3px 0 rgba(0, 0, 0, 0.58);
+}
+
+.xk-site-header__nav a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: #b2ff00;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.18s ease;
+}
+
+.xk-site-header__nav a:hover {
+  color: #ffffff;
+}
+
+.xk-site-header__nav a:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
 .xk-loader {
   position: fixed;
   inset: 0;
@@ -375,7 +478,7 @@ a {
   --stroke: calc(var(--g-10) * 0.8);
   display: inline-block;
   position: relative;
-  padding: calc(var(--g-10) * 2);
+  padding: calc(var(--g-10) * 1.5);
   transition: all 0.2s var(--timing-function_default);
   border: 0;
   background: transparent;
@@ -428,7 +531,7 @@ a {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: var(--g-20) var(--g-50);
+  padding: calc(var(--g-20) * 0.75) calc(var(--g-50) * 0.75);
   white-space: nowrap;
   background: linear-gradient(
     to bottom,
@@ -436,7 +539,7 @@ a {
     var(--color-gradient-2)
   );
   font-family: 'Minecraft Ten', sans-serif !important;
-  font-size: var(--size-32);
+  font-size: calc(var(--size-32) * 0.75);
   color: var(--color-text);
   box-shadow:
     0 calc(var(--stroke) * -1) var(--color-light),
@@ -453,7 +556,7 @@ a {
 .tycoon-landing-btn__content-arrow {
   position: relative;
   flex: none;
-  height: 36px;
+  height: 27px;
   top: 2px;
   margin-left: 0;
   filter: brightness(0) invert(1);
@@ -479,7 +582,7 @@ a {
 }
 
 .index-fixed._left .tycoon-landing-btn__content {
-  padding: var(--g-10) var(--g-20);
+  padding: calc(var(--g-10) * 0.75) calc(var(--g-20) * 0.75);
 }
 
 .index-fixed._right {
@@ -487,7 +590,7 @@ a {
 }
 
 .index-fixed._right .tycoon-landing-btn__content {
-  padding: var(--g-10) var(--g-30);
+  padding: calc(var(--g-10) * 0.75) calc(var(--g-30) * 0.75);
 }
 
 .tycoon-landing-header {
@@ -1502,13 +1605,13 @@ a {
 }
 
 .xk-cta-actions__telegram .tycoon-landing-btn__content {
-  padding: var(--g-15) var(--g-30);
-  font-size: var(--size-32) !important;
+  padding: calc(var(--g-15) * 0.75) calc(var(--g-30) * 0.75);
+  font-size: calc(var(--size-32) * 0.75) !important;
 }
 
 .xk-cta-actions__buy .tycoon-landing-btn__content {
-  padding: var(--g-15) var(--g-30);
-  font-size: var(--size-32) !important;
+  padding: calc(var(--g-15) * 0.75) calc(var(--g-30) * 0.75);
+  font-size: calc(var(--size-32) * 0.75) !important;
 }
 
 .xk-payment-page {
@@ -1778,12 +1881,12 @@ a {
 
 .xk-payment-summary__submit .tycoon-landing-btn__content,
 .xk-payment-summary__submit-content {
-  padding: 10px 22px;
-  font-size: 20px !important;
+  padding: 8px 17px;
+  font-size: 15px !important;
 }
 
 .xk-payment-summary__submit .tycoon-landing-btn__content-arrow {
-  height: 24px;
+  height: 18px;
 }
 
 .xk-payment-status {
@@ -1918,11 +2021,24 @@ a {
 
 .mc-footer {
   background: #020206;
-  padding: 60px 0 40px;
+  padding: 54px 0 38px;
 }
 
 .mc-footer-inner {
-  text-align: center;
+  display: grid;
+  gap: 30px;
+}
+
+.mc-footer-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 40px;
+}
+
+.mc-footer-about {
+  max-width: 560px;
+  text-align: left;
 }
 
 .mc-footer-title {
@@ -1940,14 +2056,22 @@ a {
   line-height: 1.8;
 }
 
+.mc-footer-copy {
+  margin-top: 0;
+  padding-top: 22px;
+  border-top: 3px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+
 .mc-footer-links {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 14px 22px;
-  margin-top: 22px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
   font-family: 'Minecraft Five', sans-serif;
-  font-size: 16px;
+  font-size: 12px;
+  line-height: 1.45;
+  text-align: right;
 }
 
 .xk-legal-page {
@@ -2004,6 +2128,151 @@ a {
   line-height: 1.7;
   color: rgba(255, 255, 255, 0.78);
   text-shadow: 0 4px 0 rgba(0, 0, 0, 0.48);
+}
+
+.xk-rules-page {
+  min-height: 100svh;
+  padding: 96px 0 120px;
+  background:
+    linear-gradient(180deg, rgba(9, 31, 16, 0.94), rgba(2, 2, 6, 0.98)),
+    #06150a;
+}
+
+.xk-rules-shell {
+  display: grid;
+  gap: 24px;
+}
+
+.xk-rules-block {
+  display: grid;
+  gap: 18px;
+  border: 6px solid #050900;
+  padding: clamp(18px, 3vw, 28px);
+  background:
+    linear-gradient(180deg, rgba(178, 255, 0, 0.1), rgba(0, 0, 0, 0.3)),
+    #071107;
+  box-shadow: 0 10px 0 rgba(0, 0, 0, 0.32);
+}
+
+.xk-rules-block h2,
+.xk-rules-card h3,
+.xk-rules-reference-card h3 {
+  margin: 0;
+  text-shadow: 0 6px 0 rgba(0, 0, 0, 0.62);
+}
+
+.xk-rules-block h2 {
+  font-family: 'Minecraft Ten', sans-serif;
+  font-size: clamp(30px, 5vw, 46px);
+  color: #ffe895;
+}
+
+.xk-rules-terms {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin: 0;
+}
+
+.xk-rules-term,
+.xk-rules-card,
+.xk-rules-reference-card {
+  border: 4px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.34);
+}
+
+.xk-rules-term {
+  padding: 16px;
+}
+
+.xk-rules-term dt {
+  font-family: 'Minecraft Five', sans-serif !important;
+  font-size: 18px;
+  line-height: 1.35;
+  color: #b2ff00;
+}
+
+.xk-rules-term dd {
+  margin: 8px 0 0;
+}
+
+.xk-rules-list,
+.xk-rules-plain-list,
+.xk-rules-reference-card ol {
+  margin: 0;
+  padding-left: 1.3em;
+}
+
+.xk-rules-list {
+  display: grid;
+  gap: 18px;
+}
+
+.xk-rules-list > li::marker,
+.xk-rules-plain-list > li::marker,
+.xk-rules-reference-card li::marker {
+  color: #b2ff00;
+}
+
+.xk-rules-card {
+  padding: 20px;
+}
+
+.xk-rules-card h3,
+.xk-rules-reference-card h3 {
+  font-family: 'Minecraft Five', sans-serif !important;
+  font-size: clamp(20px, 3vw, 28px);
+  line-height: 1.35;
+  color: #b2ff00;
+}
+
+.xk-rules-card p,
+.xk-rules-card li,
+.xk-rules-plain-list li,
+.xk-rules-reference-card li,
+.xk-rules-term dd {
+  font-family: 'Minecraft Five', sans-serif !important;
+  font-size: 16px;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.8);
+  text-shadow: 0 4px 0 rgba(0, 0, 0, 0.42);
+}
+
+.xk-rules-card p {
+  margin: 12px 0 0;
+}
+
+.xk-rules-card ul {
+  display: grid;
+  gap: 8px;
+  margin: 10px 0 0;
+  padding-left: 1.1em;
+}
+
+.xk-rules-card__label {
+  color: #ffe895 !important;
+}
+
+.xk-rules-card__note {
+  border-left: 4px solid #ffe895;
+  padding-left: 12px;
+  color: rgba(255, 232, 149, 0.9) !important;
+}
+
+.xk-rules-reference-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.xk-rules-reference-card {
+  padding: 20px;
+}
+
+.xk-rules-reference-card ol {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
 }
 
 .xk-start-tags .tycoon-landing-btn {
@@ -2340,8 +2609,27 @@ a {
   }
 
   .index-fixed._right {
-    right: 8px;
-    bottom: 8px;
+    display: none;
+  }
+
+  .xk-life-media .parallax-video__sticky::before {
+    display: none;
+  }
+
+  .xk-site-header {
+    padding: 10px 0 18px;
+  }
+
+  .xk-site-header__inner {
+    gap: 12px;
+  }
+
+  .xk-site-header__nav {
+    font-size: 12px;
+  }
+
+  .xk-site-header__nav a {
+    padding: 6px 0;
   }
 
   .xk-header-logo__caption {
@@ -2398,8 +2686,39 @@ a {
 
   .xk-payment-contact-grid,
   .xk-payment-products,
-  .xk-legal-grid {
+  .xk-legal-grid,
+  .xk-rules-terms,
+  .xk-rules-reference-grid {
     grid-template-columns: 1fr;
+  }
+
+  .mc-footer-main {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+
+  .mc-footer-about,
+  .mc-footer-links {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .xk-rules-page {
+    padding: 72px 0 88px;
+  }
+
+  .xk-rules-block,
+  .xk-rules-card,
+  .xk-rules-reference-card {
+    padding: 16px;
+  }
+
+  .xk-rules-card p,
+  .xk-rules-card li,
+  .xk-rules-plain-list li,
+  .xk-rules-reference-card li,
+  .xk-rules-term dd {
+    font-size: 14px;
   }
 
   .xk-payment-field input {
