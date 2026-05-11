@@ -2867,13 +2867,20 @@ a {
 }
 
 .xk-login-page,
-.xk-cabinet-page {
+.xk-cabinet-page,
+.xk-bank-page {
   min-height: 100svh;
   padding-top: 112px;
   background:
     linear-gradient(180deg, rgba(5, 9, 6, 0.48), rgba(5, 9, 6, 0.96)),
     url('https://images.unsplash.com/photo-1607513746994-51f730a44832?auto=format&fit=crop&w=2400&q=85')
       center / cover fixed;
+}
+
+.xk-login-page,
+.xk-cabinet-page,
+.xk-bank-page {
+  font-family: 'Minecraft Five', sans-serif;
 }
 
 .xk-login-shell {
@@ -2898,8 +2905,8 @@ a {
 .xk-login-copy p:not(.xk-overline) {
   max-width: 680px;
   color: #f8ffd8;
-  font-family: 'Montserrat', sans-serif;
-  font-size: clamp(17px, 2vw, 22px);
+  font-family: 'Minecraft Five', sans-serif;
+  font-size: clamp(15px, 2vw, 19px);
   line-height: 1.6;
 }
 
@@ -2945,11 +2952,10 @@ a {
 .xk-login-panel p,
 .xk-muted {
   color: #cdd6c3;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Minecraft Five', sans-serif;
   line-height: 1.55;
 }
 
-.xk-discord-button,
 .xk-transfer-form button,
 .xk-card-create button,
 .xk-cabinet-logout {
@@ -2977,19 +2983,32 @@ a {
   padding: 12px;
   border: 1px solid rgba(255, 113, 113, 0.45);
   border-radius: 6px;
-  color: #ffe2e2;
-  background: rgba(111, 22, 22, 0.42);
-  font-family: 'Montserrat', sans-serif;
+
+.xk-login-status,
+.xk-cabinet-error {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(0, 0, 0, 0.26);
+  font-family: 'Minecraft Five', sans-serif;
 }
 
-.xk-cabinet-page {
-  padding-bottom: 76px;
-  background-attachment: fixed;
+.xk-cabinet-error {
+  color: #ffe2e2;
+  border-color: rgba(255, 113, 113, 0.35);
+  background: rgba(111, 22, 22, 0.32);
+}
 }
 
 .xk-cabinet-loading {
   min-height: 70svh;
   display: grid;
+
+.xk-bank-page {
+  padding-bottom: 90px;
+  background-attachment: fixed;
+}
   place-items: center;
   font-family: 'Minecraft Five', sans-serif;
 }
@@ -2997,6 +3016,13 @@ a {
 .xk-cabinet-hero {
   display: flex;
   align-items: flex-end;
+
+.xk-bank-loading {
+  min-height: 70svh;
+  display: grid;
+  place-items: center;
+  font-family: 'Minecraft Five', sans-serif;
+}
   justify-content: space-between;
   gap: 24px;
   padding-bottom: 30px;
@@ -3005,6 +3031,37 @@ a {
 .xk-cabinet-tags {
   display: flex;
   flex-wrap: wrap;
+
+.xk-bank-hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 8px;
+}
+
+.xk-cabinet-copy,
+.xk-bank-hero > div:first-child {
+  max-width: 780px;
+}
+
+.xk-cabinet-lead,
+.xk-bank-lead {
+  max-width: 760px;
+  margin: 0;
+  color: #f8ffd8;
+  font-family: 'Minecraft Five', sans-serif;
+  font-size: clamp(15px, 1.9vw, 19px);
+  line-height: 1.65;
+}
+
+.xk-cabinet-actions,
+.xk-bank-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 22px;
+}
   gap: 10px;
 }
 
@@ -3022,11 +3079,58 @@ a {
   gap: 18px;
 }
 
+.xk-bank-shell {
+  display: grid;
+  gap: 18px;
+}
+
+.xk-bank-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.xk-bank-summary__item {
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.xk-bank-summary__item span {
+  display: block;
+  margin-bottom: 10px;
+  color: #9eaa93;
+  font-size: 12px;
+}
+
+.xk-bank-summary__item strong {
+  font-family: 'Minecraft Five', sans-serif;
+  font-size: 16px;
+}
+
+.xk-bank-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 18px;
+}
+
+.xk-bank-stack {
+  display: grid;
+  gap: 18px;
+}
+
 .xk-profile-panel,
+.xk-profile-summary-panel,
 .xk-bank-panel,
 .xk-stat-panel,
 .xk-history-panel {
   padding: clamp(18px, 3vw, 28px);
+}
+
+.xk-profile-summary-panel {
+  display: grid;
+  gap: 18px;
 }
 
 .xk-profile-panel {
@@ -3070,7 +3174,7 @@ a {
   display: block;
   margin-bottom: 5px;
   color: #9eaa93;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Minecraft Five', sans-serif;
   font-size: 13px;
 }
 
@@ -3091,6 +3195,27 @@ a {
 
 .xk-panel-heading h2 {
   margin-top: 6px;
+}
+
+.xk-bank-teaser {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px;
+  border-radius: 8px;
+  background: rgba(216, 255, 102, 0.08);
+  border: 1px solid rgba(216, 255, 102, 0.18);
+}
+
+.xk-bank-teaser h3 {
+  margin: 0 0 8px;
+  font-family: 'Minecraft Five', sans-serif;
+  font-size: 20px;
+}
+
+.xk-bank-teaser .xk-muted {
+  margin: 0;
 }
 
 .xk-card-create,
@@ -3119,7 +3244,7 @@ a {
   background: rgba(0, 0, 0, 0.34);
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 6px;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Minecraft Five', sans-serif;
 }
 
 .xk-card-create button,
@@ -3268,16 +3393,29 @@ a {
 
 .xk-transfer-row {
   margin-top: 10px;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Minecraft Five', sans-serif;
+}
+
+.xk-history-list {
+  display: grid;
+  gap: 10px;
 }
 
 @media (max-width: 920px) {
   .xk-login-shell,
-  .xk-cabinet-grid {
+  .xk-cabinet-grid,
+  .xk-bank-grid,
+  .xk-bank-summary {
     grid-template-columns: 1fr;
   }
 
   .xk-cabinet-hero {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .xk-bank-hero,
+  .xk-bank-teaser {
     align-items: flex-start;
     flex-direction: column;
   }
@@ -3299,11 +3437,16 @@ a {
   }
 
   .xk-login-page,
-  .xk-cabinet-page {
+  .xk-cabinet-page,
+  .xk-bank-page {
     padding-top: 96px;
   }
 
   .xk-transfer-form {
+    grid-template-columns: 1fr;
+  }
+
+  .xk-bank-summary {
     grid-template-columns: 1fr;
   }
 }
