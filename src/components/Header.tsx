@@ -3,7 +3,8 @@ import { useNavigate } from '@tanstack/react-router'
 import { Avatar, Button } from '@heroui/react'
 import { LogOut } from 'lucide-react'
 import AnimatedLink from './AnimatedLink'
-import { fetchAccount, logout, type AccountPayload } from '@/entities/account'
+import { fetchAccount, logout  } from '@/entities/account'
+import type {AccountPayload} from '@/entities/account';
 
 export default function Header() {
   const [isHidden, setIsHidden] = useState(false)
@@ -97,15 +98,6 @@ export default function Header() {
           </AnimatedLink>
           {authState === 'authed' ? (
             <div className="xk-site-header__auth">
-              <AnimatedLink className="xk-site-header__nav-link" to="/cabinet">
-                Кабинет
-              </AnimatedLink>
-              <AnimatedLink
-                className="xk-site-header__nav-link"
-                to="/cabinet/bank"
-              >
-                Банк
-              </AnimatedLink>
               <button
                 className="xk-site-header__auth-button"
                 type="button"

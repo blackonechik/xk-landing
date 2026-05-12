@@ -64,7 +64,7 @@ export function CabinetPage() {
     <HeroPage
       eyebrow="Аккаунт"
       title="Личный кабинет"
-      description="Профиль игрока, статус аккаунта и быстрый доступ к разделам."
+      description="Личный кабинет активно разрабатывается. Если вы нашли ошибку или хотите предложить улучшение, пожалуйста, сообщите нам в Discord."
       actions={
         <>
           <HeroLinkButton to="/cabinet/bank" variant="secondary">
@@ -81,7 +81,7 @@ export function CabinetPage() {
         </>
       }
     >
-      <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+      <div className="grid gap-6 lg:grid-cols-[0.6fr_1.05fr]">
         <ProfileCharacterPanel account={account} />
         <ProfileStatusPanel account={account} totalDiamonds={totalDiamonds} />
       </div>

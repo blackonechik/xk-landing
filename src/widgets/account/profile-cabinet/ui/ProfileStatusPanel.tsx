@@ -45,13 +45,7 @@ export function ProfileStatusPanel({
   return (
     <Card>
       <Card.Header className="flex items-start justify-between gap-4">
-        <div>
-          <Card.Title>Статус аккаунта</Card.Title>
-          <Card.Description>
-            Ключевая информация профиля и быстрые разделы.
-          </Card.Description>
-        </div>
-        <UserRound className="size-6 text-muted" />
+          <Card.Title>Ваш аккаунт:</Card.Title>
       </Card.Header>
       <Card.Content className="grid gap-5">
         <div className="grid gap-4 md:grid-cols-2">
@@ -77,7 +71,9 @@ export function ProfileStatusPanel({
           />
         </div>
 
-        <div className="grid gap-4 md:grid-cols-3">
+        <Card.Title>Быстрые разделы:</Card.Title>
+
+        <div className="grid gap-4 md:grid-cols-2">
           {sections.map((section) =>
             'href' in section ? (
               <AnimatedLink
@@ -107,9 +103,6 @@ export function ProfileStatusPanel({
             ),
           )}
         </div>
-        <Text color="muted" type="body-sm">
-          Разделы открываются в рамках аккаунта XK HARDCORE.
-        </Text>
       </Card.Content>
     </Card>
   )

@@ -16,10 +16,6 @@ export function ProfileCharacterPanel({ account }: ProfileCharacterPanelProps) {
   return (
     <Card>
       <Card.Header className="flex items-start justify-between gap-4">
-        <div>
-          <Card.Title>Персонаж</Card.Title>
-          <Card.Description>{account.player.nickname}</Card.Description>
-        </div>
         <Avatar>
           <Avatar.Image alt="" src={avatarUrl} />
           <Avatar.Fallback>

@@ -71,11 +71,6 @@ export function HeroPage({
                 </Text>
               ) : null}
             </div>
-            {actions ? (
-              <div className="flex flex-wrap gap-3 lg:justify-end">
-                {actions}
-              </div>
-            ) : null}
           </div>
         </header>
         {children}
