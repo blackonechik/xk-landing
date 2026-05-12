@@ -1,10 +1,13 @@
 export {
   fetchAccount,
+  fetchAccountCached,
   getDiscordLoginUrl,
+  getCachedAccount,
   getSkinProxyUrl,
   logout,
 } from './api/account-api'
 export {
+  clearPlayerAppearanceCache,
   PlayerAvatar,
   PlayerHeadImage,
   usePlayerAppearance,

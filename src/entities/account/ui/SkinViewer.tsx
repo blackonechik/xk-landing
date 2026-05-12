@@ -6,10 +6,9 @@ import { usePlayerAppearance } from './PlayerAvatar'
 
 type SkinViewerProps = {
   nickname: string
-  uuid: string | null
 }
 
-export function SkinViewer({ nickname, uuid }: SkinViewerProps) {
+export function SkinViewer({ nickname }: SkinViewerProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const { avatarSource, skinSource } = usePlayerAppearance(nickname)
 
@@ -36,7 +35,7 @@ export function SkinViewer({ nickname, uuid }: SkinViewerProps) {
     return () => {
       viewer.dispose()
     }
-  }, [nickname, skinSource, uuid])
+  }, [nickname, skinSource])
 
   return (
     <div className="xk-skin-viewer relative">

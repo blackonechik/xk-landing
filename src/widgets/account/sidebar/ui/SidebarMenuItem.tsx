@@ -1,5 +1,4 @@
-import { Chip } from '@heroui/react'
-import { SidebarButton } from './SidebarButton'
+import { Button, Card, Chip } from '@heroui/react'
 import type { AccountSidebarMenuItem as AccountSidebarMenuItemConfig } from '../model/account-sidebar-menu'
 
 type SidebarMenuItemContentProps = {
@@ -18,67 +17,61 @@ function SidebarMenuItemContent({
   return (
     <span className="flex w-full items-center justify-between gap-3">
       <span
-        className={['flex items-center gap-3', size === 'sm' ? 'text-sm' : '']
+        className={[
+          'flex min-w-0 items-center gap-3',
+          size === 'sm' ? 'text-sm' : '',
+        ]
           .filter(Boolean)
           .join(' ')}
       >
-        {icon}
-        <span>{label}</span>
+        <span className="shrink-0 text-muted">{icon}</span>
+        <span className="truncate">{label}</span>
       </span>
       {badge ? <Chip variant="soft">{badge}</Chip> : null}
     </span>
   )
 }
 
+type SidebarMenuItemProps = AccountSidebarMenuItemConfig & {
+  onNavigate: (to: string) => void
+}
+
 export function SidebarMenuItem({
   icon,
   label,
   to,
+  onNavigate,
   onPress,
   current = false,
   disabled = false,
   size = 'lg',
   badge,
   children,
-}: AccountSidebarMenuItemConfig) {
+}: SidebarMenuItemProps) {
   const hasChildren = Boolean(children?.length)
 
-  if (hasChildren) {
-    return (
-      <div className="xk-account-sidebar__group">
-        <SidebarButton
-          current={current}
-          disabled={disabled}
-          onPress={onPress}
-          size={size}
-          to={to}
-        >
-          <SidebarMenuItemContent
-            badge={badge}
-            icon={icon}
-            label={label}
-            size={size}
-          />
-        </SidebarButton>
+  function handlePress() {
+    if (disabled) {
+      return
+    }
 
-        <div className="xk-account-sidebar__submenu">
-          {children?.map((item) => {
-            const { key, ...menuItem } = item
+    if (to) {
+      onNavigate(to)
+      return
+    }
 
-            return <SidebarMenuItem key={key} {...menuItem} />
-          })}
-        </div>
-      </div>
-    )
+    onPress?.()
   }
 
-  return (
-    <SidebarButton
-      current={current}
-      disabled={disabled}
-      onPress={onPress}
+  const button = (
+    <Button
+      aria-current={current ? 'page' : undefined}
+      className="w-full justify-start"
+      fullWidth
+      isDisabled={disabled}
+      onPress={handlePress}
       size={size}
-      to={to}
+      variant={current ? 'secondary' : 'ghost'}
     >
       <SidebarMenuItemContent
         badge={badge}
@@ -86,6 +79,23 @@ export function SidebarMenuItem({
         label={label}
         size={size}
       />
-    </SidebarButton>
+    </Button>
   )
+
+  if (hasChildren) {
+    return (
+      <div className="flex flex-col">
+        {button}
+        <div className="mt-2 grid gap-2 pl-4">
+          {children?.map((item) => {
+            const { key, ...menuItem } = item
+
+            return <SidebarMenuItem key={key} onNavigate={onNavigate} {...menuItem} />
+          })}
+        </div>
+      </div>
+    )
+  }
+
+  return button
 }

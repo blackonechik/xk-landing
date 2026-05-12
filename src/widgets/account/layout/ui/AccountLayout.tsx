@@ -9,6 +9,7 @@ type AccountLayoutProps = {
   currentSection: 'home' | 'bank'
   activeBankView?: BankView
   onBankViewNavigate: (view: BankView) => void
+  onNavigate: (to: string) => void
   eyebrow?: string
   title: string
   description?: ReactNode
@@ -21,6 +22,7 @@ export function AccountLayout({
   currentSection,
   activeBankView,
   onBankViewNavigate,
+  onNavigate,
   eyebrow,
   title,
   description,
@@ -35,6 +37,7 @@ export function AccountLayout({
             account={account}
             activeBankView={activeBankView}
             currentSection={currentSection}
+            onNavigate={onNavigate}
             onBankViewNavigate={onBankViewNavigate}
           />
         </div>
@@ -44,22 +47,32 @@ export function AccountLayout({
             <header className="xk-account-layout__hero">
               <div className="xk-account-layout__hero-copy">
                 {eyebrow ? (
-                  <Chip color="accent" variant="soft">
+                  <Chip
+                    className="xk-account-layout__eyebrow"
+                    color="accent"
+                    variant="soft"
+                  >
                     {eyebrow}
                   </Chip>
                 ) : null}
                 <div className="xk-account-layout__hero-text">
-                  <Text type="h1">{title}</Text>
+                  <Text
+                    className="xk-account-layout__title"
+                    type="h1"
+                  >
+                    {title}
+                  </Text>
                   {description ? (
-                    <Text color="muted" type="body">
+                    <Text
+                      className="xk-account-layout__description"
+                      color="muted"
+                      type="body"
+                    >
                       {description}
                     </Text>
                   ) : null}
                 </div>
               </div>
-              {actions ? (
-                <div className="xk-account-layout__actions">{actions}</div>
-              ) : null}
             </header>
 
             <div className="xk-account-layout__content">{children}</div>

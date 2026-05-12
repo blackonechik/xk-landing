@@ -164,8 +164,8 @@ body {
 
 body {
   margin: 0;
-  background: #000;
-  color: #fff;
+  background: var(--background);
+  color: var(--foreground);
   font-family: 'Minecraft Rus', sans-serif;
 }
 
@@ -186,7 +186,7 @@ a {
 :root {
   --xk-page-transition-duration: 540ms;
   --xk-page-transition-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --xk-header-height: 82px;
+  --xk-header-height: 60px;
 }
 
 .xk-site-header {
@@ -332,9 +332,9 @@ a {
   min-height: 100svh;
   padding-top: var(--xk-header-height);
   background:
-    radial-gradient(circle at top left, rgba(188, 255, 115, 0.12), transparent 28%),
-    radial-gradient(circle at top right, rgba(91, 140, 255, 0.12), transparent 32%),
-    linear-gradient(180deg, rgba(13, 18, 17, 0.98), rgba(5, 7, 7, 1));
+    radial-gradient(circle at top left, rgba(188, 255, 115, 0.1), transparent 28%),
+    radial-gradient(circle at top right, rgba(91, 140, 255, 0.1), transparent 32%),
+    linear-gradient(180deg, color-mix(in srgb, var(--background) 92%, #000), var(--background));
 }
 
 .xk-account-layout__frame {
@@ -352,13 +352,15 @@ a {
 .xk-account-layout__scroll {
   display: grid;
   gap: 24px;
+  min-height: 0;
 }
 
 .xk-account-layout__hero {
   display: flex;
   flex-direction: column;
   gap: 18px;
-  padding: 20px 0 4px;
+  padding: 12px 0;
+  color: var(--foreground);
 }
 
 .xk-account-layout__hero-copy {
@@ -372,12 +374,20 @@ a {
   flex-direction: column;
   gap: 10px;
   max-width: 840px;
+  color: var(--foreground);
 }
 
-.xk-account-layout__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
+.xk-account-layout__eyebrow {
+  width: fit-content;
+}
+
+.xk-account-layout__title {
+  color: var(--foreground);
+}
+
+.xk-account-layout__description {
+  color: var(--muted);
+  line-height: 1.65;
 }
 
 .xk-account-layout__content {
@@ -386,119 +396,42 @@ a {
   padding-bottom: 28px;
 }
 
-.xk-account-sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  min-height: 100%;
-  padding: 22px 18px 18px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 28px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
-    rgba(8, 12, 11, 0.88);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 24px 48px rgba(0, 0, 0, 0.24);
+.xk-theme-switch {
+  width: fit-content;
 }
 
-.xk-account-sidebar__top,
-.xk-account-sidebar__section,
-.xk-account-sidebar__footer {
-  display: grid;
-  gap: 14px;
-}
-
-.xk-account-sidebar__top {
-  padding-bottom: 18px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.xk-account-sidebar__brand {
-  font-family: 'Unbounded', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.74);
-}
-
-.xk-account-sidebar__player {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.xk-account-sidebar__avatar {
-  width: 56px;
-  height: 56px;
+.xk-theme-switch__control {
+  position: relative;
   flex: 0 0 auto;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.06);
+  width: 68px;
+  height: 40px;
+  padding: 4px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--separator) 72%, transparent);
+  background: linear-gradient(180deg, var(--surface), var(--surface-secondary));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 8px 20px rgba(0, 0, 0, 0.12);
 }
 
-.xk-account-sidebar__player-copy {
-  display: grid;
-  gap: 4px;
-  min-width: 0;
-}
-
-.xk-account-sidebar__player-copy strong {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 18px;
-}
-
-.xk-account-sidebar__player-copy span,
-.xk-account-sidebar__section-label,
-.xk-account-sidebar__status {
-  color: rgba(231, 237, 232, 0.62);
-  font-size: 13px;
-}
-
-.xk-account-sidebar__section {
-  flex: 1 1 auto;
-}
-
-.xk-account-sidebar__section-label {
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.xk-account-sidebar__menu,
-.xk-account-sidebar__group,
-.xk-account-sidebar__submenu {
-  display: grid;
-}
-
-.xk-account-sidebar__menu {
-  gap: 8px;
-}
-
-.xk-account-sidebar__group {
-  gap: 8px;
-  padding: 8px;
-  border-radius: 22px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.xk-account-sidebar__submenu {
-  gap: 6px;
-  padding-left: 10px;
-}
-
-.xk-account-sidebar__footer {
-  padding-top: 18px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.xk-account-sidebar__status {
+.xk-theme-switch__thumb {
+  width: 30px;
+  height: 30px;
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  line-height: 1.5;
+  place-items: center;
+  border-radius: 999px;
+  color: var(--foreground);
+  background: linear-gradient(180deg, #fffdf6, var(--surface));
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.34);
+}
+
+.xk-theme-switch__icon {
+  display: grid;
+  place-items: center;
+  height: 30px;
+  width: 30px;
 }
 
 @media (min-width: 1024px) {
@@ -509,41 +442,41 @@ a {
 
   .xk-account-layout__frame {
     display: grid;
-    grid-template-columns: minmax(290px, 336px) minmax(0, 1fr);
+    gap: 12px;
+    grid-template-columns: minmax(260px, 294px) minmax(0px, 1fr);
     height: calc(100svh - var(--xk-header-height));
+    min-height: 0;
   }
 
   .xk-account-layout__rail {
     height: 100%;
+    min-height: 0;
     padding: 18px 0 18px 18px;
   }
 
   .xk-account-layout__main {
     min-width: 0;
     height: 100%;
+    min-height: 0;
     padding: 18px 18px 18px 0;
   }
 
   .xk-account-layout__scroll {
     height: 100%;
+    min-height: 0;
     overflow-y: auto;
+    overflow-x: hidden;
     padding: 12px clamp(20px, 3vw, 34px) 26px;
     border-radius: 30px;
     background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02)),
-      rgba(8, 11, 11, 0.68);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+      linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 34%),
+      var(--surface);
+    border: 1px solid var(--separator);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
   }
 
   .xk-account-layout__hero {
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    padding: 8px 0 18px;
-    background:
-      linear-gradient(180deg, rgba(8, 11, 11, 0.96), rgba(8, 11, 11, 0.84) 72%, transparent);
-    backdrop-filter: blur(12px);
+    padding: 8px 0 8px;
   }
 
   .xk-account-sidebar {
@@ -3240,8 +3173,7 @@ a {
   padding-top: 112px;
   background:
     linear-gradient(180deg, rgba(5, 9, 6, 0.48), rgba(5, 9, 6, 0.96)),
-    url('https://images.unsplash.com/photo-1607513746994-51f730a44832?auto=format&fit=crop&w=2400&q=85')
-      center / cover fixed;
+    var(--background);
 }
 
 .xk-login-page {
@@ -3325,13 +3257,13 @@ a {
 .xk-history-panel {
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid var(--separator);
   border-radius: 8px;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.075), transparent 34%),
-    rgba(10, 15, 11, 0.8);
+    var(--surface);
   box-shadow:
-    0 24px 70px rgba(0, 0, 0, 0.42),
+    0 24px 70px rgba(0, 0, 0, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(18px);
 }
@@ -3417,8 +3349,8 @@ a {
   margin-top: 16px;
   padding: 12px 14px;
   border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  background: rgba(0, 0, 0, 0.26);
+  border: 1px solid var(--separator);
+  background: var(--surface);
   font-family: 'Minecraft Five', sans-serif;
 }
 
@@ -3447,7 +3379,7 @@ a {
 .xk-cabinet-page {
   padding-bottom: 76px;
   background:
-    linear-gradient(180deg, rgba(33, 39, 34, 0.9), rgba(11, 13, 12, 0.98)),
+    linear-gradient(180deg, rgba(33, 39, 34, 0.65), rgba(11, 13, 12, 0.82)),
     radial-gradient(
       circle at 20% 0%,
       rgba(216, 255, 102, 0.14),
@@ -3465,7 +3397,7 @@ a {
 .xk-bank-page {
   padding-bottom: 90px;
   background:
-    linear-gradient(180deg, rgba(9, 13, 16, 0.82), rgba(4, 6, 8, 0.98)),
+    linear-gradient(180deg, rgba(9, 13, 16, 0.62), rgba(4, 6, 8, 0.88)),
     radial-gradient(
       circle at 20% 0%,
       rgba(216, 255, 102, 0.13),

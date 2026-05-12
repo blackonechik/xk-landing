@@ -3,7 +3,11 @@ import { useNavigate, useRouterState } from '@tanstack/react-router'
 import { buttonVariants } from '@heroui/react'
 import { LogOut } from 'lucide-react'
 import AnimatedLink from './AnimatedLink'
-import { PlayerAvatar, fetchAccount, logout } from '@/entities/account'
+import {
+  PlayerAvatar,
+  fetchAccountCached,
+  logout,
+} from '@/entities/account'
 import type { AccountPayload } from '@/entities/account'
 
 export default function Header() {
@@ -47,7 +51,7 @@ export default function Header() {
 
     async function loadAccount() {
       try {
-        const payload = await fetchAccount()
+        const payload = await fetchAccountCached()
 
         if (!isActive) {
           return
@@ -71,13 +75,6 @@ export default function Header() {
       isActive = false
     }
   }, [])
-
-  async function handleLogout() {
-    await logout()
-    setAccount(null)
-    setAuthState('guest')
-    await navigate({ to: '/' })
-  }
 
   return (
     <header
@@ -108,9 +105,9 @@ export default function Header() {
               <button
                 className="xk-site-header__auth-button"
                 type="button"
-                onClick={() => void handleLogout()}
-                aria-label="Выйти"
-                title="Выйти"
+                onClick={() => navigate({ to: '/cabinet' })}
+                aria-label="Личный кабинет"
+                title="Личный кабинет"
               >
                 {account ? (
                   <PlayerAvatar
@@ -118,8 +115,7 @@ export default function Header() {
                     nickname={account.player.nickname}
                   />
                 ) : null}
-                <span className="xk-site-header__auth-label">Выйти</span>
-                <LogOut size={16} aria-hidden="true" />
+                <span className="xk-site-header__auth-label">Личный кабинет</span>
               </button>
             </div>
           ) : authState === 'guest' ? (

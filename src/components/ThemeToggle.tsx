@@ -1,38 +1,33 @@
 import { useEffect, useState } from 'react'
+import { Moon, SunMedium } from 'lucide-react'
+import { Switch } from '@heroui/react'
 
-type ThemeMode = 'light' | 'dark' | 'auto'
+type ThemeMode = 'light' | 'dark'
 
 function getInitialMode(): ThemeMode {
   if (typeof window === 'undefined') {
-    return 'auto'
+    return 'dark'
   }
 
   const stored = window.localStorage.getItem('theme')
-  if (stored === 'light' || stored === 'dark' || stored === 'auto') {
+  if (stored === 'light' || stored === 'dark') {
     return stored
   }
 
-  return 'auto'
+  return window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? 'dark'
+    : 'light'
 }
 
 function applyThemeMode(mode: ThemeMode) {
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-  const resolved = mode === 'auto' ? (prefersDark ? 'dark' : 'light') : mode
-
   document.documentElement.classList.remove('light', 'dark')
-  document.documentElement.classList.add(resolved)
-
-  if (mode === 'auto') {
-    document.documentElement.removeAttribute('data-theme')
-  } else {
-    document.documentElement.setAttribute('data-theme', mode)
-  }
-
-  document.documentElement.style.colorScheme = resolved
+  document.documentElement.classList.add(mode)
+  document.documentElement.setAttribute('data-theme', mode)
+  document.documentElement.style.colorScheme = mode
 }
 
 export default function ThemeToggle() {
-  const [mode, setMode] = useState<ThemeMode>('auto')
+  const [mode, setMode] = useState<ThemeMode>('dark')
 
   useEffect(() => {
     const initialMode = getInitialMode()
@@ -41,41 +36,35 @@ export default function ThemeToggle() {
   }, [])
 
   useEffect(() => {
-    if (mode !== 'auto') {
-      return
-    }
-
-    const media = window.matchMedia('(prefers-color-scheme: dark)')
-    const onChange = () => applyThemeMode('auto')
-
-    media.addEventListener('change', onChange)
-    return () => {
-      media.removeEventListener('change', onChange)
-    }
+    applyThemeMode(mode)
   }, [mode])
 
-  function toggleMode() {
-    const nextMode: ThemeMode =
-      mode === 'light' ? 'dark' : mode === 'dark' ? 'auto' : 'light'
-    setMode(nextMode)
-    applyThemeMode(nextMode)
-    window.localStorage.setItem('theme', nextMode)
-  }
-
-  const label =
-    mode === 'auto'
-      ? 'Theme mode: auto (system). Click to switch to light mode.'
-      : `Theme mode: ${mode}. Click to switch mode.`
+  const isDark = mode === 'dark'
 
   return (
-    <button
-      type="button"
-      onClick={toggleMode}
-      aria-label={label}
-      title={label}
-      className="rounded-full border border-[var(--chip-line)] bg-[var(--chip-bg)] px-3 py-1.5 text-sm font-semibold text-[var(--sea-ink)] shadow-[0_8px_22px_rgba(30,90,72,0.08)] transition hover:-translate-y-0.5"
+    <Switch
+      aria-label={
+        isDark ? 'Переключить на светлую тему' : 'Переключить на тёмную тему'
+      }
+      isSelected={isDark}
+      onChange={(selected) => {
+        const nextMode: ThemeMode = selected ? 'dark' : 'light'
+        setMode(nextMode)
+        applyThemeMode(nextMode)
+        window.localStorage.setItem('theme', nextMode)
+      }}
+      size="md"
+      className={['xk-theme-switch', isDark ? 'is-dark' : 'is-light']
+        .filter(Boolean)
+        .join(' ')}
     >
-      {mode === 'auto' ? 'Auto' : mode === 'dark' ? 'Dark' : 'Light'}
-    </button>
+      <Switch.Control className="xk-theme-switch__control">
+        <Switch.Thumb className="xk-theme-switch__thumb">
+          <Switch.Icon className="xk-theme-switch__icon">
+            {isDark ? <Moon size={14} /> : <SunMedium size={14} />}
+          </Switch.Icon>
+        </Switch.Thumb>
+      </Switch.Control>
+    </Switch>
   )
 }

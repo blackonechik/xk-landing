@@ -91,8 +91,6 @@ export function getAccountSidebarMenuSections({
           key: 'kingdoms',
           icon: <Crown size={18} />,
           label: 'Королевства',
-          disabled: true,
-          badge: 'В разработке',
         },
       ],
     },

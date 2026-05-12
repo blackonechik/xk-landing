@@ -4,8 +4,6 @@ import {
   Scripts,
   createRootRoute,
 } from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanStackDevtools } from '@tanstack/react-devtools'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
 import PageTransition, {
@@ -95,6 +93,24 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     <html lang="ru" suppressHydrationWarning>
       <head>
         <HeadContent />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function () {
+                try {
+                  var stored = localStorage.getItem('theme');
+                  var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  var mode = stored === 'light' || stored === 'dark' ? stored : (prefersDark ? 'dark' : 'light');
+                  var root = document.documentElement;
+                  root.classList.remove('light', 'dark');
+                  root.classList.add(mode);
+                  root.setAttribute('data-theme', mode);
+                  root.style.colorScheme = mode;
+                } catch (error) {}
+              })();
+            `,
+          }}
+        />
       </head>
       <body>
         <PageTransitionProvider>
@@ -102,17 +118,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           {children}
           <Footer />
         </PageTransitionProvider>
-        <TanStackDevtools
-          config={{
-            position: 'bottom-right',
-          }}
-          plugins={[
-            {
-              name: 'Tanstack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-          ]}
-        />
         <Scripts />
       </body>
     </html>

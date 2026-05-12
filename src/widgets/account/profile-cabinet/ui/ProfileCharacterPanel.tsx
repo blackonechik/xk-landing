@@ -7,16 +7,14 @@ type ProfileCharacterPanelProps = {
 }
 
 export function ProfileCharacterPanel({ account }: ProfileCharacterPanelProps) {
-  const skinUuid = account.player.premiumUuid ?? account.player.uuid
-
   return (
     <Card>
       <Card.Header>
         <Card.Title>Персонаж</Card.Title>
-        <Card.Description>Скин и аватар игрока загружаются из базы через skin proxy.</Card.Description>
+        <Card.Description>А кто это у нас такой красивый?</Card.Description>
       </Card.Header>
       <Card.Content>
-        <SkinViewer nickname={account.player.nickname} uuid={skinUuid} />
+        <SkinViewer nickname={account.player.nickname} />
       </Card.Content>
     </Card>
   )

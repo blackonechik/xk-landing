@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { Button, Card, Link, Text } from '@heroui/react'
 import { LogIn } from 'lucide-react'
-import { fetchAccount, getDiscordLoginUrl } from '@/entities/account'
+import { fetchAccountCached, getDiscordLoginUrl } from '@/entities/account'
 
 export function LoginPage() {
   const navigate = useNavigate()
@@ -10,7 +10,7 @@ export function LoginPage() {
   useEffect(() => {
     let isActive = true
 
-    void fetchAccount()
+    void fetchAccountCached()
       .then(() => {
         if (!isActive) {
           return

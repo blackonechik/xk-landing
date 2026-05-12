@@ -1,7 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { Alert, Button, Spinner } from '@heroui/react'
-import { fetchAccount, logout } from '@/entities/account'
+import {
+  fetchAccountCached,
+  getCachedAccount,
+  logout,
+} from '@/entities/account'
 import {
   ProfileCharacterPanel,
   ProfileStatusPanel,
@@ -12,12 +16,14 @@ import type { AccountPayload } from '@/entities/account'
 
 export function CabinetPage() {
   const navigate = useNavigate()
-  const [account, setAccount] = useState<AccountPayload | null>(null)
+  const [account, setAccount] = useState<AccountPayload | null>(() =>
+    getCachedAccount(),
+  )
   const [error, setError] = useState('')
 
   async function loadAccount() {
     try {
-      const payload = await fetchAccount()
+      const payload = await fetchAccountCached()
       setAccount(payload)
     } catch (loadError) {
       if (loadError instanceof Error && loadError.message === 'UNAUTHORIZED') {
@@ -66,6 +72,9 @@ export function CabinetPage() {
     <AccountLayout
       account={account}
       currentSection="home"
+      onNavigate={(to) => {
+        void navigate({ to })
+      }}
       onBankViewNavigate={(view) => {
         void navigate({
           to: '/cabinet/bank',
@@ -91,7 +100,7 @@ export function CabinetPage() {
         </>
       }
     >
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,0.74fr)_minmax(0,1fr)]">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,0.44fr)_minmax(0,1fr)]">
         <ProfileCharacterPanel account={account} />
         <ProfileStatusPanel account={account} totalDiamonds={totalDiamonds} />
       </div>

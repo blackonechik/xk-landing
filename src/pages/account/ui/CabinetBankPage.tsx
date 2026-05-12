@@ -1,7 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { Alert, Button, Spinner } from '@heroui/react'
-import { fetchAccount, logout, type AccountPayload } from '@/entities/account'
+import {
+  fetchAccountCached,
+  getCachedAccount,
+  logout,
+  type AccountPayload,
+} from '@/entities/account'
 import { closeCard, createCard, transferDiamonds } from '@/entities/bank'
 import { HeroLinkButton, HeroPage } from '@/shared/ui/hero-page'
 import {
@@ -26,13 +31,15 @@ const errorMessages: Record<string, string> = {
 
 export function CabinetBankPage() {
   const navigate = useNavigate()
-  const [account, setAccount] = useState<AccountPayload | null>(null)
+  const [account, setAccount] = useState<AccountPayload | null>(() =>
+    getCachedAccount(),
+  )
   const [error, setError] = useState('')
   const [activeView, setActiveView] = useState<BankView>(() => getBankViewFromHash())
 
   async function loadAccount() {
     try {
-      const payload = await fetchAccount()
+      const payload = await fetchAccountCached()
       setAccount(payload)
     } catch (loadError) {
       if (loadError instanceof Error && loadError.message === 'UNAUTHORIZED') {
@@ -115,6 +122,9 @@ export function CabinetBankPage() {
       account={account}
       activeBankView={activeView}
       currentSection="bank"
+      onNavigate={(to) => {
+        void navigate({ to })
+      }}
       onBankViewNavigate={(view) => {
         setActiveView(view)
         void navigate({

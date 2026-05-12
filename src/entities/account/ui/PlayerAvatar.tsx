@@ -15,6 +15,15 @@ type PlayerHeadImageProps = {
   alt?: string
 }
 
+type CachedAppearance = {
+  skinSource: string
+  avatarSource: string
+  objectUrl?: string
+}
+
+const appearanceCache = new Map<string, CachedAppearance>()
+const appearanceRequests = new Map<string, Promise<CachedAppearance>>()
+
 function getHueSeed(name: string) {
   return name
     .split('')
@@ -106,60 +115,112 @@ async function createHeadDataUrlFromSkin(source: string) {
   return canvas.toDataURL('image/png')
 }
 
+function getCachedAppearance(identifier: string) {
+  return appearanceCache.get(identifier)
+}
+
+async function loadAppearance(identifier: string) {
+  const fallbackSkin = createFallbackSkinDataUrl(identifier)
+  const fallbackAvatar = createFallbackHeadDataUrl(identifier)
+
+  if (appearanceCache.has(identifier)) {
+    return appearanceCache.get(identifier)!
+  }
+
+  const cachedRequest = appearanceRequests.get(identifier)
+  if (cachedRequest) {
+    return cachedRequest
+  }
+
+  const request = fetch(getSkinProxyUrl(identifier))
+    .then(async (response) => {
+      if (!response.ok) {
+        throw new Error('SKIN_FETCH_FAILED')
+      }
+
+      const blob = await response.blob()
+      const objectUrl = URL.createObjectURL(blob)
+      const avatarSource = (await createHeadDataUrlFromSkin(objectUrl)) || fallbackAvatar
+      const appearance = {
+        skinSource: objectUrl,
+        avatarSource,
+        objectUrl,
+      }
+
+      appearanceCache.set(identifier, appearance)
+      return appearance
+    })
+    .catch(() => {
+      const appearance = {
+        skinSource: fallbackSkin,
+        avatarSource: fallbackAvatar,
+      }
+
+      appearanceCache.set(identifier, appearance)
+      return appearance
+    })
+    .finally(() => {
+      appearanceRequests.delete(identifier)
+    })
+
+  appearanceRequests.set(identifier, request)
+  return request
+}
+
+export function clearPlayerAppearanceCache(identifier?: string) {
+  if (identifier) {
+    const cached = appearanceCache.get(identifier)
+    if (cached?.objectUrl) {
+      URL.revokeObjectURL(cached.objectUrl)
+    }
+
+    appearanceCache.delete(identifier)
+    appearanceRequests.delete(identifier)
+    return
+  }
+
+  for (const cached of appearanceCache.values()) {
+    if (cached.objectUrl) {
+      URL.revokeObjectURL(cached.objectUrl)
+    }
+  }
+
+  appearanceCache.clear()
+  appearanceRequests.clear()
+}
+
 export function usePlayerAppearance(identifier: string) {
-  const [skinSource, setSkinSource] = useState(() =>
-    createFallbackSkinDataUrl(identifier),
+  const cachedAppearance = getCachedAppearance(identifier)
+  const [skinSource, setSkinSource] = useState(
+    () => cachedAppearance?.skinSource ?? createFallbackSkinDataUrl(identifier),
   )
-  const [avatarSource, setAvatarSource] = useState(() =>
-    createFallbackHeadDataUrl(identifier),
+  const [avatarSource, setAvatarSource] = useState(
+    () =>
+      cachedAppearance?.avatarSource ?? createFallbackHeadDataUrl(identifier),
   )
 
   useEffect(() => {
+    const cached = getCachedAppearance(identifier)
+
+    if (cached) {
+      setSkinSource(cached.skinSource)
+      setAvatarSource(cached.avatarSource)
+      return undefined
+    }
+
     let active = true
-    let objectUrl: string | null = null
-    const controller = new AbortController()
 
-    const fallbackSkin = createFallbackSkinDataUrl(identifier)
-    const fallbackAvatar = createFallbackHeadDataUrl(identifier)
+    void loadAppearance(identifier).then((appearance) => {
+      if (!active) {
+        return
+      }
 
-    setSkinSource(fallbackSkin)
-    setAvatarSource(fallbackAvatar)
-
-    void fetch(getSkinProxyUrl(identifier), {
-      signal: controller.signal,
+      setSkinSource(appearance.skinSource)
+      setAvatarSource(appearance.avatarSource)
     })
-      .then(async (response) => {
-        if (!response.ok) {
-          throw new Error('SKIN_FETCH_FAILED')
-        }
-
-        const blob = await response.blob()
-        objectUrl = URL.createObjectURL(blob)
-        const nextAvatarSource = await createHeadDataUrlFromSkin(objectUrl)
-
-        if (!active) {
-          return
-        }
-
-        setSkinSource(objectUrl)
-        setAvatarSource(nextAvatarSource || fallbackAvatar)
-      })
-      .catch(() => {
-        if (!active) {
-          return
-        }
-
-        setSkinSource(fallbackSkin)
-        setAvatarSource(fallbackAvatar)
-      })
 
     return () => {
       active = false
-      controller.abort()
-
-      if (objectUrl) {
-        URL.revokeObjectURL(objectUrl)
-      }
     }
   }, [identifier])
 

@@ -1,6 +1,9 @@
 import { apiBaseUrl } from '@/shared/api/config'
 import type { AccountPayload } from '../model/types'
 
+let accountCache: AccountPayload | null = null
+let accountRequest: Promise<AccountPayload> | null = null
+
 export function getDiscordLoginUrl(returnTo?: string) {
   const url = new URL(`${apiBaseUrl}/api/auth/discord`)
 
@@ -29,9 +32,38 @@ export async function fetchAccount() {
   return (await response.json()) as AccountPayload
 }
 
+export function getCachedAccount() {
+  return accountCache
+}
+
+export async function fetchAccountCached() {
+  if (accountCache) {
+    return accountCache
+  }
+
+  if (!accountRequest) {
+    accountRequest = fetchAccount()
+      .then((payload) => {
+        accountCache = payload
+        return payload
+      })
+      .finally(() => {
+        accountRequest = null
+      })
+  }
+
+  return accountRequest
+}
+
+export function clearAccountCache() {
+  accountCache = null
+  accountRequest = null
+}
+
 export async function logout() {
   await fetch(`${apiBaseUrl}/api/auth/logout`, {
     method: 'POST',
     credentials: 'include',
   })
+  clearAccountCache()
 }
