@@ -1,8 +1,14 @@
 import { apiBaseUrl } from '@/shared/api/config'
 import type { AccountPayload } from '../model/types'
 
-export function getDiscordLoginUrl() {
-  return `${apiBaseUrl}/api/auth/discord`
+export function getDiscordLoginUrl(returnTo?: string) {
+  const url = new URL(`${apiBaseUrl}/api/auth/discord`)
+
+  if (returnTo) {
+    url.searchParams.set('returnTo', returnTo)
+  }
+
+  return url.toString()
 }
 
 export function getSkinProxyUrl(identifier: string) {

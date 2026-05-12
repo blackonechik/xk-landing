@@ -42,8 +42,11 @@ export function LoginPage() {
             </Card.Description>
           </Card.Header>
           <Card.Content className="flex flex-col items-center gap-4 text-center">
-            <Button 
-              onClick={() => window.location.href = getDiscordLoginUrl()}>
+            <Button
+              onClick={() => {
+                window.location.href = getDiscordLoginUrl(window.location.origin)
+              }}
+            >
               Вход через Discord
             </Button>
             <Text type="body-sm" color="muted">

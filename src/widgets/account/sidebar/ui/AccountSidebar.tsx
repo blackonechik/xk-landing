@@ -93,18 +93,15 @@ export function AccountSidebar({
   return (
     <aside className="lg:sticky lg:top-28 lg:self-start">
       <Card>
-        <Card.Header className="flex items-center gap-4">
+        <Card.Header className="flex gap-4 flex-row justify-center">
           <PlayerAvatar
             className="size-14 shrink-0 border border-white/10 bg-white/5"
             nickname={account.player.nickname}
           />
-          <div className="min-w-0">
             <Card.Title className="truncate">{account.player.nickname}</Card.Title>
-            <Card.Description>Личный кабинет игрока</Card.Description>
-          </div>
         </Card.Header>
 
-        <Card.Content className="flex flex-col gap-2">
+        <Card.Content className="flex flex-col gap-1">
           <SidebarButton current={currentSection === 'home'} to="/cabinet">
             <span className="flex items-center gap-3">
               <House size={18} />
@@ -112,7 +109,7 @@ export function AccountSidebar({
             </span>
           </SidebarButton>
 
-          <div className="flex flex-col gap-2 rounded-2xl border border-white/8 bg-white/4 p-2">
+          <div className="flex flex-col gap-2 rounded-2xl border border-white/8 bg-white/4">
             <SidebarButton
               current={currentSection === 'bank' && activeBankView === 'cards'}
               onPress={() => onBankViewNavigate('cards')}

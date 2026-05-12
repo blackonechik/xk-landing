@@ -83,7 +83,7 @@ export function CabinetPage() {
         </>
       }
     >
-      <div className="grid gap-6 lg:grid-cols-[0.6fr_1.05fr]">
+      <div className="flex gap-6">
         <AccountSidebar
           account={account}
           currentSection="home"
