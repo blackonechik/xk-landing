@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate } from '@tanstack/react-router'
+import { useNavigate, useRouterState } from '@tanstack/react-router'
 import { buttonVariants } from '@heroui/react'
 import { LogOut } from 'lucide-react'
 import AnimatedLink from './AnimatedLink'
@@ -14,8 +14,17 @@ export default function Header() {
   )
   const lastScrollY = useRef(0)
   const navigate = useNavigate()
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  })
+  const isCabinetRoute = pathname.startsWith('/cabinet')
 
   useEffect(() => {
+    if (isCabinetRoute) {
+      setIsHidden(false)
+      return undefined
+    }
+
     lastScrollY.current = window.scrollY
 
     function handleScroll() {
@@ -31,7 +40,7 @@ export default function Header() {
     return () => {
       window.removeEventListener('scroll', handleScroll)
     }
-  }, [])
+  }, [isCabinetRoute])
 
   useEffect(() => {
     let isActive = true
@@ -72,7 +81,11 @@ export default function Header() {
 
   return (
     <header
-      className={['xk-site-header', isHidden ? 'is-hidden' : '']
+      className={[
+        'xk-site-header',
+        isHidden ? 'is-hidden' : '',
+        isCabinetRoute ? 'is-locked' : '',
+      ]
         .filter(Boolean)
         .join(' ')}
     >

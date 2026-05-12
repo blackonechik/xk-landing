@@ -12,7 +12,7 @@ import {
   BankTransferView,
   type BankView,
 } from '@/widgets/account/bank-cabinet'
-import { AccountSidebar } from '@/widgets/account/sidebar'
+import { AccountLayout } from '@/widgets/account/layout'
 
 const errorMessages: Record<string, string> = {
   CARD_LIMIT_REACHED: 'Достигнут лимит карт.',
@@ -111,7 +111,18 @@ export function CabinetBankPage() {
     account.bank.cards.length < account.bank.limits.maxCardsPerPlayer
 
   return (
-    <HeroPage
+    <AccountLayout
+      account={account}
+      activeBankView={activeView}
+      currentSection="bank"
+      onBankViewNavigate={(view) => {
+        setActiveView(view)
+        void navigate({
+          hash: view,
+          replace: true,
+          to: '/cabinet/bank',
+        })
+      }}
       eyebrow="XK Bank"
       title="Карты и переводы"
       description="Управление картами, балансом, переводами и историей операций."
@@ -132,73 +143,55 @@ export function CabinetBankPage() {
       }
     >
       <div className="grid gap-6">
-        <div className="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
-          <AccountSidebar
+        {hasCards ? (
+          <BankSummary account={account} totalDiamonds={totalDiamonds} />
+        ) : (
+          <BankOnboarding
             account={account}
-            activeBankView={activeView}
-            currentSection="bank"
-            onBankViewNavigate={(view) => {
-              setActiveView(view)
-              void navigate({
-                hash: view,
-                replace: true,
-                to: '/cabinet/bank',
-              })
-            }}
+            canCreateCard={canCreateCard}
+            onCreateCard={(payload) =>
+              runBankAction(
+                () => createCard(payload),
+                'Не получилось создать карту.',
+              )
+            }
           />
+        )}
 
-          <div className="grid gap-6">
-            {hasCards ? (
-              <BankSummary account={account} totalDiamonds={totalDiamonds} />
-            ) : (
-              <BankOnboarding
-                account={account}
-                canCreateCard={canCreateCard}
-                onCreateCard={(payload) =>
-                  runBankAction(
-                    () => createCard(payload),
-                    'Не получилось создать карту.',
-                  )
-                }
-              />
-            )}
+        {hasCards && activeView === 'cards' ? (
+          <BankCardsView
+            account={account}
+            canCreateCard={canCreateCard}
+            onCreateCard={(payload) =>
+              runBankAction(
+                () => createCard(payload),
+                'Не получилось создать карту.',
+              )
+            }
+            onCloseCard={(cardId) =>
+              runBankAction(
+                () => closeCard(cardId),
+                'Не получилось закрыть карту.',
+              )
+            }
+          />
+        ) : null}
 
-            {hasCards && activeView === 'cards' ? (
-              <BankCardsView
-                account={account}
-                canCreateCard={canCreateCard}
-                onCreateCard={(payload) =>
-                  runBankAction(
-                    () => createCard(payload),
-                    'Не получилось создать карту.',
-                  )
-                }
-                onCloseCard={(cardId) =>
-                  runBankAction(
-                    () => closeCard(cardId),
-                    'Не получилось закрыть карту.',
-                  )
-                }
-              />
-            ) : null}
+        {hasCards && activeView === 'transfer' ? (
+          <BankTransferView
+            account={account}
+            onTransfer={(payload) =>
+              runBankAction(
+                () => transferDiamonds(payload),
+                'Не получилось выполнить перевод.',
+              )
+            }
+          />
+        ) : null}
 
-            {hasCards && activeView === 'transfer' ? (
-              <BankTransferView
-                account={account}
-                onTransfer={(payload) =>
-                  runBankAction(
-                    () => transferDiamonds(payload),
-                    'Не получилось выполнить перевод.',
-                  )
-                }
-              />
-            ) : null}
-
-            {hasCards && activeView === 'history' ? (
-              <BankHistoryView transfers={account.bank.transfers} />
-            ) : null}
-          </div>
-        </div>
+        {hasCards && activeView === 'history' ? (
+          <BankHistoryView transfers={account.bank.transfers} />
+        ) : null}
 
         {error ? (
           <Alert status="danger">
@@ -209,7 +202,7 @@ export function CabinetBankPage() {
           </Alert>
         ) : null}
       </div>
-    </HeroPage>
+    </AccountLayout>
   )
 }
 

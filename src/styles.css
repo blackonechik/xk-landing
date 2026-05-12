@@ -186,6 +186,7 @@ a {
 :root {
   --xk-page-transition-duration: 540ms;
   --xk-page-transition-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --xk-header-height: 82px;
 }
 
 .xk-site-header {
@@ -194,35 +195,20 @@ a {
   left: 0;
   right: 0;
   z-index: 80;
-  padding: 14px 0 22px;
-  background: transparent;
-  isolation: isolate;
+  padding: 14px 0;
+  background: rgba(0, 0, 0, 0.48);  
   transition:
     transform 0.24s ease,
     background 0.24s ease;
   view-transition-name: xk-header;
 }
 
-.xk-site-header::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background:
-    linear-gradient( 180deg, rgba(2, 2, 6, 0.84) 0%, rgba(2, 2, 6, 0.62) 44%, rgba(2, 2, 6, 0) 100% ), linear-gradient(90deg, rgba(2, 2, 0, 0.6), rgba(255, 224, 100, 0.1));
-  -webkit-mask-image: linear-gradient(
-    180deg,
-    #000 0%,
-    rgba(0, 0, 0, 0.9) 56%,
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    180deg,
-    #000 0%,
-    rgba(0, 0, 0, 0.9) 56%,
-    transparent 100%
-  );
+.xk-site-header.is-locked {
+  background: rgba(7, 10, 10, 0.82);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
+
 
 .xk-site-header.is-hidden {
   transform: translateY(-100%);
@@ -335,6 +321,234 @@ a {
 .xk-site-header__login-button.button {
   color: var(--accent-foreground);
   font-family: var(--font-sans);
+}
+
+.xk-account-layout,
+.xk-account-layout * {
+  font-family: var(--font-sans);
+}
+
+.xk-account-layout {
+  min-height: 100svh;
+  padding-top: var(--xk-header-height);
+  background:
+    radial-gradient(circle at top left, rgba(188, 255, 115, 0.12), transparent 28%),
+    radial-gradient(circle at top right, rgba(91, 140, 255, 0.12), transparent 32%),
+    linear-gradient(180deg, rgba(13, 18, 17, 0.98), rgba(5, 7, 7, 1));
+}
+
+.xk-account-layout__frame {
+  min-height: calc(100svh - var(--xk-header-height));
+}
+
+.xk-account-layout__rail {
+  padding: 18px 18px 0;
+}
+
+.xk-account-layout__main {
+  padding: 0 18px 24px;
+}
+
+.xk-account-layout__scroll {
+  display: grid;
+  gap: 24px;
+}
+
+.xk-account-layout__hero {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 20px 0 4px;
+}
+
+.xk-account-layout__hero-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.xk-account-layout__hero-text {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 840px;
+}
+
+.xk-account-layout__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.xk-account-layout__content {
+  display: grid;
+  gap: 24px;
+  padding-bottom: 28px;
+}
+
+.xk-account-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-height: 100%;
+  padding: 22px 18px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 28px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
+    rgba(8, 12, 11, 0.88);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 24px 48px rgba(0, 0, 0, 0.24);
+}
+
+.xk-account-sidebar__top,
+.xk-account-sidebar__section,
+.xk-account-sidebar__footer {
+  display: grid;
+  gap: 14px;
+}
+
+.xk-account-sidebar__top {
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.xk-account-sidebar__brand {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.74);
+}
+
+.xk-account-sidebar__player {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.xk-account-sidebar__avatar {
+  width: 56px;
+  height: 56px;
+  flex: 0 0 auto;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.xk-account-sidebar__player-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.xk-account-sidebar__player-copy strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 18px;
+}
+
+.xk-account-sidebar__player-copy span,
+.xk-account-sidebar__section-label,
+.xk-account-sidebar__status {
+  color: rgba(231, 237, 232, 0.62);
+  font-size: 13px;
+}
+
+.xk-account-sidebar__section {
+  flex: 1 1 auto;
+}
+
+.xk-account-sidebar__section-label {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.xk-account-sidebar__menu,
+.xk-account-sidebar__group,
+.xk-account-sidebar__submenu {
+  display: grid;
+}
+
+.xk-account-sidebar__menu {
+  gap: 8px;
+}
+
+.xk-account-sidebar__group {
+  gap: 8px;
+  padding: 8px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.xk-account-sidebar__submenu {
+  gap: 6px;
+  padding-left: 10px;
+}
+
+.xk-account-sidebar__footer {
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.xk-account-sidebar__status {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  line-height: 1.5;
+}
+
+@media (min-width: 1024px) {
+  .xk-account-layout {
+    height: 100svh;
+    overflow: hidden;
+  }
+
+  .xk-account-layout__frame {
+    display: grid;
+    grid-template-columns: minmax(290px, 336px) minmax(0, 1fr);
+    height: calc(100svh - var(--xk-header-height));
+  }
+
+  .xk-account-layout__rail {
+    height: 100%;
+    padding: 18px 0 18px 18px;
+  }
+
+  .xk-account-layout__main {
+    min-width: 0;
+    height: 100%;
+    padding: 18px 18px 18px 0;
+  }
+
+  .xk-account-layout__scroll {
+    height: 100%;
+    overflow-y: auto;
+    padding: 12px clamp(20px, 3vw, 34px) 26px;
+    border-radius: 30px;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02)),
+      rgba(8, 11, 11, 0.68);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .xk-account-layout__hero {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding: 8px 0 18px;
+    background:
+      linear-gradient(180deg, rgba(8, 11, 11, 0.96), rgba(8, 11, 11, 0.84) 72%, transparent);
+    backdrop-filter: blur(12px);
+  }
+
+  .xk-account-sidebar {
+    height: 100%;
+  }
 }
 
 .xk-page-transition {

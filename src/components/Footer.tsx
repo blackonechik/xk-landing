@@ -1,6 +1,15 @@
+import { useRouterState } from '@tanstack/react-router'
 import AnimatedLink from './AnimatedLink'
 
 export default function Footer() {
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  })
+
+  if (pathname.startsWith('/cabinet')) {
+    return null
+  }
+
   const year = new Date().getFullYear()
 
   return (

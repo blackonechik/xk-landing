@@ -6,7 +6,7 @@ import {
   ProfileCharacterPanel,
   ProfileStatusPanel,
 } from '@/widgets/account/profile-cabinet'
-import { AccountSidebar } from '@/widgets/account/sidebar'
+import { AccountLayout } from '@/widgets/account/layout'
 import { HeroLinkButton, HeroPage } from '@/shared/ui/hero-page'
 import type { AccountPayload } from '@/entities/account'
 
@@ -63,7 +63,15 @@ export function CabinetPage() {
   }
 
   return (
-    <HeroPage
+    <AccountLayout
+      account={account}
+      currentSection="home"
+      onBankViewNavigate={(view) => {
+        void navigate({
+          to: '/cabinet/bank',
+          hash: view,
+        })
+      }}
       eyebrow="Аккаунт"
       title="Личный кабинет"
       description="Личный кабинет активно разрабатывается. Если вы нашли ошибку или хотите предложить улучшение, пожалуйста, сообщите нам в Discord."
@@ -83,24 +91,9 @@ export function CabinetPage() {
         </>
       }
     >
-      <div className="flex gap-6">
-        <AccountSidebar
-          account={account}
-          currentSection="home"
-          onBankViewNavigate={(view) => {
-            void navigate({
-              to: '/cabinet/bank',
-              hash: view,
-            })
-          }}
-        />
-
-        <div className="grid gap-6">
-          <div className="grid gap-6 xl:grid-cols-[0.72fr_1fr]">
-            <ProfileCharacterPanel account={account} />
-            <ProfileStatusPanel account={account} totalDiamonds={totalDiamonds} />
-          </div>
-        </div>
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,0.74fr)_minmax(0,1fr)]">
+        <ProfileCharacterPanel account={account} />
+        <ProfileStatusPanel account={account} totalDiamonds={totalDiamonds} />
       </div>
 
       {error ? (
@@ -111,6 +104,6 @@ export function CabinetPage() {
           </Alert.Content>
         </Alert>
       ) : null}
-    </HeroPage>
+    </AccountLayout>
   )
 }
