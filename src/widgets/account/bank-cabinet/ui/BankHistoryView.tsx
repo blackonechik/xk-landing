@@ -1,8 +1,6 @@
+import { Card, Text } from '@heroui/react'
 import { History } from 'lucide-react'
 import type { BankTransfer } from '@/entities/bank'
-import { InfoTile } from '@/shared/ui/info-tile'
-import { SectionHeader } from '@/shared/ui/section-header'
-import { SurfaceCard } from '@/shared/ui/surface-card'
 
 type BankHistoryViewProps = {
   transfers: BankTransfer[]
@@ -10,28 +8,36 @@ type BankHistoryViewProps = {
 
 export function BankHistoryView({ transfers }: BankHistoryViewProps) {
   return (
-    <div className="xk-bank-stack">
-      <SurfaceCard as="section" className="xk-bank-panel">
-        <SectionHeader
-          eyebrow="История"
-          title="Последние переводы"
-          icon={<History size={28} />}
-        />
-
-        <div className="xk-history-list">
+    <Card>
+      <Card.Header className="flex items-start justify-between gap-4">
+        <div>
+          <Card.Title>Последние переводы</Card.Title>
+          <Card.Description>История операций по картам.</Card.Description>
+        </div>
+        <History className="size-6 text-muted" />
+      </Card.Header>
+      <Card.Content>
+        <div className="grid gap-3">
           {transfers.map((transfer) => (
-            <InfoTile
-              className="xk-transfer-row"
-              key={transfer.id}
-              label={`${transfer.fromOwner} → ${transfer.toOwner}`}
-              value={`${transfer.amountDiamonds} алм.`}
-            />
+            <Card key={transfer.id} variant="secondary">
+              <Card.Header className="flex flex-row items-center justify-between gap-4">
+                <div>
+                  <Card.Title>
+                    {transfer.fromOwner} → {transfer.toOwner}
+                  </Card.Title>
+                  {transfer.comment ? (
+                    <Card.Description>{transfer.comment}</Card.Description>
+                  ) : null}
+                </div>
+                <Text weight="semibold">{transfer.amountDiamonds} алм.</Text>
+              </Card.Header>
+            </Card>
           ))}
           {transfers.length === 0 ? (
-            <p className="xk-muted">Пока нет переводов.</p>
+            <Text color="muted">Пока нет переводов.</Text>
           ) : null}
         </div>
-      </SurfaceCard>
-    </div>
+      </Card.Content>
+    </Card>
   )
 }

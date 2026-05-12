@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
+import { Alert, Button, Spinner } from '@heroui/react'
 import { fetchAccount, logout, type AccountPayload } from '@/entities/account'
 import { closeCard, createCard, transferDiamonds } from '@/entities/bank'
-import { LogoutButton } from '@/features/auth/logout'
-import { LandingButton } from '@/shared/ui/landing-button'
+import { HeroLinkButton, HeroPage } from '@/shared/ui/hero-page'
 import {
   BankCardsView,
   BankHistoryView,
@@ -75,11 +75,21 @@ export function CabinetBankPage() {
 
   if (!account) {
     return (
-      <main className="xk-bank-page">
-        <section className="page-wrap xk-bank-loading">
-          Загружаем XK Bank...
-        </section>
-      </main>
+      <HeroPage
+        eyebrow="XK Bank"
+        title="Загружаем банк"
+        description="Получаем карты, лимиты и историю операций."
+        narrow
+      >
+        <Alert status="accent">
+          <Alert.Indicator>
+            <Spinner size="sm" />
+          </Alert.Indicator>
+          <Alert.Content>
+            <Alert.Title>Пожалуйста, подождите</Alert.Title>
+          </Alert.Content>
+        </Alert>
+      </HeroPage>
     )
   }
 
@@ -88,36 +98,27 @@ export function CabinetBankPage() {
     account.bank.cards.length < account.bank.limits.maxCardsPerPlayer
 
   return (
-    <main className="xk-bank-page">
-      <section className="page-wrap xk-bank-shell">
-        <div className="xk-bank-hero">
-          <div>
-            <p className="xk-overline">XK Bank</p>
-            <h1>Карты и переводы</h1>
-            <p className="xk-bank-lead">
-              Отдельная страница для управления картами, переводами и историей
-              операций.
-            </p>
-            <div className="xk-bank-actions">
-              <LandingButton
-                href="/cabinet"
-                tone="primary"
-                arrow
-                className="xk-cabinet-cta xk-cabinet-cta_small"
-              >
-                Назад в профиль
-              </LandingButton>
-            </div>
-          </div>
-
-          <LogoutButton
-            onLogout={async () => {
-              await logout()
-              await navigate({ to: '/' })
+    <HeroPage
+      eyebrow="XK Bank"
+      title="Карты и переводы"
+      description="Управление картами, балансом, переводами и историей операций."
+      actions={
+        <>
+          <HeroLinkButton to="/cabinet" variant="secondary">
+            Назад в профиль
+          </HeroLinkButton>
+          <Button
+            variant="ghost"
+            onPress={() => {
+              void logout().then(() => navigate({ to: '/' }))
             }}
-          />
-        </div>
-
+          >
+            Выйти
+          </Button>
+        </>
+      }
+    >
+      <div className="grid gap-6">
         {hasCards ? (
           <>
             <BankSummary account={account} totalDiamonds={totalDiamonds} />
@@ -171,8 +172,15 @@ export function CabinetBankPage() {
           <BankHistoryView transfers={account.bank.transfers} />
         ) : null}
 
-        {error ? <div className="xk-cabinet-error">{error}</div> : null}
-      </section>
-    </main>
+        {error ? (
+          <Alert status="danger">
+            <Alert.Indicator />
+            <Alert.Content>
+              <Alert.Title>{error}</Alert.Title>
+            </Alert.Content>
+          </Alert>
+        ) : null}
+      </div>
+    </HeroPage>
   )
 }

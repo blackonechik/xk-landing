@@ -1,8 +1,9 @@
 import { useEffect } from 'react'
 import { useNavigate } from '@tanstack/react-router'
+import { Card, Text } from '@heroui/react'
+import { LogIn } from 'lucide-react'
 import { fetchAccount, getDiscordLoginUrl } from '@/entities/account'
-import { LandingButton } from '@/shared/ui/landing-button'
-import AnimatedLink from '@/components/AnimatedLink'
+import { HeroLinkButton, HeroPage } from '@/shared/ui/hero-page'
 
 export function LoginPage() {
   const navigate = useNavigate()
@@ -30,23 +31,34 @@ export function LoginPage() {
   }, [navigate])
 
   return (
-    <main className="xk-login-page">
-      <section className="xk-login-shell page-wrap">
-        <div className="xk-login-card">
-          <h1 className="xk-login-card__title">Авторизация</h1>
-          <p>Авторизуйтесь на сайте, чтобы управлять своим аккаунтом.</p>
-          <LandingButton
-            href={getDiscordLoginUrl()}
-            tone="success"
-            size="small"
-          >
+    <HeroPage
+      eyebrow="Аккаунт"
+      title="Авторизация"
+      description="Войдите через Discord, чтобы открыть личный кабинет, банк и управление аккаунтом."
+      narrow
+    >
+      <Card className="max-w-lg">
+        <LogIn className="size-6 text-muted" />
+        <Card.Header>
+          <Card.Title>Вход на сайт</Card.Title>
+          <Card.Description>
+            Авторизация нужна для доступа к приватным разделам аккаунта.
+          </Card.Description>
+        </Card.Header>
+        <Card.Content className="flex flex-col gap-4">
+          <HeroLinkButton href={getDiscordLoginUrl()}>
             Вход через Discord
-          </LandingButton>
-          <AnimatedLink className="xk-login-terms" to="/offer">
+          </HeroLinkButton>
+          <Text color="muted" type="body-sm">
+            Продолжая вход, вы принимаете условия использования проекта.
+          </Text>
+        </Card.Content>
+        <Card.Footer>
+          <HeroLinkButton to="/offer" variant="ghost" size="sm">
             Условия использования
-          </AnimatedLink>
-        </div>
-      </section>
-    </main>
+          </HeroLinkButton>
+        </Card.Footer>
+      </Card>
+    </HeroPage>
   )
 }

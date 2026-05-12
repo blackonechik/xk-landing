@@ -1,4 +1,9 @@
-import { HeadContent, Outlet, Scripts, createRootRoute } from '@tanstack/react-router'
+import {
+  HeadContent,
+  Outlet,
+  Scripts,
+  createRootRoute,
+} from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import Footer from '../components/Footer'
@@ -6,6 +11,11 @@ import Header from '../components/Header'
 import PageTransition, {
   PageTransitionProvider,
 } from '../components/PageTransition'
+import {
+  HeroLinkButton,
+  HeroPage,
+  HeroSectionCard,
+} from '@/shared/ui/hero-page'
 
 import appCss from '../styles.css?url'
 
@@ -57,19 +67,29 @@ function RootRouteContent() {
 
 function NotFoundPage() {
   return (
-    <main className="tycoon-landing xk-legal-page">
-      <section className="page-wrap xk-legal-shell">
-        <p className="xk-overline">404</p>
-        <h1 className="mc-footer-title">Страница не найдена</h1>
-        <p className="xk-legal-lead">
-          Такого раздела на XK HARDCORE нет. Проверь адрес или вернись на
-          главную страницу.
-        </p>
-      </section>
-    </main>
+    <HeroPage
+      eyebrow="404"
+      title="Страница не найдена"
+      description="Такого раздела на XK HARDCORE нет. Проверь адрес или вернись на главную страницу."
+      actions={<HeroLinkButton to="/">На главную</HeroLinkButton>}
+      narrow
+    >
+      <HeroSectionCard title="Что можно открыть">
+        <div className="flex flex-wrap gap-3">
+          <HeroLinkButton to="/rules" variant="secondary">
+            Правила
+          </HeroLinkButton>
+          <HeroLinkButton to="/payment" variant="secondary">
+            Оплата
+          </HeroLinkButton>
+          <HeroLinkButton to="/cabinet" variant="secondary">
+            Кабинет
+          </HeroLinkButton>
+        </div>
+      </HeroSectionCard>
+    </HeroPage>
   )
 }
-
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ru" suppressHydrationWarning>

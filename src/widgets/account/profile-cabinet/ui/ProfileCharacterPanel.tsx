@@ -1,9 +1,7 @@
+import { Avatar, Card } from '@heroui/react'
 import { UserRound } from 'lucide-react'
-import { SkinViewer, type AccountPayload } from '@/entities/account'
-import { formatDate } from '@/shared/lib/date/format-date'
-import { InfoTile } from '@/shared/ui/info-tile'
-import { SectionHeader } from '@/shared/ui/section-header'
-import { SurfaceCard } from '@/shared/ui/surface-card'
+import { SkinViewer } from '@/entities/account'
+import type { AccountPayload } from '@/entities/account'
 
 type ProfileCharacterPanelProps = {
   account: AccountPayload
@@ -11,39 +9,27 @@ type ProfileCharacterPanelProps = {
 
 export function ProfileCharacterPanel({ account }: ProfileCharacterPanelProps) {
   const skinUuid = account.player.premiumUuid ?? account.player.uuid
+  const avatarUrl = `https://api.mcheads.org/head/${encodeURIComponent(
+    account.player.nickname,
+  )}/64`
 
   return (
-    <SurfaceCard className="xk-profile-panel">
-      <SectionHeader
-        eyebrow="Скин"
-        title="Персонаж"
-        icon={<UserRound size={30} />}
-      />
-      <SkinViewer nickname={account.player.nickname} uuid={skinUuid} />
-      <div className="xk-profile-facts">
-        <InfoTile
-          label="Дата регистрации"
-          value={formatDate(account.player.registeredAt)}
-        />
-        <InfoTile
-          label="Последний вход"
-          value={formatDate(account.player.lastLoginAt)}
-        />
-        <InfoTile
-          label="2FA и уведомления"
-          value={
-            <>
-              {account.player.social.totpEnabled
-                ? '2FA включена'
-                : '2FA выключена'}{' '}
-              ·{' '}
-              {account.player.social.notifyEnabled
-                ? 'уведомления да'
-                : 'уведомления нет'}
-            </>
-          }
-        />
-      </div>
-    </SurfaceCard>
+    <Card>
+      <Card.Header className="flex items-start justify-between gap-4">
+        <div>
+          <Card.Title>Персонаж</Card.Title>
+          <Card.Description>{account.player.nickname}</Card.Description>
+        </div>
+        <Avatar>
+          <Avatar.Image alt="" src={avatarUrl} />
+          <Avatar.Fallback>
+            <UserRound size={18} />
+          </Avatar.Fallback>
+        </Avatar>
+      </Card.Header>
+      <Card.Content>
+        <SkinViewer nickname={account.player.nickname} uuid={skinUuid} />
+      </Card.Content>
+    </Card>
   )
 }

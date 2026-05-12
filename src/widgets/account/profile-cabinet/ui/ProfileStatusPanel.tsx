@@ -1,10 +1,16 @@
-import { Shield } from 'lucide-react'
+import { Card, Chip, Text } from '@heroui/react'
+import {
+  Construction,
+  Gem,
+  HeartPulse,
+  Landmark,
+  ScrollText,
+  UserRound,
+} from 'lucide-react'
 import type { AccountPayload } from '@/entities/account'
 import { formatDate } from '@/shared/lib/date/format-date'
-import { InfoTile } from '@/shared/ui/info-tile'
-import { ActionButtons } from '@/shared/ui/action-buttons'
-import { SectionHeader } from '@/shared/ui/section-header'
-import { SurfaceCard } from '@/shared/ui/surface-card'
+import AnimatedLink from '@/components/AnimatedLink'
+import { HeroMetricCard } from '@/shared/ui/hero-page'
 
 type ProfileStatusPanelProps = {
   account: AccountPayload
@@ -15,46 +21,96 @@ export function ProfileStatusPanel({
   account,
   totalDiamonds,
 }: ProfileStatusPanelProps) {
+  const sections = [
+    {
+      href: '/rules',
+      icon: <ScrollText size={22} />,
+      title: 'Правила',
+      description: 'Открой актуальные правила, ограничения и уточнения.',
+    },
+    {
+      href: '/cabinet/bank',
+      icon: <Landmark size={22} />,
+      title: 'Банк',
+      description: 'Переводы, карты и управление алмазами в одном месте.',
+    },
+    {
+      icon: <Construction size={22} />,
+      title: 'Королевства',
+      description: 'Раздел находится в разработке и появится чуть позже.',
+      badge: 'В разработке',
+    },
+  ] as const
+
   return (
-    <SurfaceCard className="xk-profile-summary-panel">
-      <SectionHeader
-        eyebrow="Кратко"
-        title="Статус аккаунта"
-        icon={<Shield size={30} />}
-      />
-
-      <div className="xk-profile-facts">
-        <InfoTile label="Ник" value={account.player.nickname} />
-        <InfoTile label="Жизни" value={account.player.lives} />
-        <InfoTile
-          label="Последний вход"
-          value={formatDate(account.player.lastLoginAt)}
-        />
-        <InfoTile label="Discord" value="связан" />
-        <InfoTile
-          label="UUID"
-          value={account.player.premiumUuid ?? 'offline'}
-        />
-        <InfoTile label="Алмазы на картах" value={totalDiamonds} />
-      </div>
-
-      <ActionButtons
-        className="xk-cabinet-actions_compact"
-        items={[
-          { href: '/cabinet/bank', label: 'XK Bank', tone: 'success' },
-          { href: '/payment', label: 'Пополнить', tone: 'primary' },
-        ]}
-      />
-
-      <div className="xk-bank-teaser">
+    <Card>
+      <Card.Header className="flex items-start justify-between gap-4">
         <div>
-          <p className="xk-overline">XK Bank</p>
-          <h3>{account.bank.cards.length} карт в системе</h3>
-          <p className="xk-muted">
-            {totalDiamonds} алмазов доступно на активных картах.
-          </p>
+          <Card.Title>Статус аккаунта</Card.Title>
+          <Card.Description>
+            Ключевая информация профиля и быстрые разделы.
+          </Card.Description>
         </div>
-      </div>
-    </SurfaceCard>
+        <UserRound className="size-6 text-muted" />
+      </Card.Header>
+      <Card.Content className="grid gap-5">
+        <div className="grid gap-4 md:grid-cols-2">
+          <HeroMetricCard
+            label="Ник"
+            value={account.player.nickname}
+            icon={<UserRound size={18} />}
+          />
+          <HeroMetricCard
+            label="Жизни"
+            value={account.player.lives}
+            icon={<HeartPulse size={18} />}
+          />
+          <HeroMetricCard
+            label="Последний вход"
+            value={formatDate(account.player.lastLoginAt)}
+            icon={<ScrollText size={18} />}
+          />
+          <HeroMetricCard
+            label="Алмазы на картах"
+            value={totalDiamonds}
+            icon={<Gem size={18} />}
+          />
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-3">
+          {sections.map((section) =>
+            'href' in section ? (
+              <AnimatedLink
+                key={section.title}
+                className="block"
+                to={section.href}
+              >
+                <Card className="h-full" variant="secondary">
+                  <div className="text-muted">{section.icon}</div>
+                  <Card.Header>
+                    <Card.Title>{section.title}</Card.Title>
+                    <Card.Description>{section.description}</Card.Description>
+                  </Card.Header>
+                </Card>
+              </AnimatedLink>
+            ) : (
+              <Card key={section.title} className="h-full" variant="secondary">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="text-muted">{section.icon}</div>
+                  <Chip variant="soft">{section.badge}</Chip>
+                </div>
+                <Card.Header>
+                  <Card.Title>{section.title}</Card.Title>
+                  <Card.Description>{section.description}</Card.Description>
+                </Card.Header>
+              </Card>
+            ),
+          )}
+        </div>
+        <Text color="muted" type="body-sm">
+          Разделы открываются в рамках аккаунта XK HARDCORE.
+        </Text>
+      </Card.Content>
+    </Card>
   )
 }

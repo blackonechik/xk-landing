@@ -1,10 +1,8 @@
+import { Button, Card, Text } from '@heroui/react'
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import type { AccountPayload } from '@/entities/account'
 import { CreateBankCardForm } from '@/features/bank/create-card'
-import { LandingButton } from '@/shared/ui/landing-button'
-import { SectionHeader } from '@/shared/ui/section-header'
-import { SurfaceCard } from '@/shared/ui/surface-card'
 
 type BankOnboardingProps = {
   account: AccountPayload
@@ -20,45 +18,45 @@ export function BankOnboarding({
   const [isCreating, setIsCreating] = useState(false)
 
   return (
-    <section className="xk-bank-onboarding">
-      <SurfaceCard className="xk-bank-onboarding__copy">
-        <p className="xk-overline">Первый шаг</p>
-        <h2>Добро пожаловать в банк</h2>
-        <p>
-          У вас еще нет банковских карт. Нажмите кнопку, чтобы оформить первую
-          карту и открыть доступ к балансу, переводам и истории операций.
-        </p>
+    <section className="grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
+      <Card>
+        <Card.Header>
+          <Card.Title>Добро пожаловать в банк</Card.Title>
+          <Card.Description>Первый шаг</Card.Description>
+        </Card.Header>
+        <Card.Content>
+          <Text color="muted">
+            У вас еще нет банковских карт. Нажмите кнопку, чтобы оформить первую
+            карту и открыть доступ к балансу, переводам и истории операций.
+          </Text>
+        </Card.Content>
         {!isCreating ? (
-          <div className="xk-bank-onboarding__action">
-            <LandingButton
-              as="button"
-              type="button"
-              tone="success"
-              size="small"
-              arrow
-              onClick={() => setIsCreating(true)}
-            >
+          <Card.Footer>
+            <Button onPress={() => setIsCreating(true)}>
               Оформить первую карту
-            </LandingButton>
-          </div>
+            </Button>
+          </Card.Footer>
         ) : null}
-      </SurfaceCard>
+      </Card>
       {isCreating ? (
-        <SurfaceCard as="section" className="xk-bank-panel">
-          <SectionHeader
-            eyebrow="Новая карта"
-            title="Оформление"
-            icon={<Plus size={28} />}
-          />
-
-          <CreateBankCardForm
-            ownerNickname={account.player.nickname}
-            canCreateCard={canCreateCard}
-            showOwnerField
-            submitLabel="Выпустить карту"
-            onCreate={onCreateCard}
-          />
-        </SurfaceCard>
+        <Card>
+          <Card.Header className="flex items-start justify-between gap-4">
+            <div>
+              <Card.Title>Оформление</Card.Title>
+              <Card.Description>Новая карта</Card.Description>
+            </div>
+            <Plus className="size-6 text-muted" />
+          </Card.Header>
+          <Card.Content>
+            <CreateBankCardForm
+              ownerNickname={account.player.nickname}
+              canCreateCard={canCreateCard}
+              showOwnerField
+              submitLabel="Выпустить карту"
+              onCreate={onCreateCard}
+            />
+          </Card.Content>
+        </Card>
       ) : null}
     </section>
   )

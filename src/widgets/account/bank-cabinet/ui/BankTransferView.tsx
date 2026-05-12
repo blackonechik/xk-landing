@@ -1,8 +1,7 @@
+import { Card } from '@heroui/react'
 import { Send } from 'lucide-react'
 import type { AccountPayload } from '@/entities/account'
 import { TransferDiamondsForm } from '@/features/bank/transfer-diamonds'
-import { SectionHeader } from '@/shared/ui/section-header'
-import { SurfaceCard } from '@/shared/ui/surface-card'
 
 type BankTransferViewProps = {
   account: AccountPayload
@@ -20,16 +19,19 @@ export function BankTransferView({
   onTransfer,
 }: BankTransferViewProps) {
   return (
-    <div className="xk-bank-stack">
-      <SurfaceCard as="section" className="xk-bank-panel">
-        <SectionHeader
-          eyebrow="Перевод"
-          title="Отправить алмазы"
-          icon={<Send size={28} />}
-        />
-
+    <Card>
+      <Card.Header className="flex items-start justify-between gap-4">
+        <div>
+          <Card.Title>Отправить алмазы</Card.Title>
+          <Card.Description>
+            Перевод по нику игрока или номеру карты.
+          </Card.Description>
+        </div>
+        <Send className="size-6 text-muted" />
+      </Card.Header>
+      <Card.Content>
         <TransferDiamondsForm account={account} onTransfer={onTransfer} />
-      </SurfaceCard>
-    </div>
+      </Card.Content>
+    </Card>
   )
 }

@@ -1,7 +1,7 @@
+import { Button, Input, Label, ListBox, Select, type Key } from '@heroui/react'
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import { BankCardPreview, cardDesigns } from '@/entities/bank'
-import { FormField } from '@/shared/ui/form-field'
 
 type CreateBankCardFormProps = {
   ownerNickname: string
@@ -19,57 +19,68 @@ export function CreateBankCardForm({
   onCreate,
 }: CreateBankCardFormProps) {
   const [title, setTitle] = useState('Алмазная карта')
-  const [design, setDesign] = useState('creeper')
+  const [design, setDesign] = useState<Key>('creeper')
 
   return (
-    <div className="xk-card-create">
-      <div className="xk-bank-card_preview">
+    <div className="grid gap-4">
+      <div>
         <BankCardPreview
           title={title}
           ownerNickname={ownerNickname}
-          designId={design}
+          designId={String(design)}
         />
       </div>
 
       {showOwnerField ? (
-        <FormField
-          label="Имя владельца"
-          inputProps={{ value: ownerNickname, disabled: true }}
+        <Input
+          isDisabled
+          aria-label="Имя владельца"
+          placeholder="Имя владельца"
+          value={ownerNickname}
         />
       ) : null}
 
-      <FormField
-        label="Название карты"
-        inputProps={{
-          value: title,
-          onChange: (event) => setTitle(event.target.value),
-        }}
+      <Input
+        aria-label="Название карты"
+        placeholder="Название карты"
+        value={title}
+        onChange={(event) => setTitle(event.target.value)}
       />
 
-      <FormField label="Выбор дизайна">
-        <div className="xk-card-designs" aria-label="Дизайн карты">
-          {cardDesigns.map((cardDesign) => (
-            <button
-              className={design === cardDesign.id ? 'is-active' : ''}
-              key={cardDesign.id}
-              type="button"
-              title={cardDesign.title}
-              onClick={() => setDesign(cardDesign.id)}
-            >
-              {cardDesign.title}
-            </button>
-          ))}
-        </div>
-      </FormField>
+      <Select
+        value={design}
+        onChange={(nextDesign) => setDesign(nextDesign ?? 'creeper')}
+        placeholder="Выберите дизайн"
+      >
+        <Label>Дизайн карты</Label>
+        <Select.Trigger>
+          <Select.Value />
+          <Select.Indicator />
+        </Select.Trigger>
+        <Select.Popover>
+          <ListBox>
+            {cardDesigns.map((cardDesign) => (
+              <ListBox.Item
+                key={cardDesign.id}
+                id={cardDesign.id}
+                textValue={cardDesign.title}
+              >
+                {cardDesign.title}
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+            ))}
+          </ListBox>
+        </Select.Popover>
+      </Select>
 
-      <button
+      <Button
         type="button"
-        disabled={!canCreateCard}
-        onClick={() => onCreate({ title, design })}
+        isDisabled={!canCreateCard}
+        onPress={() => onCreate({ title, design: String(design) })}
       >
         <Plus size={18} />
         {submitLabel}
-      </button>
+      </Button>
     </div>
   )
 }

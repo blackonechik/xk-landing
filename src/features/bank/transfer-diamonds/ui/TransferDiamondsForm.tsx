@@ -1,7 +1,15 @@
 import { useState } from 'react'
+import {
+  Button,
+  Input,
+  Label,
+  ListBox,
+  Select,
+  Tabs,
+  type Key,
+} from '@heroui/react'
 import { Send } from 'lucide-react'
 import type { AccountPayload } from '@/entities/account'
-import { TabSwitcher } from '@/shared/ui/tab-switcher'
 
 type TransferDiamondsFormProps = {
   account: AccountPayload
@@ -47,7 +55,7 @@ export function TransferDiamondsForm({
 
   return (
     <form
-      className="xk-transfer-form"
+      className="grid gap-4 md:grid-cols-2"
       onSubmit={async (event) => {
         event.preventDefault()
         await onTransfer(form)
@@ -60,30 +68,41 @@ export function TransferDiamondsForm({
         }))
       }}
     >
-      <select
-        className="xk-transfer-form__wide"
+      <Select
         value={form.fromCardId}
-        onChange={(event) =>
+        onChange={(key) =>
           setForm((current) => ({
             ...current,
-            fromCardId: event.target.value,
+            fromCardId: String(key ?? ''),
           }))
         }
+        placeholder="Выберите карту"
       >
-        {account.bank.cards.map((card) => (
-          <option key={card.id} value={card.id}>
-            {card.title} · {card.cardNumber}
-          </option>
-        ))}
-      </select>
+        <Label>Карта списания</Label>
+        <Select.Trigger>
+          <Select.Value />
+          <Select.Indicator />
+        </Select.Trigger>
+        <Select.Popover>
+          <ListBox>
+            {account.bank.cards.map((card) => (
+              <ListBox.Item
+                key={card.id}
+                id={card.id}
+                textValue={`${card.title} · ${card.cardNumber}`}
+              >
+                {card.title} · {card.cardNumber}
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
+            ))}
+          </ListBox>
+        </Select.Popover>
+      </Select>
 
-      <TabSwitcher
-        activeId={recipientMode}
-        items={[
-          { id: 'nickname', label: 'По нику' },
-          { id: 'card', label: 'По карте' },
-        ]}
-        onChange={(nextMode) => {
+      <Tabs
+        selectedKey={recipientMode}
+        onSelectionChange={(key: Key) => {
+          const nextMode = key as 'nickname' | 'card'
           setRecipientMode(nextMode)
           setForm((current) => ({
             ...current,
@@ -91,14 +110,24 @@ export function TransferDiamondsForm({
             toOwnerNickname: nextMode === 'card' ? '' : current.toOwnerNickname,
           }))
         }}
-        className="xk-transfer-recipient-mode"
-        ariaLabel="Способ перевода"
-      />
+      >
+        <Tabs.ListContainer>
+          <Tabs.List aria-label="Способ перевода">
+            <Tabs.Tab id="nickname">
+              По нику
+              <Tabs.Indicator />
+            </Tabs.Tab>
+            <Tabs.Tab id="card">
+              По карте
+              <Tabs.Indicator />
+            </Tabs.Tab>
+          </Tabs.List>
+        </Tabs.ListContainer>
+      </Tabs>
 
       {recipientMode === 'nickname' ? (
         <>
-          <input
-            className="xk-transfer-form__wide"
+          <Input
             list="xk-bank-recipient-nicks"
             placeholder="Ник игрока"
             value={form.toOwnerNickname}
@@ -116,8 +145,7 @@ export function TransferDiamondsForm({
           </datalist>
         </>
       ) : (
-        <input
-          className="xk-transfer-form__wide"
+        <Input
           placeholder="Номер карты получателя"
           value={form.toCardNumber}
           onChange={(event) =>
@@ -131,7 +159,7 @@ export function TransferDiamondsForm({
 
       {hasRecipient ? (
         <>
-          <input
+          <Input
             inputMode="numeric"
             placeholder="Алмазы"
             value={form.amountDiamonds}
@@ -142,7 +170,7 @@ export function TransferDiamondsForm({
               }))
             }
           />
-          <input
+          <Input
             placeholder="Комментарий"
             value={form.comment}
             onChange={(event) =>
@@ -155,10 +183,10 @@ export function TransferDiamondsForm({
         </>
       ) : null}
 
-      <button type="submit" disabled={!canTransfer}>
+      <Button type="submit" isDisabled={!canTransfer}>
         <Send size={18} />
         Перевести
-      </button>
+      </Button>
     </form>
   )
 }

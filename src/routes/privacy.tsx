@@ -1,4 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { Card, Link, Text } from '@heroui/react'
+import type { ReactNode } from 'react'
+import { HeroPage } from '@/shared/ui/hero-page'
 
 export const Route = createFileRoute('/privacy')({
   head: () => ({
@@ -18,114 +21,119 @@ export const Route = createFileRoute('/privacy')({
 
 function PrivacyPage() {
   return (
-    <main className="tycoon-landing xk-legal-page">
-      <section className="page-wrap xk-legal-shell">
-        <p className="xk-overline">Документы</p>
-        <h1 className="mc-footer-title">
-          Политика обработки персональных данных
-        </h1>
-        <p className="xk-legal-lead">
-          Настоящая политика описывает, какие персональные данные обрабатывает
-          XK HARDCORE при оформлении цифровых услуг и как пользователь может
-          обратиться по вопросам обработки данных.
-        </p>
+    <HeroPage
+      eyebrow="Документы"
+      title="Политика обработки персональных данных"
+      description="Настоящая политика описывает, какие персональные данные обрабатывает XK HARDCORE при оформлении цифровых услуг и как пользователь может обратиться по вопросам обработки данных."
+    >
+      <div className="grid gap-4 md:grid-cols-2">
+        <LegalCard title="Оператор">
+          <Text.Paragraph>
+            Самозанятый: Сурнин Владислав Владимирович.
+          </Text.Paragraph>
+          <Text.Paragraph>ИНН: 233711467280.</Text.Paragraph>
+          <Text.Paragraph>
+            Email:{' '}
+            <Link href="mailto:surnin.vladislav@gmail.com">
+              surnin.vladislav@gmail.com
+            </Link>
+            .
+          </Text.Paragraph>
+          <Text.Paragraph>
+            Telegram:{' '}
+            <Link href="https://t.me/blackonechik">@blackonechik</Link>.
+          </Text.Paragraph>
+          <Text.Paragraph>
+            Телефон: <Link href="tel:+79186618809">+7 918 661-88-09</Link>.
+          </Text.Paragraph>
+          <Text.Paragraph>
+            Почтовый адрес: г. Анапа, ул. Ленина 180А.
+          </Text.Paragraph>
+        </LegalCard>
 
-        <div className="xk-legal-grid">
-          <article className="xk-legal-card">
-            <h2>Оператор</h2>
-            <p>Самозанятый: Сурнин Владислав Владимирович.</p>
-            <p>ИНН: 233711467280.</p>
-            <p>
-              Email:{' '}
-              <a href="mailto:surnin.vladislav@gmail.com">
-                surnin.vladislav@gmail.com
-              </a>
-              .
-            </p>
-            <p>
-              Telegram:{' '}
-              <a href="https://t.me/blackonechik">@blackonechik</a>.
-            </p>
-            <p>
-              Телефон: <a href="tel:+79186618809">+7 918 661-88-09</a>.
-            </p>
-            <p>Почтовый адрес: г. Анапа, ул. Ленина 180А.</p>
-          </article>
+        <LegalCard title="Какие данные обрабатываются">
+          <Text.Paragraph>
+            При оформлении заказа пользователь передает никнейм Minecraft,
+            выбранную услугу, промокод при наличии, сведения о статусе заказа и
+            платежа.
+          </Text.Paragraph>
+          <Text.Paragraph>
+            Также могут обрабатываться технические данные, необходимые для
+            работы сайта и защиты от ошибок: дата и время обращения, сетевые
+            идентификаторы, данные браузера и устройства.
+          </Text.Paragraph>
+        </LegalCard>
 
-          <article className="xk-legal-card">
-            <h2>Какие данные обрабатываются</h2>
-            <p>
-              При оформлении заказа пользователь передает никнейм Minecraft,
-              выбранную услугу, промокод при наличии, сведения о статусе заказа
-              и платежа.
-            </p>
-            <p>
-              Также могут обрабатываться технические данные, необходимые для
-              работы сайта и защиты от ошибок: дата и время обращения, сетевые
-              идентификаторы, данные браузера и устройства.
-            </p>
-          </article>
+        <LegalCard title="Цели обработки">
+          <Text.Paragraph>
+            Данные используются для создания заказа, приема оплаты, активации
+            цифровой услуги на сервере, поддержки, учета платежей и исполнения
+            обязанностей по закону.
+          </Text.Paragraph>
+          <Text.Paragraph>
+            Правовые основания обработки: согласие пользователя, исполнение
+            договора и публичной оферты, а также требования законодательства РФ.
+          </Text.Paragraph>
+        </LegalCard>
 
-          <article className="xk-legal-card">
-            <h2>Цели обработки</h2>
-            <p>
-              Данные используются для создания заказа, приема оплаты, активации
-              цифровой услуги на сервере, поддержки, учета платежей и исполнения
-              обязанностей по закону.
-            </p>
-            <p>
-              Правовые основания обработки: согласие пользователя, исполнение
-              договора и публичной оферты, а также требования законодательства
-              РФ.
-            </p>
-          </article>
+        <LegalCard title="Действия с данными">
+          <Text.Paragraph>
+            Оператор может собирать, записывать, систематизировать, хранить,
+            уточнять, использовать, передавать платежному провайдеру,
+            блокировать, удалять и уничтожать персональные данные.
+          </Text.Paragraph>
+          <Text.Paragraph>
+            Данные не публикуются в открытом доступе и не используются для
+            рассылок.
+          </Text.Paragraph>
+        </LegalCard>
 
-          <article className="xk-legal-card">
-            <h2>Действия с данными</h2>
-            <p>
-              Оператор может собирать, записывать, систематизировать, хранить,
-              уточнять, использовать, передавать платежному провайдеру,
-              блокировать, удалять и уничтожать персональные данные.
-            </p>
-            <p>
-              Данные не публикуются в открытом доступе и не используются для
-              рассылок.
-            </p>
-          </article>
+        <LegalCard title="Сроки хранения">
+          <Text.Paragraph>
+            Данные хранятся до достижения целей обработки, отзыва согласия
+            пользователем или истечения сроков хранения, предусмотренных
+            законодательством и учетными обязанностями оператора.
+          </Text.Paragraph>
+          <Text.Paragraph>
+            Если пользователь отзывает согласие, часть данных может быть
+            сохранена, когда это необходимо для исполнения закона, учета
+            платежей, разрешения споров или защиты прав оператора.
+          </Text.Paragraph>
+        </LegalCard>
 
-          <article className="xk-legal-card">
-            <h2>Сроки хранения</h2>
-            <p>
-              Данные хранятся до достижения целей обработки, отзыва согласия
-              пользователем или истечения сроков хранения, предусмотренных
-              законодательством и учетными обязанностями оператора.
-            </p>
-            <p>
-              Если пользователь отзывает согласие, часть данных может быть
-              сохранена, когда это необходимо для исполнения закона, учета
-              платежей, разрешения споров или защиты прав оператора.
-            </p>
-          </article>
+        <LegalCard title="Права пользователя">
+          <Text.Paragraph>
+            Пользователь может запросить сведения об обработке персональных
+            данных, уточнение, блокирование, удаление данных или отозвать
+            согласие, направив обращение на email оператора.
+          </Text.Paragraph>
+          <Text.Paragraph>
+            По вопросам обработки персональных данных пишите на{' '}
+            <Link href="mailto:surnin.vladislav@gmail.com">
+              surnin.vladislav@gmail.com
+            </Link>{' '}
+            или в Telegram{' '}
+            <Link href="https://t.me/blackonechik">@blackonechik</Link>.
+          </Text.Paragraph>
+        </LegalCard>
+      </div>
+    </HeroPage>
+  )
+}
 
-          <article className="xk-legal-card">
-            <h2>Права пользователя</h2>
-            <p>
-              Пользователь может запросить сведения об обработке персональных
-              данных, уточнение, блокирование, удаление данных или отозвать
-              согласие, направив обращение на email оператора.
-            </p>
-            <p>
-              По вопросам обработки персональных данных пишите на{' '}
-              <a href="mailto:surnin.vladislav@gmail.com">
-                surnin.vladislav@gmail.com
-              </a>
-              {' '}или в Telegram{' '}
-              <a href="https://t.me/blackonechik">@blackonechik</a>
-              .
-            </p>
-          </article>
-        </div>
-      </section>
-    </main>
+function LegalCard({
+  title,
+  children,
+}: {
+  title: string
+  children: ReactNode
+}) {
+  return (
+    <Card>
+      <Card.Header>
+        <Card.Title>{title}</Card.Title>
+      </Card.Header>
+      <Card.Content className="space-y-3">{children}</Card.Content>
+    </Card>
   )
 }

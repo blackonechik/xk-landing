@@ -1,4 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { Card, Link, Text } from '@heroui/react'
+import type { ReactNode } from 'react'
+import { HeroPage } from '@/shared/ui/hero-page'
 
 export const Route = createFileRoute('/personal-data-consent')({
   head: () => ({
@@ -18,93 +21,99 @@ export const Route = createFileRoute('/personal-data-consent')({
 
 function PersonalDataConsentPage() {
   return (
-    <main className="tycoon-landing xk-legal-page">
-      <section className="page-wrap xk-legal-shell">
-        <p className="xk-overline">Документы</p>
-        <h1 className="mc-footer-title">
-          Согласие на обработку персональных данных
-        </h1>
-        <p className="xk-legal-lead">
-          Заполняя форму оплаты на сайте XK HARDCORE и отмечая согласие,
-          пользователь свободно, своей волей и в своем интересе дает согласие
-          оператору на обработку персональных данных.
-        </p>
+    <HeroPage
+      eyebrow="Документы"
+      title="Согласие на обработку персональных данных"
+      description="Заполняя форму оплаты на сайте XK HARDCORE и отмечая согласие, пользователь свободно, своей волей и в своем интересе дает согласие оператору на обработку персональных данных."
+    >
+      <div className="grid gap-4 md:grid-cols-2">
+        <LegalCard title="Кому дается согласие">
+          <Text.Paragraph>
+            Оператор: самозанятый Сурнин Владислав Владимирович.
+          </Text.Paragraph>
+          <Text.Paragraph>ИНН: 233711467280.</Text.Paragraph>
+          <Text.Paragraph>
+            Email:{' '}
+            <Link href="mailto:surnin.vladislav@gmail.com">
+              surnin.vladislav@gmail.com
+            </Link>
+            .
+          </Text.Paragraph>
+          <Text.Paragraph>
+            Telegram:{' '}
+            <Link href="https://t.me/blackonechik">@blackonechik</Link>.
+          </Text.Paragraph>
+          <Text.Paragraph>
+            Почтовый адрес: г. Анапа, ул. Ленина 180А.
+          </Text.Paragraph>
+        </LegalCard>
 
-        <div className="xk-legal-grid">
-          <article className="xk-legal-card">
-            <h2>Кому дается согласие</h2>
-            <p>Оператор: самозанятый Сурнин Владислав Владимирович.</p>
-            <p>ИНН: 233711467280.</p>
-            <p>
-              Email:{' '}
-              <a href="mailto:surnin.vladislav@gmail.com">
-                surnin.vladislav@gmail.com
-              </a>
-              .
-            </p>
-            <p>
-              Telegram:{' '}
-              <a href="https://t.me/blackonechik">@blackonechik</a>.
-            </p>
-            <p>Почтовый адрес: г. Анапа, ул. Ленина 180А.</p>
-          </article>
+        <LegalCard title="Какие данные">
+          <Text.Paragraph>
+            Пользователь соглашается на обработку никнейма Minecraft, выбранной
+            цифровой услуги, промокода, статуса заказа и платежа, а также
+            технических данных, связанных с оформлением заказа.
+          </Text.Paragraph>
+        </LegalCard>
 
-          <article className="xk-legal-card">
-            <h2>Какие данные</h2>
-            <p>
-              Пользователь соглашается на обработку никнейма Minecraft,
-              выбранной цифровой услуги, промокода, статуса заказа и платежа, а
-              также технических данных, связанных с оформлением заказа.
-            </p>
-          </article>
+        <LegalCard title="Для каких целей">
+          <Text.Paragraph>
+            Цели обработки: оформление заказа, прием оплаты, активация проходки
+            или RP-жизни, поддержка, ведение учета и исполнение требований
+            законодательства РФ.
+          </Text.Paragraph>
+        </LegalCard>
 
-          <article className="xk-legal-card">
-            <h2>Для каких целей</h2>
-            <p>
-              Цели обработки: оформление заказа, прием оплаты, активация
-              проходки или RP-жизни, поддержка, ведение учета и исполнение
-              требований законодательства РФ.
-            </p>
-          </article>
+        <LegalCard title="Какие действия разрешены">
+          <Text.Paragraph>
+            Пользователь разрешает сбор, запись, систематизацию, накопление,
+            хранение, уточнение, использование, передачу платежному провайдеру,
+            блокирование, удаление и уничтожение персональных данных.
+          </Text.Paragraph>
+          <Text.Paragraph>
+            Обработка может выполняться как автоматизированным, так и
+            неавтоматизированным способом.
+          </Text.Paragraph>
+        </LegalCard>
 
-          <article className="xk-legal-card">
-            <h2>Какие действия разрешены</h2>
-            <p>
-              Пользователь разрешает сбор, запись, систематизацию, накопление,
-              хранение, уточнение, использование, передачу платежному
-              провайдеру, блокирование, удаление и уничтожение персональных
-              данных.
-            </p>
-            <p>
-              Обработка может выполняться как автоматизированным, так и
-              неавтоматизированным способом.
-            </p>
-          </article>
+        <LegalCard title="Срок действия">
+          <Text.Paragraph>
+            Согласие действует до достижения целей обработки или до его отзыва
+            пользователем, если более длительное хранение не требуется по
+            закону.
+          </Text.Paragraph>
+        </LegalCard>
 
-          <article className="xk-legal-card">
-            <h2>Срок действия</h2>
-            <p>
-              Согласие действует до достижения целей обработки или до его отзыва
-              пользователем, если более длительное хранение не требуется по
-              закону.
-            </p>
-          </article>
+        <LegalCard title="Как отозвать">
+          <Text.Paragraph>
+            Согласие можно отозвать письменным обращением на{' '}
+            <Link href="mailto:surnin.vladislav@gmail.com">
+              surnin.vladislav@gmail.com
+            </Link>{' '}
+            или в Telegram{' '}
+            <Link href="https://t.me/blackonechik">@blackonechik</Link>. После
+            получения отзыва оператор прекратит обработку данных, кроме случаев,
+            когда дальнейшая обработка разрешена законом.
+          </Text.Paragraph>
+        </LegalCard>
+      </div>
+    </HeroPage>
+  )
+}
 
-          <article className="xk-legal-card">
-            <h2>Как отозвать</h2>
-            <p>
-              Согласие можно отозвать письменным обращением на{' '}
-              <a href="mailto:surnin.vladislav@gmail.com">
-                surnin.vladislav@gmail.com
-              </a>
-              {' '}или в Telegram{' '}
-              <a href="https://t.me/blackonechik">@blackonechik</a>
-              . После получения отзыва оператор прекратит обработку данных,
-              кроме случаев, когда дальнейшая обработка разрешена законом.
-            </p>
-          </article>
-        </div>
-      </section>
-    </main>
+function LegalCard({
+  title,
+  children,
+}: {
+  title: string
+  children: ReactNode
+}) {
+  return (
+    <Card>
+      <Card.Header>
+        <Card.Title>{title}</Card.Title>
+      </Card.Header>
+      <Card.Content className="space-y-3">{children}</Card.Content>
+    </Card>
   )
 }

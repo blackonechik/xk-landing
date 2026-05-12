@@ -1,4 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { Accordion, Card, Chip, Text } from '@heroui/react'
+import { ChevronDown, Scale } from 'lucide-react'
+import { HeroPage } from '@/shared/ui/hero-page'
 
 type RuleItem = {
   title: string
@@ -90,9 +93,7 @@ const rules: RuleItem[] = [
     title: 'Запрещенные темы',
     description:
       'Запрещены спам, флуд, упоминание или демонстрация тем, нарушающих моральные, социальные ценности и права.',
-    resolution: [
-      'Блокировка аккаунта игрока без возможности покупки разбана.',
-    ],
+    resolution: ['Блокировка аккаунта игрока без возможности покупки разбана.'],
     note: 'Правило распространяется на постройки, скины, никнеймы, сообщения в текстовом и голосовом чатах.',
   },
   {
@@ -221,69 +222,134 @@ export const Route = createFileRoute('/rules')({
 
 function RulesPage() {
   return (
-    <main className="tycoon-landing xk-rules-page">
-      <section className="page-wrap xk-rules-shell">
-        <p className="xk-overline">Правила сервера</p>
-        <h1 className="mc-footer-title">Правила XK HARDCORE</h1>
+    <HeroPage
+      eyebrow="Правила сервера"
+      title="Правила XK HARDCORE"
+      description="Единый набор правил, решений модерации и уточнений для игроков сервера."
+    >
+      <div className="grid gap-6">
+        <Card>
+          <Card.Header>
+            <Card.Title>Терминология</Card.Title>
+            <Card.Description>
+              Основные определения, которые используются в правилах.
+            </Card.Description>
+          </Card.Header>
+          <Card.Content>
+            <dl className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+              {terms.map((term) => (
+                <Card key={term.title} variant="secondary">
+                  <Card.Header>
+                    <Card.Title>{term.title}</Card.Title>
+                  </Card.Header>
+                  <Card.Content>
+                    <Text color="muted" type="body-sm">
+                      {term.text}
+                    </Text>
+                  </Card.Content>
+                </Card>
+              ))}
+            </dl>
+          </Card.Content>
+        </Card>
 
-        <section className="xk-rules-block" aria-labelledby="rules-terms">
-          <h2 id="rules-terms">Терминология</h2>
-          <dl className="xk-rules-terms">
-            {terms.map((term) => (
-              <div key={term.title} className="xk-rules-term">
-                <dt>{term.title}</dt>
-                <dd>{term.text}</dd>
+        <Card>
+          <Card.Header>
+            <Card.Title>Основные правила</Card.Title>
+            <Card.Description>
+              Открой пункт, чтобы увидеть решение ситуации и примечания.
+            </Card.Description>
+          </Card.Header>
+          <Card.Content>
+            <Accordion className="w-full">
+              {rules.map((rule, index) => (
+                <Accordion.Item key={rule.title}>
+                  <Accordion.Heading>
+                    <Accordion.Trigger>
+                      <Scale className="mr-3 size-4 shrink-0 text-muted" />
+                      <span className="flex-1 text-left">
+                        {index + 1}. {rule.title}
+                      </span>
+                      <Accordion.Indicator>
+                        <ChevronDown className="size-4" />
+                      </Accordion.Indicator>
+                    </Accordion.Trigger>
+                  </Accordion.Heading>
+                  <Accordion.Panel>
+                    <Accordion.Body>
+                      <div className="grid gap-4">
+                        {rule.description ? (
+                          <Text color="muted" type="body-sm">
+                            {rule.description}
+                          </Text>
+                        ) : null}
+                        <div>
+                          <Chip variant="soft">Решение ситуации</Chip>
+                          <ul className="mt-3 grid gap-2 pl-5 text-sm text-foreground">
+                            {rule.resolution.map((item) => (
+                              <li className="list-disc" key={item}>
+                                {item}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        {rule.note ? (
+                          <Text color="muted" type="body-sm">
+                            {rule.note}
+                          </Text>
+                        ) : null}
+                      </div>
+                    </Accordion.Body>
+                  </Accordion.Panel>
+                </Accordion.Item>
+              ))}
+            </Accordion>
+          </Card.Content>
+        </Card>
+
+        <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+          <Card>
+            <Card.Header>
+              <Card.Title>Уточнения</Card.Title>
+            </Card.Header>
+            <Card.Content>
+              <ol className="grid gap-3 pl-5 text-sm text-foreground">
+                {clarifications.map((item) => (
+                  <li className="list-decimal" key={item}>
+                    {item}
+                  </li>
+                ))}
+              </ol>
+            </Card.Content>
+          </Card>
+
+          <Card>
+            <Card.Header>
+              <Card.Title>Уточняющие списки</Card.Title>
+            </Card.Header>
+            <Card.Content>
+              <div className="grid gap-4 md:grid-cols-2">
+                {referenceLists.map((list) => (
+                  <Card key={list.title} variant="secondary">
+                    <Card.Header>
+                      <Card.Title>{list.title}</Card.Title>
+                    </Card.Header>
+                    <Card.Content>
+                      <ol className="grid gap-2 pl-5 text-sm text-foreground">
+                        {list.items.map((item) => (
+                          <li className="list-decimal" key={item}>
+                            {item}
+                          </li>
+                        ))}
+                      </ol>
+                    </Card.Content>
+                  </Card>
+                ))}
               </div>
-            ))}
-          </dl>
-        </section>
-
-        <section className="xk-rules-block" aria-labelledby="rules-main">
-          <h2 id="rules-main">Основные правила</h2>
-          <ol className="xk-rules-list">
-            {rules.map((rule) => (
-              <li key={rule.title} className="xk-rules-card">
-                <h3>{rule.title}</h3>
-                {rule.description ? <p>{rule.description}</p> : null}
-                <p className="xk-rules-card__label">Решение ситуации:</p>
-                <ul>
-                  {rule.resolution.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-                {rule.note ? (
-                  <p className="xk-rules-card__note">{rule.note}</p>
-                ) : null}
-              </li>
-            ))}
-          </ol>
-        </section>
-
-        <section className="xk-rules-block" aria-labelledby="rules-notes">
-          <h2 id="rules-notes">Уточнения</h2>
-          <ol className="xk-rules-plain-list">
-            {clarifications.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ol>
-        </section>
-
-        <section className="xk-rules-block" aria-labelledby="rules-reference">
-          <h2 id="rules-reference">Уточняющие списки</h2>
-          <div className="xk-rules-reference-grid">
-            {referenceLists.map((list) => (
-              <article key={list.title} className="xk-rules-reference-card">
-                <h3>{list.title}</h3>
-                <ol>
-                  {list.items.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ol>
-              </article>
-            ))}
-          </div>
-        </section>
-      </section>
-    </main>
+            </Card.Content>
+          </Card>
+        </div>
+      </div>
+    </HeroPage>
   )
 }

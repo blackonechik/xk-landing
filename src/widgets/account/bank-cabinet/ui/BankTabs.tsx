@@ -1,4 +1,4 @@
-import { TabSwitcher } from '@/shared/ui/tab-switcher'
+import { Tabs } from '@heroui/react'
 
 export type BankView = 'cards' | 'transfer' | 'history'
 
@@ -15,12 +15,20 @@ type BankTabsProps = {
 
 export function BankTabs({ activeView, onChange }: BankTabsProps) {
   return (
-    <TabSwitcher
-      activeId={activeView}
-      items={bankTabs}
-      onChange={onChange}
-      className="xk-bank-tabs"
-      ariaLabel="Разделы банка"
-    />
+    <Tabs
+      selectedKey={activeView}
+      onSelectionChange={(key) => onChange(key as BankView)}
+    >
+      <Tabs.ListContainer>
+        <Tabs.List aria-label="Разделы банка">
+          {bankTabs.map((tab) => (
+            <Tabs.Tab id={tab.id} key={tab.id}>
+              {tab.label}
+              <Tabs.Indicator />
+            </Tabs.Tab>
+          ))}
+        </Tabs.List>
+      </Tabs.ListContainer>
+    </Tabs>
   )
 }

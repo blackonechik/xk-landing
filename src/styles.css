@@ -1,7 +1,97 @@
 @import 'tailwindcss';
+@import "@heroui/styles"; 
 
 @theme {
   --font-sans: 'Minecraft Rus';
+}
+
+/*
+ * HeroUI Theme Customization
+ * Add this to your global.css after importing @heroui/styles
+ * Only includes base variables from variables.css
+ * @see https://heroui.com/docs/react/getting-started/theming
+ */
+
+:root,
+.light,
+.default,
+[data-theme="light"],
+[data-theme="default"] {
+  /* Theme Colors (Light Mode) */
+  --accent: oklch(0 0 0);
+  --accent-foreground: oklch(99.11% 0 0);
+  --background: oklch(97.02% 0.0000 0.00);
+  --border: oklch(90.00% 0.0000 0.00);
+  --danger: oklch(65.32% 0.2328 355.28);
+  --danger-foreground: oklch(99.11% 0 0);
+  --default: oklch(94.00% 0.0000 0.00);
+  --default-foreground: oklch(21.03% 0.0059 0.00);
+  --field-background: oklch(100.00% 0.0000 0.00);
+  --field-foreground: oklch(21.03% 0.0000 0.00);
+  --field-placeholder: oklch(55.17% 0.0000 0.00);
+  --focus: oklch(0 0 0);
+  --foreground: oklch(21.03% 0.0000 0.00);
+  --muted: oklch(55.17% 0.0000 0.00);
+  --overlay: oklch(100.00% 0.0000 0.00);
+  --overlay-foreground: oklch(21.03% 0.0000 0.00);
+  --scrollbar: oklch(87.10% 0.0000 0.00);
+  --segment: oklch(100.00% 0.0000 0.00);
+  --segment-foreground: oklch(21.03% 0.0000 0.00);
+  --separator: oklch(92.00% 0.0000 0.00);
+  --success: oklch(73.29% 0.1935 120.35);
+  --success-foreground: oklch(21.03% 0.0059 120.35);
+  --surface: oklch(100.00% 0.0000 0.00);
+  --surface-foreground: oklch(21.03% 0.0000 0.00);
+  --surface-secondary: oklch(95.24% 0.0000 0.00);
+  --surface-secondary-foreground: oklch(21.03% 0.0000 0.00);
+  --surface-tertiary: oklch(93.73% 0.0000 0.00);
+  --surface-tertiary-foreground: oklch(21.03% 0.0000 0.00);
+  --warning: oklch(78.19% 0.1585 41.87);
+  --warning-foreground: oklch(21.03% 0.0059 41.87);
+
+  /* Border Radius */
+  --radius: 0.25rem;
+  --field-radius: 0.25rem;
+
+  /* Font Family */
+  /* Make sure to load Unbounded font in your app */
+  --font-sans: "Unbounded", sans-serif;
+}
+
+.dark,
+[data-theme="dark"] {
+  color-scheme: dark;
+  /* Theme Colors (Dark Mode) */
+  --accent: oklch(0.9848 0 0);
+  --accent-foreground: oklch(15% 0.0000 0.00);
+  --background: oklch(12.00% 0.0000 0.00);
+  --border: oklch(28.00% 0.0000 0.00);
+  --danger: oklch(59.40% 0.1967 354.17);
+  --danger-foreground: oklch(99.11% 0 0);
+  --default: oklch(27.40% 0.0000 0.00);
+  --default-foreground: oklch(99.11% 0 0);
+  --field-background: oklch(21.03% 0.0000 0.00);
+  --field-foreground: oklch(99.11% 0.0000 0.00);
+  --field-placeholder: oklch(70.50% 0.0000 0.00);
+  --focus: oklch(0.9848 0 0);
+  --foreground: oklch(99.11% 0.0000 0.00);
+  --muted: oklch(70.50% 0.0000 0.00);
+  --overlay: oklch(21.03% 0.0000 0.00);
+  --overlay-foreground: oklch(99.11% 0.0000 0.00);
+  --scrollbar: oklch(70.50% 0.0000 0.00);
+  --segment: oklch(39.64% 0.0000 0.00);
+  --segment-foreground: oklch(99.11% 0.0000 0.00);
+  --separator: oklch(25.00% 0.0000 0.00);
+  --success: oklch(73.29% 0.1935 120.35);
+  --success-foreground: oklch(21.03% 0.0059 120.35);
+  --surface: oklch(21.03% 0.0000 0.00);
+  --surface-foreground: oklch(99.11% 0.0000 0.00);
+  --surface-secondary: oklch(25.70% 0.0000 0.00);
+  --surface-secondary-foreground: oklch(99.11% 0.0000 0.00);
+  --surface-tertiary: oklch(27.21% 0.0000 0.00);
+  --surface-tertiary-foreground: oklch(99.11% 0.0000 0.00);
+  --warning: oklch(82.03% 0.1388 45.88);
+  --warning-foreground: oklch(21.03% 0.0059 45.88);
 }
 
 @font-face {
@@ -159,9 +249,17 @@ a {
 .xk-site-header__nav {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: clamp(16px, 3vw, 30px);
   font-family: 'Minecraft Five', sans-serif;
   font-size: 14px;
+}
+
+.xk-site-header__auth {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .xk-site-header__nav-link {
@@ -191,6 +289,59 @@ a {
 .xk-site-header__nav-link:hover::after {
   transform: scaleX(1);
   transform-origin: left;
+}
+
+.xk-site-header__auth-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 38px;
+  padding: 5px 10px 5px 6px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-family: 'Minecraft Five', sans-serif;
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.xk-site-header__auth-button:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.24);
+}
+
+.xk-site-header__auth-avatar {
+  width: 26px;
+  height: 26px;
+  flex: 0 0 auto;
+  border-radius: 6px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(216, 255, 102, 0.25),
+      rgba(88, 101, 242, 0.22)
+    ),
+    rgba(0, 0, 0, 0.35);
+  background-position: center;
+  background-size: cover;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.xk-site-header__auth-label {
+  white-space: nowrap;
+}
+
+.xk-site-header__auth-placeholder {
+  display: inline-block;
+  width: 124px;
+  height: 38px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .xk-page-transition {
@@ -3309,12 +3460,17 @@ a {
 .xk-profile-facts .xk-info-tile,
 .xk-stat-grid,
 .xk-transfer-row {
+  align-items: center;
   padding: 14px;
   border-radius: 6px;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.055), transparent),
     rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.xk-profile-facts .xk-info-tile {
+  gap: 14px;
 }
 
 .xk-profile-facts .xk-info-tile span,
@@ -3341,6 +3497,14 @@ a {
 
 .xk-info-tile__icon {
   flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  color: #d8ff66;
+  background: rgba(216, 255, 102, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(216, 255, 102, 0.16);
 }
 
 .xk-info-tile__content {
@@ -3384,30 +3548,78 @@ a {
 }
 
 .xk-bank-teaser {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.xk-bank-teaser__card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  min-height: 146px;
+  padding: 18px;
+  border-radius: 8px;
+  border: 1px solid rgba(216, 255, 102, 0.14);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 38%),
+    rgba(216, 255, 102, 0.05);
+  color: inherit;
+  text-align: left;
+}
+
+.xk-bank-teaser__card_disabled {
+  border-color: rgba(255, 255, 255, 0.12);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 38%),
+    rgba(255, 255, 255, 0.04);
+}
+
+.xk-bank-teaser__icon {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  background: rgba(216, 255, 102, 0.12);
+  color: #d8ff66;
+  box-shadow: inset 0 0 0 1px rgba(216, 255, 102, 0.16);
+}
+
+.xk-bank-teaser__content {
+  min-width: 0;
+}
+
+.xk-bank-teaser__title-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 18px;
-  padding: 18px;
-  border-radius: 8px;
-  background:
-    linear-gradient(
-      135deg,
-      rgba(216, 255, 102, 0.13),
-      rgba(88, 101, 242, 0.08)
-    ),
-    rgba(216, 255, 102, 0.06);
-  border: 1px solid rgba(216, 255, 102, 0.18);
+  gap: 12px;
 }
 
-.xk-bank-teaser h3 {
-  margin: 0 0 8px;
-  font-family: 'Minecraft Five', sans-serif;
-  font-size: 20px;
-}
-
-.xk-bank-teaser .xk-muted {
+.xk-bank-teaser__card h3 {
   margin: 0;
+  font-family: 'Minecraft Five', sans-serif;
+  font-size: 18px;
+}
+
+.xk-bank-teaser__card p {
+  margin: 0;
+  color: #cdd6c3;
+  font-family: 'Minecraft Five', sans-serif;
+  line-height: 1.55;
+}
+
+.xk-bank-teaser__badge {
+  flex: 0 0 auto;
+  padding: 6px 8px;
+  border-radius: 6px;
+  color: #f5f7e5;
+  background: rgba(255, 255, 255, 0.12);
+  font-family: 'Minecraft Five', sans-serif;
+  font-size: 11px;
+  white-space: nowrap;
 }
 
 .xk-card-create,
@@ -3842,10 +4054,13 @@ a {
     flex-direction: column;
   }
 
-  .xk-bank-hero,
-  .xk-bank-teaser {
+  .xk-bank-hero {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .xk-bank-teaser {
+    grid-template-columns: 1fr;
   }
 
   .xk-cabinet-name,
@@ -3862,6 +4077,20 @@ a {
   .xk-site-header__nav {
     gap: 10px;
     font-size: 12px;
+  }
+
+  .xk-site-header__auth {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .xk-site-header__auth-label {
+    display: none;
+  }
+
+  .xk-site-header__auth-placeholder {
+    width: 96px;
   }
 
   .xk-login-page,
