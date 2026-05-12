@@ -1104,6 +1104,7 @@ a {
 }
 
 .xk-header-logo__text strong {
+  color: white;
   font-family: 'Unbounded', sans-serif;
   font-size: clamp(3rem, 8vw, 5.7rem);
   line-height: 0.9;
