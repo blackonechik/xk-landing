@@ -1,6 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { Avatar } from '@heroui/react'
+import { UserRound } from 'lucide-react'
+import { useEffect, useRef } from 'react'
 import { SkinViewer as MinecraftSkinViewer, WalkingAnimation } from 'skinview3d'
-import { getSkinProxyUrl } from '../api/account-api'
+import { usePlayerAppearance } from './PlayerAvatar'
 
 type SkinViewerProps = {
   nickname: string
@@ -9,76 +11,7 @@ type SkinViewerProps = {
 
 export function SkinViewer({ nickname, uuid }: SkinViewerProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
-  const [skinSource, setSkinSource] = useState<string | null>(null)
-
-  function createFallbackSkinDataUrl(name: string) {
-    const canvas = document.createElement('canvas')
-    canvas.width = 64
-    canvas.height = 64
-
-    const context = canvas.getContext('2d')
-    if (!context) {
-      return ''
-    }
-
-    const seed = name
-      .split('')
-      .reduce((accumulator, char) => accumulator + char.charCodeAt(0), 0)
-    const hue = seed % 360
-
-    context.fillStyle = '#000000'
-    context.fillRect(0, 0, 64, 64)
-    context.fillStyle = `hsl(${hue}, 65%, 48%)`
-    context.fillRect(8, 8, 24, 24)
-    context.fillStyle = `hsl(${(hue + 28) % 360}, 72%, 34%)`
-    context.fillRect(8, 32, 24, 24)
-    context.fillStyle = 'rgba(255,255,255,0.16)'
-    context.fillRect(32, 8, 24, 48)
-
-    return canvas.toDataURL('image/png')
-  }
-
-  useEffect(() => {
-    let active = true
-    let objectUrl: string | null = null
-
-    setSkinSource(createFallbackSkinDataUrl(nickname))
-
-    const controller = new AbortController()
-
-    void fetch(getSkinProxyUrl(nickname), {
-      signal: controller.signal,
-    })
-      .then(async (response) => {
-        if (!response.ok) {
-          throw new Error('SKIN_FETCH_FAILED')
-        }
-
-        const blob = await response.blob()
-        if (!active) {
-          return
-        }
-
-        objectUrl = URL.createObjectURL(blob)
-        setSkinSource(objectUrl)
-      })
-      .catch(() => {
-        if (!active) {
-          return
-        }
-
-        setSkinSource(createFallbackSkinDataUrl(nickname))
-      })
-
-    return () => {
-      active = false
-      controller.abort()
-
-      if (objectUrl) {
-        URL.revokeObjectURL(objectUrl)
-      }
-    }
-  }, [nickname, uuid])
+  const { avatarSource, skinSource } = usePlayerAppearance(nickname)
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -106,8 +39,16 @@ export function SkinViewer({ nickname, uuid }: SkinViewerProps) {
   }, [nickname, skinSource, uuid])
 
   return (
-    <div className="xk-skin-viewer">
+    <div className="xk-skin-viewer relative">
       <canvas ref={canvasRef} aria-label={`3D-скин игрока ${nickname}`} />
+      <div className="pointer-events-none absolute bottom-4 right-4">
+        <Avatar className="size-16 border border-white/12 bg-black/30 shadow-lg backdrop-blur-sm">
+          {avatarSource ? <Avatar.Image alt="" src={avatarSource} /> : null}
+          <Avatar.Fallback>
+            <UserRound size={18} />
+          </Avatar.Fallback>
+        </Avatar>
+      </div>
     </div>
   )
 }

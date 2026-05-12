@@ -1,0 +1,190 @@
+import { Avatar } from '@heroui/react'
+import { UserRound } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { getSkinProxyUrl } from '../api/account-api'
+
+type PlayerAvatarProps = {
+  nickname: string
+  className?: string
+  alt?: string
+}
+
+type PlayerHeadImageProps = {
+  nickname: string
+  className?: string
+  alt?: string
+}
+
+function getHueSeed(name: string) {
+  return name
+    .split('')
+    .reduce((accumulator, char) => accumulator + char.charCodeAt(0), 0) % 360
+}
+
+function createFallbackSkinDataUrl(name: string) {
+  const canvas = document.createElement('canvas')
+  canvas.width = 64
+  canvas.height = 64
+
+  const context = canvas.getContext('2d')
+  if (!context) {
+    return ''
+  }
+
+  const hue = getHueSeed(name)
+
+  context.fillStyle = '#000000'
+  context.fillRect(0, 0, 64, 64)
+  context.fillStyle = `hsl(${hue}, 65%, 48%)`
+  context.fillRect(8, 8, 24, 24)
+  context.fillStyle = `hsl(${(hue + 28) % 360}, 72%, 34%)`
+  context.fillRect(8, 32, 24, 24)
+  context.fillStyle = 'rgba(255,255,255,0.16)'
+  context.fillRect(32, 8, 24, 48)
+
+  return canvas.toDataURL('image/png')
+}
+
+function createFallbackHeadDataUrl(name: string) {
+  const canvas = document.createElement('canvas')
+  canvas.width = 64
+  canvas.height = 64
+
+  const context = canvas.getContext('2d')
+  if (!context) {
+    return ''
+  }
+
+  const hue = getHueSeed(name)
+
+  context.imageSmoothingEnabled = false
+  context.clearRect(0, 0, 64, 64)
+  context.fillStyle = `hsl(${hue}, 58%, 52%)`
+  context.fillRect(0, 0, 64, 64)
+  context.fillStyle = `hsl(${(hue + 14) % 360}, 55%, 38%)`
+  context.fillRect(0, 0, 64, 10)
+  context.fillStyle = 'rgba(255,255,255,0.18)'
+  context.fillRect(8, 12, 12, 12)
+  context.fillRect(44, 12, 12, 12)
+  context.fillStyle = 'rgba(0,0,0,0.5)'
+  context.fillRect(14, 26, 36, 6)
+  context.fillStyle = 'rgba(255,255,255,0.1)'
+  context.fillRect(0, 0, 64, 64)
+
+  return canvas.toDataURL('image/png')
+}
+
+function loadImage(source: string) {
+  return new Promise<HTMLImageElement>((resolve, reject) => {
+    const image = new Image()
+    image.decoding = 'async'
+    image.onload = () => resolve(image)
+    image.onerror = () => reject(new Error('IMAGE_LOAD_FAILED'))
+    image.src = source
+  })
+}
+
+async function createHeadDataUrlFromSkin(source: string) {
+  const image = await loadImage(source)
+  const canvas = document.createElement('canvas')
+  canvas.width = 64
+  canvas.height = 64
+
+  const context = canvas.getContext('2d')
+  if (!context) {
+    return ''
+  }
+
+  context.imageSmoothingEnabled = false
+  context.clearRect(0, 0, 64, 64)
+  context.drawImage(image, 8, 8, 8, 8, 0, 0, 64, 64)
+
+  if (image.width >= 48 && image.height >= 16) {
+    context.drawImage(image, 40, 8, 8, 8, 0, 0, 64, 64)
+  }
+
+  return canvas.toDataURL('image/png')
+}
+
+export function usePlayerAppearance(identifier: string) {
+  const [skinSource, setSkinSource] = useState(() =>
+    createFallbackSkinDataUrl(identifier),
+  )
+  const [avatarSource, setAvatarSource] = useState(() =>
+    createFallbackHeadDataUrl(identifier),
+  )
+
+  useEffect(() => {
+    let active = true
+    let objectUrl: string | null = null
+    const controller = new AbortController()
+
+    const fallbackSkin = createFallbackSkinDataUrl(identifier)
+    const fallbackAvatar = createFallbackHeadDataUrl(identifier)
+
+    setSkinSource(fallbackSkin)
+    setAvatarSource(fallbackAvatar)
+
+    void fetch(getSkinProxyUrl(identifier), {
+      signal: controller.signal,
+    })
+      .then(async (response) => {
+        if (!response.ok) {
+          throw new Error('SKIN_FETCH_FAILED')
+        }
+
+        const blob = await response.blob()
+        objectUrl = URL.createObjectURL(blob)
+        const nextAvatarSource = await createHeadDataUrlFromSkin(objectUrl)
+
+        if (!active) {
+          return
+        }
+
+        setSkinSource(objectUrl)
+        setAvatarSource(nextAvatarSource || fallbackAvatar)
+      })
+      .catch(() => {
+        if (!active) {
+          return
+        }
+
+        setSkinSource(fallbackSkin)
+        setAvatarSource(fallbackAvatar)
+      })
+
+    return () => {
+      active = false
+      controller.abort()
+
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl)
+      }
+    }
+  }, [identifier])
+
+  return { avatarSource, skinSource }
+}
+
+export function PlayerAvatar({ nickname, className, alt = '' }: PlayerAvatarProps) {
+  const { avatarSource } = usePlayerAppearance(nickname)
+
+  return (
+    <Avatar className={className}>
+      {avatarSource ? <Avatar.Image alt={alt} src={avatarSource} /> : null}
+      <Avatar.Fallback>
+        <UserRound size={18} />
+      </Avatar.Fallback>
+    </Avatar>
+  )
+}
+
+export function PlayerHeadImage({
+  nickname,
+  className,
+  alt = '',
+}: PlayerHeadImageProps) {
+  const { avatarSource } = usePlayerAppearance(nickname)
+
+  return <img alt={alt} className={className} src={avatarSource} />
+}

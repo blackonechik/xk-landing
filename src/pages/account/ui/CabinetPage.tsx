@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { Alert, Button, Spinner } from '@heroui/react'
-import { fetchAccount, logout, type AccountPayload } from '@/entities/account'
+import { fetchAccount, logout } from '@/entities/account'
 import {
   ProfileCharacterPanel,
   ProfileStatusPanel,
 } from '@/widgets/account/profile-cabinet'
+import { AccountSidebar } from '@/widgets/account/sidebar'
 import { HeroLinkButton, HeroPage } from '@/shared/ui/hero-page'
+import type { AccountPayload } from '@/entities/account'
 
 export function CabinetPage() {
   const navigate = useNavigate()
@@ -82,8 +84,23 @@ export function CabinetPage() {
       }
     >
       <div className="grid gap-6 lg:grid-cols-[0.6fr_1.05fr]">
-        <ProfileCharacterPanel account={account} />
-        <ProfileStatusPanel account={account} totalDiamonds={totalDiamonds} />
+        <AccountSidebar
+          account={account}
+          currentSection="home"
+          onBankViewNavigate={(view) => {
+            void navigate({
+              to: '/cabinet/bank',
+              hash: view,
+            })
+          }}
+        />
+
+        <div className="grid gap-6">
+          <div className="grid gap-6 xl:grid-cols-[0.72fr_1fr]">
+            <ProfileCharacterPanel account={account} />
+            <ProfileStatusPanel account={account} totalDiamonds={totalDiamonds} />
+          </div>
+        </div>
       </div>
 
       {error ? (

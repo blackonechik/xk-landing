@@ -18,6 +18,7 @@ import {
   weightedBlocks,
 } from '../model/mineConfig'
 import type { BlockKind } from '../model/mineConfig'
+import { PlayerHeadImage } from '@/entities/account'
 import './MinePage.css'
 
 type MineBlock = {
@@ -739,13 +740,10 @@ function RatingPage() {
             key={player.name}
           >
             <span>#{index + 1}</span>
-            <img
+            <PlayerHeadImage
               alt=""
               className="mine-leader__avatar"
-              onError={(event) => {
-                event.currentTarget.src = minecraftHeadUrl('Steve')
-              }}
-              src={minecraftHeadUrl(player.name)}
+              nickname={player.name}
             />
             <strong>{player.name}</strong>
             <small>
@@ -808,10 +806,6 @@ function formatTimer(totalSeconds: number) {
   const seconds = totalSeconds % 60
 
   return `${minutes}:${seconds.toString().padStart(2, '0')}`
-}
-
-function minecraftHeadUrl(nickname: string) {
-  return `https://api.mcheads.org/head/${encodeURIComponent(nickname)}/64`
 }
 
 function playMineSound(name: keyof typeof mineSounds, volume = 0.38) {

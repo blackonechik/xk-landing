@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { Avatar, Button } from '@heroui/react'
+import { buttonVariants } from '@heroui/react'
 import { LogOut } from 'lucide-react'
 import AnimatedLink from './AnimatedLink'
-import { fetchAccount, logout  } from '@/entities/account'
-import type {AccountPayload} from '@/entities/account';
+import { PlayerAvatar, fetchAccount, logout } from '@/entities/account'
+import type { AccountPayload } from '@/entities/account'
 
 export default function Header() {
   const [isHidden, setIsHidden] = useState(false)
@@ -70,12 +70,6 @@ export default function Header() {
     await navigate({ to: '/' })
   }
 
-  const avatarUrl = account
-    ? `https://api.mcheads.org/head/${encodeURIComponent(
-        account.player.nickname,
-      )}/64`
-    : undefined
-
   return (
     <header
       className={['xk-site-header', isHidden ? 'is-hidden' : '']
@@ -105,24 +99,26 @@ export default function Header() {
                 aria-label="Выйти"
                 title="Выйти"
               >
-                <Avatar className="xk-site-header__auth-avatar">
-                  {avatarUrl ? <Avatar.Image alt="" src={avatarUrl} /> : null}
-                  <Avatar.Fallback>
-                    {account?.player.nickname.slice(0, 2).toUpperCase()}
-                  </Avatar.Fallback>
-                </Avatar>
+                {account ? (
+                  <PlayerAvatar
+                    className="xk-site-header__auth-avatar"
+                    nickname={account.player.nickname}
+                  />
+                ) : null}
                 <span className="xk-site-header__auth-label">Выйти</span>
                 <LogOut size={16} aria-hidden="true" />
               </button>
             </div>
           ) : authState === 'guest' ? (
-            <Button
-              className="xk-site-header__login-button"
-              render={(props) => <AnimatedLink {...props} to="/login" />}
-              size="sm"
+            <AnimatedLink
+              className={buttonVariants({
+                className: 'xk-site-header__login-button',
+                size: 'sm',
+              })}
+              to="/login"
             >
               Войти
-            </Button>
+            </AnimatedLink>
           ) : (
             <span
               className="xk-site-header__auth-placeholder"
