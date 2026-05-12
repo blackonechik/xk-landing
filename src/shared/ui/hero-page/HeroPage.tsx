@@ -44,8 +44,9 @@ export function HeroPage({
   return (
     <main
       className={[
+        'xk-hero-scope',
         'min-h-svh bg-background text-foreground',
-        'font-["Montserrat",sans-serif]',
+        'font-sans',
         'px-4 pb-16 pt-28 sm:px-6 lg:px-8',
       ].join(' ')}
     >
@@ -55,7 +56,7 @@ export function HeroPage({
           narrow ? 'max-w-4xl' : 'max-w-7xl',
         ].join(' ')}
       >
-        <header className="flex flex-col gap-5">
+        <header className="flex flex-col gap-5 items-start">
           {eyebrow ? (
             <Chip color="accent" variant="soft">
               {eyebrow}
