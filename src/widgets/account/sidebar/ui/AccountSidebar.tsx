@@ -24,6 +24,7 @@ export function AccountSidebar({
   const sections = getAccountSidebarMenuSections({
     currentSection,
     activeBankView,
+    hasBankCards: account.bank.cards.length > 0,
     onBankViewNavigate,
   })
 

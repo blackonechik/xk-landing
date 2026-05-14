@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from '@tanstack/react-router'
+import { useNavigate, useRouterState } from '@tanstack/react-router'
 import { Alert, Button, Spinner } from '@heroui/react'
 import {
   fetchAccountCached,
@@ -31,11 +31,14 @@ const errorMessages: Record<string, string> = {
 
 export function CabinetBankPage() {
   const navigate = useNavigate()
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  })
   const [account, setAccount] = useState<AccountPayload | null>(() =>
     getCachedAccount(),
   )
   const [error, setError] = useState('')
-  const [activeView, setActiveView] = useState<BankView>(() => getBankViewFromHash())
+  const activeView = getBankViewFromPathname(pathname)
 
   async function loadAccount() {
     try {
@@ -72,17 +75,21 @@ export function CabinetBankPage() {
   }, [])
 
   useEffect(() => {
-    function handleHashChange() {
-      setActiveView(getBankViewFromHash())
+    if (!account) {
+      return
     }
 
-    handleHashChange()
-    window.addEventListener('hashchange', handleHashChange)
+    const hasBankCards = account.bank.cards.length > 0
 
-    return () => {
-      window.removeEventListener('hashchange', handleHashChange)
+    if (!hasBankCards && pathname !== '/cabinet/bank') {
+      void navigate({ replace: true, to: '/cabinet/bank' })
+      return
     }
-  }, [])
+
+    if (hasBankCards && pathname === '/cabinet/bank') {
+      void navigate({ replace: true, to: '/cabinet/bank/cards' })
+    }
+  }, [account, navigate, pathname])
 
   const totalDiamonds = useMemo(
     () =>
@@ -126,16 +133,15 @@ export function CabinetBankPage() {
         void navigate({ to })
       }}
       onBankViewNavigate={(view) => {
-        setActiveView(view)
-        void navigate({
-          hash: view,
-          replace: true,
-          to: '/cabinet/bank',
-        })
+        void navigate({ to: getBankViewPath(view) })
       }}
       eyebrow="XK Bank"
-      title="Карты и переводы"
-      description="Управление картами, балансом, переводами и историей операций."
+      title={hasCards ? 'Карты и переводы' : 'Добро пожаловать в банк!'}
+      description={
+        hasCards
+          ? 'Управление картами, балансом, переводами и историей операций.'
+          : 'Карты и переводы. Управление картами, балансом, переводами и историей операций.'
+      }
       actions={
         <>
           <HeroLinkButton to="/cabinet" variant="secondary">
@@ -216,16 +222,21 @@ export function CabinetBankPage() {
   )
 }
 
-function getBankViewFromHash(): BankView {
-  if (typeof window === 'undefined') {
-    return 'cards'
+function getBankViewFromPathname(pathname: string): BankView {
+  if (pathname.endsWith('/transfer')) {
+    return 'transfer'
   }
 
-  const hash = window.location.hash.replace('#', '')
-
-  if (hash === 'transfer' || hash === 'history' || hash === 'cards') {
-    return hash
+  if (pathname.endsWith('/history')) {
+    return 'history'
   }
 
   return 'cards'
+}
+
+function getBankViewPath(view: BankView) {
+  return `/cabinet/bank/${view}` as
+    | '/cabinet/bank/cards'
+    | '/cabinet/bank/transfer'
+    | '/cabinet/bank/history'
 }

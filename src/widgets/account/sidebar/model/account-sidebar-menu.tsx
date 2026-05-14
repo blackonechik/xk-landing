@@ -30,6 +30,7 @@ export type AccountSidebarMenuSection = {
 type GetAccountSidebarMenuSectionsParams = {
   currentSection: 'home' | 'bank'
   activeBankView: BankView
+  hasBankCards: boolean
   onBankViewNavigate: (view: BankView) => void
 }
 
@@ -54,8 +55,20 @@ const bankItems = [
 export function getAccountSidebarMenuSections({
   currentSection,
   activeBankView,
+  hasBankCards,
   onBankViewNavigate,
 }: GetAccountSidebarMenuSectionsParams): AccountSidebarMenuSection[] {
+  const bankChildren = hasBankCards
+    ? bankItems.map((item) => ({
+        key: item.view,
+        icon: item.icon,
+        label: item.label,
+        onPress: () => onBankViewNavigate(item.view),
+        current: currentSection === 'bank' && activeBankView === item.view,
+        size: 'sm' as const,
+      }))
+    : undefined
+
   return [
     {
       key: 'primary',
@@ -71,16 +84,10 @@ export function getAccountSidebarMenuSections({
           key: 'bank',
           icon: <Landmark size={18} />,
           label: 'Банк',
-          onPress: () => onBankViewNavigate('cards'),
-          current: currentSection === 'bank' && activeBankView === 'cards',
-          children: bankItems.map((item) => ({
-            key: item.view,
-            icon: item.icon,
-            label: item.label,
-            onPress: () => onBankViewNavigate(item.view),
-            current: currentSection === 'bank' && activeBankView === item.view,
-            size: 'sm',
-          })),
+          to: hasBankCards ? undefined : '/cabinet/bank',
+          onPress: hasBankCards ? () => onBankViewNavigate('cards') : undefined,
+          current: currentSection === 'bank',
+          children: bankChildren,
         },
       ],
     },

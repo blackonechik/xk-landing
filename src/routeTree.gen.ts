@@ -24,6 +24,9 @@ import { Route as PaymentSuccessRouteImport } from './routes/payment.success'
 import { Route as PaymentPendingRouteImport } from './routes/payment.pending'
 import { Route as PaymentFailedRouteImport } from './routes/payment.failed'
 import { Route as CabinetBankRouteImport } from './routes/cabinet.bank'
+import { Route as CabinetBankTransferRouteImport } from './routes/cabinet.bank.transfer'
+import { Route as CabinetBankHistoryRouteImport } from './routes/cabinet.bank.history'
+import { Route as CabinetBankCardsRouteImport } from './routes/cabinet.bank.cards'
 
 const RulesRoute = RulesRouteImport.update({
   id: '/rules',
@@ -100,6 +103,21 @@ const CabinetBankRoute = CabinetBankRouteImport.update({
   path: '/bank',
   getParentRoute: () => CabinetRoute,
 } as any)
+const CabinetBankTransferRoute = CabinetBankTransferRouteImport.update({
+  id: '/transfer',
+  path: '/transfer',
+  getParentRoute: () => CabinetBankRoute,
+} as any)
+const CabinetBankHistoryRoute = CabinetBankHistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => CabinetBankRoute,
+} as any)
+const CabinetBankCardsRoute = CabinetBankCardsRouteImport.update({
+  id: '/cards',
+  path: '/cards',
+  getParentRoute: () => CabinetBankRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -113,10 +131,13 @@ export interface FileRoutesByFullPath {
   '/personal-data-consent': typeof PersonalDataConsentRoute
   '/privacy': typeof PrivacyRoute
   '/rules': typeof RulesRoute
-  '/cabinet/bank': typeof CabinetBankRoute
+  '/cabinet/bank': typeof CabinetBankRouteWithChildren
   '/payment/failed': typeof PaymentFailedRoute
   '/payment/pending': typeof PaymentPendingRoute
   '/payment/success': typeof PaymentSuccessRoute
+  '/cabinet/bank/cards': typeof CabinetBankCardsRoute
+  '/cabinet/bank/history': typeof CabinetBankHistoryRoute
+  '/cabinet/bank/transfer': typeof CabinetBankTransferRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -130,10 +151,13 @@ export interface FileRoutesByTo {
   '/personal-data-consent': typeof PersonalDataConsentRoute
   '/privacy': typeof PrivacyRoute
   '/rules': typeof RulesRoute
-  '/cabinet/bank': typeof CabinetBankRoute
+  '/cabinet/bank': typeof CabinetBankRouteWithChildren
   '/payment/failed': typeof PaymentFailedRoute
   '/payment/pending': typeof PaymentPendingRoute
   '/payment/success': typeof PaymentSuccessRoute
+  '/cabinet/bank/cards': typeof CabinetBankCardsRoute
+  '/cabinet/bank/history': typeof CabinetBankHistoryRoute
+  '/cabinet/bank/transfer': typeof CabinetBankTransferRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -148,10 +172,13 @@ export interface FileRoutesById {
   '/personal-data-consent': typeof PersonalDataConsentRoute
   '/privacy': typeof PrivacyRoute
   '/rules': typeof RulesRoute
-  '/cabinet/bank': typeof CabinetBankRoute
+  '/cabinet/bank': typeof CabinetBankRouteWithChildren
   '/payment/failed': typeof PaymentFailedRoute
   '/payment/pending': typeof PaymentPendingRoute
   '/payment/success': typeof PaymentSuccessRoute
+  '/cabinet/bank/cards': typeof CabinetBankCardsRoute
+  '/cabinet/bank/history': typeof CabinetBankHistoryRoute
+  '/cabinet/bank/transfer': typeof CabinetBankTransferRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -171,6 +198,9 @@ export interface FileRouteTypes {
     | '/payment/failed'
     | '/payment/pending'
     | '/payment/success'
+    | '/cabinet/bank/cards'
+    | '/cabinet/bank/history'
+    | '/cabinet/bank/transfer'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -188,6 +218,9 @@ export interface FileRouteTypes {
     | '/payment/failed'
     | '/payment/pending'
     | '/payment/success'
+    | '/cabinet/bank/cards'
+    | '/cabinet/bank/history'
+    | '/cabinet/bank/transfer'
   id:
     | '__root__'
     | '/'
@@ -205,6 +238,9 @@ export interface FileRouteTypes {
     | '/payment/failed'
     | '/payment/pending'
     | '/payment/success'
+    | '/cabinet/bank/cards'
+    | '/cabinet/bank/history'
+    | '/cabinet/bank/transfer'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -328,15 +364,52 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CabinetBankRouteImport
       parentRoute: typeof CabinetRoute
     }
+    '/cabinet/bank/transfer': {
+      id: '/cabinet/bank/transfer'
+      path: '/transfer'
+      fullPath: '/cabinet/bank/transfer'
+      preLoaderRoute: typeof CabinetBankTransferRouteImport
+      parentRoute: typeof CabinetBankRoute
+    }
+    '/cabinet/bank/history': {
+      id: '/cabinet/bank/history'
+      path: '/history'
+      fullPath: '/cabinet/bank/history'
+      preLoaderRoute: typeof CabinetBankHistoryRouteImport
+      parentRoute: typeof CabinetBankRoute
+    }
+    '/cabinet/bank/cards': {
+      id: '/cabinet/bank/cards'
+      path: '/cards'
+      fullPath: '/cabinet/bank/cards'
+      preLoaderRoute: typeof CabinetBankCardsRouteImport
+      parentRoute: typeof CabinetBankRoute
+    }
   }
 }
 
+interface CabinetBankRouteChildren {
+  CabinetBankCardsRoute: typeof CabinetBankCardsRoute
+  CabinetBankHistoryRoute: typeof CabinetBankHistoryRoute
+  CabinetBankTransferRoute: typeof CabinetBankTransferRoute
+}
+
+const CabinetBankRouteChildren: CabinetBankRouteChildren = {
+  CabinetBankCardsRoute: CabinetBankCardsRoute,
+  CabinetBankHistoryRoute: CabinetBankHistoryRoute,
+  CabinetBankTransferRoute: CabinetBankTransferRoute,
+}
+
+const CabinetBankRouteWithChildren = CabinetBankRoute._addFileChildren(
+  CabinetBankRouteChildren,
+)
+
 interface CabinetRouteChildren {
-  CabinetBankRoute: typeof CabinetBankRoute
+  CabinetBankRoute: typeof CabinetBankRouteWithChildren
 }
 
 const CabinetRouteChildren: CabinetRouteChildren = {
-  CabinetBankRoute: CabinetBankRoute,
+  CabinetBankRoute: CabinetBankRouteWithChildren,
 }
 
 const CabinetRouteWithChildren =
