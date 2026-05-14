@@ -61,6 +61,39 @@ export function BankOnboarding({
 }: BankOnboardingProps) {
   const [isCreating, setIsCreating] = useState(false)
 
+  if (isCreating) {
+    return (
+      <section className="grid gap-6">
+        <Card>
+          <Card.Header className="flex items-start justify-between gap-4">
+            <div className="grid gap-2">
+              <Chip color="accent" variant="soft">
+                <CreditCard size={14} />
+                Новая банковская карта
+              </Chip>
+              <Card.Title>Оформление банковской карты</Card.Title>
+              <Card.Description>
+                Сейчас вам нужно написать название своей карты и выбрать дизайн.
+                Превью обновляется сразу, поэтому можно подобрать вид перед
+                выпуском.
+              </Card.Description>
+            </div>
+            <Plus className="size-6 text-muted" />
+          </Card.Header>
+          <Card.Content>
+            <CreateBankCardForm
+              ownerNickname={account.player.nickname}
+              canCreateCard={canCreateCard}
+              showOwnerField
+              submitLabel="Выпустить карту"
+              onCreate={onCreateCard}
+            />
+          </Card.Content>
+        </Card>
+      </section>
+    )
+  }
+
   return (
     <section className="grid items-start gap-6 xl:grid-cols-[minmax(280px,0.72fr)_minmax(420px,1fr)]">
       <Card className="overflow-hidden">
@@ -140,27 +173,6 @@ export function BankOnboarding({
           })}
         </div>
       </div>
-
-      {isCreating ? (
-        <Card className="xl:col-span-2">
-          <Card.Header className="flex items-start justify-between gap-4">
-            <div>
-              <Card.Title>Оформление</Card.Title>
-              <Card.Description>Новая карта</Card.Description>
-            </div>
-            <Plus className="size-6 text-muted" />
-          </Card.Header>
-          <Card.Content>
-            <CreateBankCardForm
-              ownerNickname={account.player.nickname}
-              canCreateCard={canCreateCard}
-              showOwnerField
-              submitLabel="Выпустить карту"
-              onCreate={onCreateCard}
-            />
-          </Card.Content>
-        </Card>
-      ) : null}
     </section>
   )
 }

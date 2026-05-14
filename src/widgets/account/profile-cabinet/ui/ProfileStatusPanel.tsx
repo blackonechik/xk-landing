@@ -10,7 +10,7 @@ import {
 } from 'lucide-react'
 import AnimatedLink from '@/components/AnimatedLink'
 import type { AccountPayload } from '@/entities/account'
-import { formatDate } from '@/shared/lib/date/format-date'
+import { formatLastSeen } from '@/shared/lib/date/format-date'
 import { HeroMetricCard } from '@/shared/ui/hero-page'
 
 type ProfileStatusPanelProps = {
@@ -171,7 +171,7 @@ export function ProfileStatusPanel({
         <Card.Title>Ваш аккаунт:</Card.Title>
       </Card.Header>
       <Card.Content className="grid gap-5">
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-4">
           <HeroMetricCard
             label="Ник"
             value={account.player.nickname}
@@ -184,11 +184,11 @@ export function ProfileStatusPanel({
           />
           <HeroMetricCard
             label="Последний вход"
-            value={formatDate(account.player.lastLoginAt)}
+            value={formatLastSeen(account.player.lastLoginAt)}
             icon={<ScrollText size={18} />}
           />
           <HeroMetricCard
-            label="Алмазы на картах"
+            label="Алмазы"
             value={totalDiamonds}
             icon={<Gem size={18} />}
           />

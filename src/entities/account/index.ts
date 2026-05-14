@@ -1,4 +1,5 @@
 export {
+  clearAccountCache,
   fetchAccount,
   fetchAccountCached,
   getDiscordLoginUrl,

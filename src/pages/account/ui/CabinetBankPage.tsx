@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useRouterState } from '@tanstack/react-router'
 import { Alert, Button, Spinner } from '@heroui/react'
 import {
+  clearAccountCache,
   fetchAccountCached,
   getCachedAccount,
   logout,
@@ -62,6 +63,7 @@ export function CabinetBankPage() {
 
     try {
       await action()
+      clearAccountCache()
       await loadAccount()
     } catch (actionError) {
       const message =
