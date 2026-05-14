@@ -6,6 +6,7 @@ export {
   getCachedAccount,
   getSkinProxyUrl,
   logout,
+  updateProfileAppearance,
 } from './api/account-api'
 export {
   clearPlayerAppearanceCache,
@@ -14,4 +15,8 @@ export {
   usePlayerAppearance,
 } from './ui/PlayerAvatar'
 export { SkinViewer } from './ui/SkinViewer'
-export type { AccountPayload, CabinetPlayer } from './model/types'
+export type {
+  AccountPayload,
+  CabinetPlayer,
+  PlayerProfileAppearance,
+} from './model/types'

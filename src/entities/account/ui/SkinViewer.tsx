@@ -3,12 +3,29 @@ import { UserRound } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { FunctionAnimation, Render as Skin3dRender } from 'skin3d'
 import { usePlayerAppearance } from './PlayerAvatar'
+import type {
+  ProfileAnimation,
+  ProfileBackground,
+} from '@/widgets/account/profile-cabinet/model/profile-appearance'
 
 type SkinViewerProps = {
   nickname: string
+  animation?: ProfileAnimation
+  background?: ProfileBackground
 }
 
-export function SkinViewer({ nickname }: SkinViewerProps) {
+const backgroundClasses: Record<ProfileBackground, string> = {
+  amber: 'from-amber-950/50 via-[var(--surface)] to-[var(--background)]',
+  default: 'from-white/10 via-[var(--surface)] to-[var(--background)]',
+  emerald: 'from-emerald-950/55 via-[var(--surface)] to-[var(--background)]',
+  violet: 'from-violet-950/55 via-[var(--surface)] to-[var(--background)]',
+}
+
+export function SkinViewer({
+  nickname,
+  animation = 'inspect',
+  background = 'default',
+}: SkinViewerProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const animationTimeoutRef = useRef<number | null>(null)
   const idleTimeoutRef = useRef<number | null>(null)
@@ -49,8 +66,8 @@ export function SkinViewer({ nickname }: SkinViewerProps) {
       }
     }
 
-    const playLookAtHandsAnimation = () => {
-      const animation = new FunctionAnimation((player, progress) => {
+    const playInspectAnimation = () => {
+      const inspectAnimation = new FunctionAnimation((player, progress) => {
         const duration = 4.2
         const t = Math.min(progress / duration, 1)
         const smoothstep = (edge0: number, edge1: number, value: number) => {
@@ -102,8 +119,8 @@ export function SkinViewer({ nickname }: SkinViewerProps) {
         }
       })
 
-      animation.speed = 1
-      viewer.animation = animation
+      inspectAnimation.speed = 1
+      viewer.animation = inspectAnimation
 
       animationTimeoutRef.current = window.setTimeout(() => {
         viewer.animation = null
@@ -111,12 +128,41 @@ export function SkinViewer({ nickname }: SkinViewerProps) {
       }, 4400)
     }
 
+    const playWaveAnimation = () => {
+      const waveAnimation = new FunctionAnimation((player, progress) => {
+        const wave = Math.sin(progress * 7) * 0.35
+        player.skin.rightArm.rotation.x = -1.85
+        player.skin.rightArm.rotation.y = -0.2
+        player.skin.rightArm.rotation.z = -0.55 + wave
+        player.skin.head.rotation.y = Math.sin(progress * 1.8) * 0.12
+        player.skin.body.rotation.y = Math.sin(progress * 1.8) * 0.04
+      })
+
+      waveAnimation.speed = 1
+      viewer.animation = waveAnimation
+
+      animationTimeoutRef.current = window.setTimeout(() => {
+        viewer.animation = null
+        queueNextAnimation()
+      }, 4200)
+    }
+
     const queueNextAnimation = () => {
       clearTimers()
 
+      if (animation === 'idle') {
+        viewer.animation = null
+        return
+      }
+
       idleTimeoutRef.current = window.setTimeout(() => {
-        playLookAtHandsAnimation()
-      }, 10000 + Math.floor(Math.random() * 8000))
+        if (animation === 'wave') {
+          playWaveAnimation()
+          return
+        }
+
+        playInspectAnimation()
+      }, 1400)
     }
 
     queueNextAnimation()
@@ -125,10 +171,15 @@ export function SkinViewer({ nickname }: SkinViewerProps) {
       clearTimers()
       viewer.dispose()
     }
-  }, [nickname, skinSource])
+  }, [animation, nickname, skinSource])
 
   return (
-    <div className="xk-skin-viewer relative">
+    <div
+      className={[
+        'relative grid min-h-[456px] place-items-center overflow-hidden rounded-lg border border-[var(--separator)] bg-gradient-to-br shadow-inner',
+        backgroundClasses[background],
+      ].join(' ')}
+    >
       <canvas ref={canvasRef} aria-label={`3D-скин игрока ${nickname}`} />
       <div className="pointer-events-none absolute bottom-4 right-4">
         <Avatar className="size-16 border border-white/12 bg-black/30 shadow-lg backdrop-blur-sm">

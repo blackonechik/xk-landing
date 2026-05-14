@@ -31,6 +31,10 @@ function getHueSeed(name: string) {
 }
 
 function createFallbackSkinDataUrl(name: string) {
+  if (typeof document === 'undefined') {
+    return ''
+  }
+
   const canvas = document.createElement('canvas')
   canvas.width = 64
   canvas.height = 64
@@ -55,6 +59,10 @@ function createFallbackSkinDataUrl(name: string) {
 }
 
 function createFallbackHeadDataUrl(name: string) {
+  if (typeof document === 'undefined') {
+    return ''
+  }
+
   const canvas = document.createElement('canvas')
   canvas.width = 64
   canvas.height = 64

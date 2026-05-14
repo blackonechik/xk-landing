@@ -1,21 +1,25 @@
 import type { CSSProperties, ReactNode } from 'react'
-import { Card, Chip, Text } from '@heroui/react'
+import { Card, Chip } from '@heroui/react'
 import {
   Construction,
   Gem,
   HeartPulse,
   Landmark,
+  Radio,
   ScrollText,
   UserRound,
 } from 'lucide-react'
 import AnimatedLink from '@/components/AnimatedLink'
-import type { AccountPayload } from '@/entities/account'
+import type { PublicPlayerProfile } from '@/entities/player'
+import { formatPlayedHours } from '@/entities/player'
 import { formatLastSeen } from '@/shared/lib/date/format-date'
 import { HeroMetricCard } from '@/shared/ui/hero-page'
 
 type ProfileStatusPanelProps = {
-  account: AccountPayload
-  totalDiamonds: number
+  player: PublicPlayerProfile
+  actions?: ReactNode
+  isOwnProfile?: boolean
+  totalDiamonds?: number
 }
 
 type QuickSectionCardProps = {
@@ -27,6 +31,10 @@ type QuickSectionCardProps = {
   title: string
   badge?: string
   meta: string
+}
+
+type QuickSection = QuickSectionCardProps & {
+  title: string
 }
 
 function QuickSectionCard({
@@ -135,10 +143,12 @@ function QuickSectionCard({
 }
 
 export function ProfileStatusPanel({
-  account,
+  actions,
+  isOwnProfile = false,
+  player,
   totalDiamonds,
 }: ProfileStatusPanelProps) {
-  const sections = [
+  const sections: QuickSection[] = [
     {
       href: '/rules',
       accent: '#85ad71',
@@ -146,6 +156,7 @@ export function ProfileStatusPanel({
       mockLabel: 'rules art',
       title: 'Правила',
       description: 'Открой актуальные правила, ограничения и уточнения.',
+      meta: 'Открыть',
     },
     {
       href: '/cabinet/bank',
@@ -154,6 +165,7 @@ export function ProfileStatusPanel({
       mockLabel: 'bank art',
       title: 'Банк',
       description: 'Переводы, карты и управление алмазами в одном месте.',
+      meta: 'Открыть',
     },
     {
       accent: '#4f7d86',
@@ -162,55 +174,81 @@ export function ProfileStatusPanel({
       title: 'Королевства',
       description: 'Раздел находится в разработке и появится чуть позже.',
       badge: 'В разработке',
+      meta: 'Скоро',
     },
   ] as const
 
   return (
     <Card>
       <Card.Header className="flex items-start justify-between gap-4">
-        <Card.Title>Ваш аккаунт:</Card.Title>
+        <div>
+          <div className="flex flex-wrap items-center gap-3">
+            <Card.Title>{isOwnProfile ? 'Ваш аккаунт:' : 'Профиль игрока:'}</Card.Title>
+            <Chip
+              color={player.isOnline ? 'success' : 'default'}
+              variant="soft"
+            >
+              {player.isOnline ? 'Онлайн' : 'Оффлайн'}
+            </Chip>
+          </div>
+          <Card.Description>
+            Основная информация, активность и игровые показатели.
+          </Card.Description>
+        </div>
+        {actions ? <div className="flex flex-wrap gap-2">{actions}</div> : null}
       </Card.Header>
       <Card.Content className="grid gap-5">
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
           <HeroMetricCard
             label="Ник"
-            value={account.player.nickname}
+            value={player.nickname}
             icon={<UserRound size={18} />}
           />
           <HeroMetricCard
             label="Жизни"
-            value={account.player.lives}
+            value={player.lives ?? 'нет данных'}
             icon={<HeartPulse size={18} />}
           />
           <HeroMetricCard
             label="Последний вход"
-            value={formatLastSeen(account.player.lastLoginAt)}
+            value={formatLastSeen(player.lastLoginAt)}
             icon={<ScrollText size={18} />}
           />
           <HeroMetricCard
-            label="Алмазы"
-            value={totalDiamonds}
-            icon={<Gem size={18} />}
+            label="Наиграно"
+            value={formatPlayedHours(player.playedHours)}
+            icon={<Radio size={18} />}
           />
-        </div>
-
-        <Card.Title>Быстрые разделы:</Card.Title>
-
-        <div className="grid gap-4 md:grid-cols-2">
-          {sections.map((section) => (
-            <QuickSectionCard
-              key={section.title}
-              accent={section.accent}
-              badge={section.badge}
-              description={section.description}
-              href={section.href}
-              icon={section.icon}
-              meta={section.meta}
-              mockLabel={section.mockLabel}
-              title={section.title}
+          {typeof totalDiamonds === 'number' ? (
+            <HeroMetricCard
+              label="Алмазы"
+              value={totalDiamonds}
+              icon={<Gem size={18} />}
             />
-          ))}
+          ) : null}
         </div>
+
+        {isOwnProfile ? (
+          <>
+            <Card.Title>Быстрые разделы:</Card.Title>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              {sections.map((section) => (
+                <QuickSectionCard
+                  key={section.title}
+                  accent={section.accent}
+                  badge={section.badge}
+                  description={section.description}
+                  href={section.href}
+                  icon={section.icon}
+                  meta={section.meta}
+                  mockLabel={section.mockLabel}
+                  title={section.title}
+                />
+              ))}
+            </div>
+          </>
+        ) : null}
       </Card.Content>
     </Card>
   )

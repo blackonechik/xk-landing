@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RulesRouteImport } from './routes/rules'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PlayersRouteImport } from './routes/players'
 import { Route as PersonalDataConsentRouteImport } from './routes/personal-data-consent'
 import { Route as PaymentRouteImport } from './routes/payment'
 import { Route as OfferRouteImport } from './routes/offer'
@@ -20,6 +21,7 @@ import { Route as CabinetRouteImport } from './routes/cabinet'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as UNicknameRouteImport } from './routes/u.$nickname'
 import { Route as PaymentSuccessRouteImport } from './routes/payment.success'
 import { Route as PaymentPendingRouteImport } from './routes/payment.pending'
 import { Route as PaymentFailedRouteImport } from './routes/payment.failed'
@@ -36,6 +38,11 @@ const RulesRoute = RulesRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlayersRoute = PlayersRouteImport.update({
+  id: '/players',
+  path: '/players',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PersonalDataConsentRoute = PersonalDataConsentRouteImport.update({
@@ -81,6 +88,11 @@ const AboutRoute = AboutRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UNicknameRoute = UNicknameRouteImport.update({
+  id: '/u/$nickname',
+  path: '/u/$nickname',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PaymentSuccessRoute = PaymentSuccessRouteImport.update({
@@ -129,12 +141,14 @@ export interface FileRoutesByFullPath {
   '/offer': typeof OfferRoute
   '/payment': typeof PaymentRouteWithChildren
   '/personal-data-consent': typeof PersonalDataConsentRoute
+  '/players': typeof PlayersRoute
   '/privacy': typeof PrivacyRoute
   '/rules': typeof RulesRoute
   '/cabinet/bank': typeof CabinetBankRouteWithChildren
   '/payment/failed': typeof PaymentFailedRoute
   '/payment/pending': typeof PaymentPendingRoute
   '/payment/success': typeof PaymentSuccessRoute
+  '/u/$nickname': typeof UNicknameRoute
   '/cabinet/bank/cards': typeof CabinetBankCardsRoute
   '/cabinet/bank/history': typeof CabinetBankHistoryRoute
   '/cabinet/bank/transfer': typeof CabinetBankTransferRoute
@@ -149,12 +163,14 @@ export interface FileRoutesByTo {
   '/offer': typeof OfferRoute
   '/payment': typeof PaymentRouteWithChildren
   '/personal-data-consent': typeof PersonalDataConsentRoute
+  '/players': typeof PlayersRoute
   '/privacy': typeof PrivacyRoute
   '/rules': typeof RulesRoute
   '/cabinet/bank': typeof CabinetBankRouteWithChildren
   '/payment/failed': typeof PaymentFailedRoute
   '/payment/pending': typeof PaymentPendingRoute
   '/payment/success': typeof PaymentSuccessRoute
+  '/u/$nickname': typeof UNicknameRoute
   '/cabinet/bank/cards': typeof CabinetBankCardsRoute
   '/cabinet/bank/history': typeof CabinetBankHistoryRoute
   '/cabinet/bank/transfer': typeof CabinetBankTransferRoute
@@ -170,12 +186,14 @@ export interface FileRoutesById {
   '/offer': typeof OfferRoute
   '/payment': typeof PaymentRouteWithChildren
   '/personal-data-consent': typeof PersonalDataConsentRoute
+  '/players': typeof PlayersRoute
   '/privacy': typeof PrivacyRoute
   '/rules': typeof RulesRoute
   '/cabinet/bank': typeof CabinetBankRouteWithChildren
   '/payment/failed': typeof PaymentFailedRoute
   '/payment/pending': typeof PaymentPendingRoute
   '/payment/success': typeof PaymentSuccessRoute
+  '/u/$nickname': typeof UNicknameRoute
   '/cabinet/bank/cards': typeof CabinetBankCardsRoute
   '/cabinet/bank/history': typeof CabinetBankHistoryRoute
   '/cabinet/bank/transfer': typeof CabinetBankTransferRoute
@@ -192,12 +210,14 @@ export interface FileRouteTypes {
     | '/offer'
     | '/payment'
     | '/personal-data-consent'
+    | '/players'
     | '/privacy'
     | '/rules'
     | '/cabinet/bank'
     | '/payment/failed'
     | '/payment/pending'
     | '/payment/success'
+    | '/u/$nickname'
     | '/cabinet/bank/cards'
     | '/cabinet/bank/history'
     | '/cabinet/bank/transfer'
@@ -212,12 +232,14 @@ export interface FileRouteTypes {
     | '/offer'
     | '/payment'
     | '/personal-data-consent'
+    | '/players'
     | '/privacy'
     | '/rules'
     | '/cabinet/bank'
     | '/payment/failed'
     | '/payment/pending'
     | '/payment/success'
+    | '/u/$nickname'
     | '/cabinet/bank/cards'
     | '/cabinet/bank/history'
     | '/cabinet/bank/transfer'
@@ -232,12 +254,14 @@ export interface FileRouteTypes {
     | '/offer'
     | '/payment'
     | '/personal-data-consent'
+    | '/players'
     | '/privacy'
     | '/rules'
     | '/cabinet/bank'
     | '/payment/failed'
     | '/payment/pending'
     | '/payment/success'
+    | '/u/$nickname'
     | '/cabinet/bank/cards'
     | '/cabinet/bank/history'
     | '/cabinet/bank/transfer'
@@ -253,8 +277,10 @@ export interface RootRouteChildren {
   OfferRoute: typeof OfferRoute
   PaymentRoute: typeof PaymentRouteWithChildren
   PersonalDataConsentRoute: typeof PersonalDataConsentRoute
+  PlayersRoute: typeof PlayersRoute
   PrivacyRoute: typeof PrivacyRoute
   RulesRoute: typeof RulesRoute
+  UNicknameRoute: typeof UNicknameRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -271,6 +297,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/players': {
+      id: '/players'
+      path: '/players'
+      fullPath: '/players'
+      preLoaderRoute: typeof PlayersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/personal-data-consent': {
@@ -334,6 +367,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/u/$nickname': {
+      id: '/u/$nickname'
+      path: '/u/$nickname'
+      fullPath: '/u/$nickname'
+      preLoaderRoute: typeof UNicknameRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/payment/success': {
@@ -440,8 +480,10 @@ const rootRouteChildren: RootRouteChildren = {
   OfferRoute: OfferRoute,
   PaymentRoute: PaymentRouteWithChildren,
   PersonalDataConsentRoute: PersonalDataConsentRoute,
+  PlayersRoute: PlayersRoute,
   PrivacyRoute: PrivacyRoute,
   RulesRoute: RulesRoute,
+  UNicknameRoute: UNicknameRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

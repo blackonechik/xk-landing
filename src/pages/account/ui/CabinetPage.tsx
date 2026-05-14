@@ -5,10 +5,13 @@ import {
   fetchAccountCached,
   getCachedAccount,
   logout,
+  updateProfileAppearance,
 } from '@/entities/account'
+import { fetchPlayerProfile, type PublicPlayerProfile } from '@/entities/player'
 import {
-  ProfileCharacterPanel,
-  ProfileStatusPanel,
+  defaultProfileAppearance,
+  PlayerProfileView,
+  type ProfileAppearance,
 } from '@/widgets/account/profile-cabinet'
 import { AccountLayout } from '@/widgets/account/layout'
 import { HeroLinkButton, HeroPage } from '@/shared/ui/hero-page'
@@ -19,6 +22,11 @@ export function CabinetPage() {
   const [account, setAccount] = useState<AccountPayload | null>(() =>
     getCachedAccount(),
   )
+  const [appearance, setAppearance] = useState<ProfileAppearance>(
+    defaultProfileAppearance,
+  )
+  const [playerProfile, setPlayerProfile] =
+    useState<PublicPlayerProfile | null>(null)
   const [error, setError] = useState('')
 
   async function loadAccount() {
@@ -39,6 +47,62 @@ export function CabinetPage() {
     void loadAccount()
   }, [])
 
+  useEffect(() => {
+    if (account?.player.appearance) {
+      setAppearance(account.player.appearance)
+    }
+  }, [account?.player.appearance])
+
+  useEffect(() => {
+    if (!account?.player.nickname) {
+      return undefined
+    }
+
+    let isActive = true
+
+    void fetchPlayerProfile(account.player.nickname)
+      .then((profile) => {
+        if (isActive) {
+          setPlayerProfile({
+            ...profile,
+            lives: account.player.lives,
+            lastLoginAt: account.player.lastLoginAt,
+            appearance: account.player.appearance ?? profile.appearance,
+          })
+        }
+      })
+      .catch(() => {
+        if (isActive) {
+          setPlayerProfile({
+            nickname: account.player.nickname,
+            uuid: account.player.uuid,
+            lives: account.player.lives,
+            lastLoginAt: account.player.lastLoginAt,
+            playedHours: 0,
+            isOnline: true,
+            stats: {
+              totalHours: 0,
+              monthHours: 0,
+              weekHours: 0,
+              todayHours: 0,
+            },
+            activity: [],
+            appearance: account.player.appearance ?? defaultProfileAppearance,
+            rating: {
+              likes: 0,
+              dislikes: 0,
+              score: 0,
+              currentUserRating: 0,
+            },
+          })
+        }
+      })
+
+    return () => {
+      isActive = false
+    }
+  }, [account])
+
   const totalDiamonds = useMemo(
     () =>
       account?.bank.cards.reduce(
@@ -47,6 +111,13 @@ export function CabinetPage() {
       ) ?? 0,
     [account],
   )
+
+  function handleAppearanceChange(nextAppearance: ProfileAppearance) {
+    setAppearance(nextAppearance)
+    void updateProfileAppearance(nextAppearance)
+      .then((savedAppearance) => setAppearance(savedAppearance))
+      .catch(() => setAppearance(account?.player.appearance ?? defaultProfileAppearance))
+  }
 
   if (!account) {
     return (
@@ -77,8 +148,7 @@ export function CabinetPage() {
       }}
       onBankViewNavigate={(view) => {
         void navigate({
-          to: '/cabinet/bank',
-          hash: view,
+          to: `/cabinet/bank/${view}`,
         })
       }}
       eyebrow="Аккаунт"
@@ -100,10 +170,16 @@ export function CabinetPage() {
         </>
       }
     >
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,0.44fr)_minmax(0,1fr)]">
-        <ProfileCharacterPanel account={account} />
-        <ProfileStatusPanel account={account} totalDiamonds={totalDiamonds} />
-      </div>
+      {playerProfile ? (
+        <PlayerProfileView
+          appearance={appearance}
+          isOwnProfile
+          onAppearanceChange={handleAppearanceChange}
+          onPlayerChange={setPlayerProfile}
+          player={playerProfile}
+          totalDiamonds={totalDiamonds}
+        />
+      ) : null}
 
       {error ? (
         <Alert status="danger">

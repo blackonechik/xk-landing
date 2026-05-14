@@ -1,5 +1,5 @@
 import { apiBaseUrl } from '@/shared/api/config'
-import type { AccountPayload } from '../model/types'
+import type { AccountPayload, PlayerProfileAppearance } from '../model/types'
 
 let accountCache: AccountPayload | null = null
 let accountRequest: Promise<AccountPayload> | null = null
@@ -58,6 +58,39 @@ export async function fetchAccountCached() {
 export function clearAccountCache() {
   accountCache = null
   accountRequest = null
+}
+
+export async function updateProfileAppearance(
+  appearance: PlayerProfileAppearance,
+) {
+  const response = await fetch(`${apiBaseUrl}/api/account/profile/appearance`, {
+    method: 'PATCH',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(appearance),
+  })
+
+  if (!response.ok) {
+    throw new Error('PROFILE_APPEARANCE_UPDATE_FAILED')
+  }
+
+  const payload = (await response.json()) as {
+    appearance: PlayerProfileAppearance
+  }
+
+  if (accountCache) {
+    accountCache = {
+      ...accountCache,
+      player: {
+        ...accountCache.player,
+        appearance: payload.appearance,
+      },
+    }
+  }
+
+  return payload.appearance
 }
 
 export async function logout() {
