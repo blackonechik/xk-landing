@@ -37,15 +37,15 @@ export function PlayerProfileView({
         actions={actions}
         isOwnProfile={isOwnProfile}
         player={player}
+        ratingSlot={
+          <ProfileRatingPanel
+            isOwnProfile={isOwnProfile}
+            onPlayerChange={onPlayerChange}
+            player={player}
+          />
+        }
         totalDiamonds={totalDiamonds}
       />
-      <div className="xl:col-span-2">
-        <ProfileRatingPanel
-          isOwnProfile={isOwnProfile}
-          onPlayerChange={onPlayerChange}
-          player={player}
-        />
-      </div>
       <div className="xl:col-span-2">
         <ProfileActivityPanel player={player} />
       </div>

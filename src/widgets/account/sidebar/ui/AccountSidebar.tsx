@@ -8,7 +8,7 @@ import { SidebarMenuItem } from './SidebarMenuItem'
 
 type AccountSidebarProps = {
   account: AccountPayload
-  currentSection: 'home' | 'bank'
+  currentSection: 'home' | 'bank' | 'stats'
   activeBankView?: BankView
   onNavigate: (to: string) => void
   onBankViewNavigate: (view: BankView) => void

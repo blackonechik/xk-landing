@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import {
   ArrowRightLeft,
+  BarChart3,
   CreditCard,
   Crown,
   History,
@@ -28,7 +29,7 @@ export type AccountSidebarMenuSection = {
 }
 
 type GetAccountSidebarMenuSectionsParams = {
-  currentSection: 'home' | 'bank'
+  currentSection: 'home' | 'bank' | 'stats'
   activeBankView: BankView
   hasBankCards: boolean
   onBankViewNavigate: (view: BankView) => void
@@ -94,6 +95,13 @@ export function getAccountSidebarMenuSections({
     {
       key: 'secondary',
       items: [
+        {
+          key: 'stats',
+          icon: <BarChart3 size={18} />,
+          label: 'Статистика',
+          to: '/cabinet/stats',
+          current: currentSection === 'stats',
+        },
         {
           key: 'kingdoms',
           icon: <Crown size={18} />,

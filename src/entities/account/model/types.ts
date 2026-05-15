@@ -18,8 +18,26 @@ export type CabinetPlayer = {
 }
 
 export type PlayerProfileAppearance = {
-  animation: 'idle' | 'inspect' | 'wave'
-  background: 'default' | 'emerald' | 'violet' | 'amber'
+  animation:
+    | 'idle'
+    | 'inspect'
+    | 'wave'
+    | 'walk'
+    | 'run'
+    | 'fly'
+    | 'crouch'
+    | 'hit'
+  background:
+    | 'plains'
+    | 'nether'
+    | 'end'
+    | 'palette-slate'
+    | 'palette-emerald'
+    | 'palette-amber'
+    | 'palette-rose'
+    | 'palette-violet'
+    | 'palette-sky'
+    | 'palette-zinc'
 }
 
 export type AccountPayload = {

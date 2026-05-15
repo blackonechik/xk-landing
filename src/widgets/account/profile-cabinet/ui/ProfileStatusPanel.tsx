@@ -19,6 +19,7 @@ type ProfileStatusPanelProps = {
   player: PublicPlayerProfile
   actions?: ReactNode
   isOwnProfile?: boolean
+  ratingSlot?: ReactNode
   totalDiamonds?: number
 }
 
@@ -146,6 +147,7 @@ export function ProfileStatusPanel({
   actions,
   isOwnProfile = false,
   player,
+  ratingSlot,
   totalDiamonds,
 }: ProfileStatusPanelProps) {
   const sections: QuickSection[] = [
@@ -191,9 +193,6 @@ export function ProfileStatusPanel({
               {player.isOnline ? 'Онлайн' : 'Оффлайн'}
             </Chip>
           </div>
-          <Card.Description>
-            Основная информация, активность и игровые показатели.
-          </Card.Description>
         </div>
         {actions ? <div className="flex flex-wrap gap-2">{actions}</div> : null}
       </Card.Header>
@@ -227,6 +226,8 @@ export function ProfileStatusPanel({
             />
           ) : null}
         </div>
+
+        {ratingSlot ? <div className="flex justify-start">{ratingSlot}</div> : null}
 
         {isOwnProfile ? (
           <>

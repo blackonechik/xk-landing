@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Alert, Button, ButtonGroup, Card, Text } from '@heroui/react'
+import { Button, ButtonGroup } from '@heroui/react'
 import { ThumbsDown, ThumbsUp } from 'lucide-react'
 import {
   ratePlayer,
@@ -55,62 +55,39 @@ export function ProfileRatingPanel({
   }
 
   return (
-    <Card>
-      <Card.Header className="flex items-start justify-between gap-4">
-        <div>
-          <Card.Title>Оценки</Card.Title>
-          <Card.Description>
-            Репутация игрока по оценкам сообщества.
-          </Card.Description>
-        </div>
-        <ButtonGroup variant="tertiary">
-          <Button
-            isDisabled={isOwnProfile || isPending}
-            onPress={() => {
-              void handleRate(1)
-            }}
-            variant={
-              player.rating.currentUserRating === 1 ? 'secondary' : 'tertiary'
-            }
-          >
-            <ThumbsUp size={16} />
-            <span className="text-xs font-semibold">
-              {formatRatingCount(player.rating.likes)}
-            </span>
-          </Button>
-          <Button
-            isDisabled={isOwnProfile || isPending}
-            isIconOnly
-            onPress={() => {
-              void handleRate(-1)
-            }}
-            variant={
-              player.rating.currentUserRating === -1 ? 'secondary' : 'tertiary'
-            }
-          >
-            <ButtonGroup.Separator />
-            <ThumbsDown size={16} />
-          </Button>
-        </ButtonGroup>
-      </Card.Header>
-      <Card.Content className="grid gap-3">
-        <Text color="muted" type="body-sm">
-          Баланс оценок: {formatRatingCount(player.rating.score)}
-        </Text>
-        {isOwnProfile ? (
-          <Text color="muted" type="body-sm">
-            На своей странице можно видеть оценки, но нельзя оценивать себя.
-          </Text>
-        ) : null}
-        {error ? (
-          <Alert status="danger">
-            <Alert.Indicator />
-            <Alert.Content>
-              <Alert.Title>{error}</Alert.Title>
-            </Alert.Content>
-          </Alert>
-        ) : null}
-      </Card.Content>
-    </Card>
+    <ButtonGroup
+      aria-label={
+        error
+          ? error
+          : `Оценки игрока: ${formatRatingCount(player.rating.score)}`
+      }
+      variant="tertiary"
+    >
+      <Button
+        isDisabled={isOwnProfile || isPending}
+        onPress={() => {
+          void handleRate(1)
+        }}
+        title="Нравится"
+        variant={player.rating.currentUserRating === 1 ? 'secondary' : 'tertiary'}
+      >
+        <ThumbsUp size={16} />
+        <span className="text-xs font-semibold">
+          {formatRatingCount(player.rating.likes)}
+        </span>
+      </Button>
+      <Button
+        isDisabled={isOwnProfile || isPending}
+        isIconOnly
+        onPress={() => {
+          void handleRate(-1)
+        }}
+        title="Не нравится"
+        variant={player.rating.currentUserRating === -1 ? 'secondary' : 'tertiary'}
+      >
+        <ButtonGroup.Separator />
+        <ThumbsDown size={16} />
+      </Button>
+    </ButtonGroup>
   )
 }

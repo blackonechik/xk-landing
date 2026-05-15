@@ -100,6 +100,9 @@ export default function Header() {
           <AnimatedLink className="xk-site-header__nav-link" to="/players">
             Игроки
           </AnimatedLink>
+          <AnimatedLink className="xk-site-header__nav-link" to="/cabinet/stats">
+            Статистика
+          </AnimatedLink>
           <AnimatedLink className="xk-site-header__nav-link" to="/offer">
             Оферта
           </AnimatedLink>

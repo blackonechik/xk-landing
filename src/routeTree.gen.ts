@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as StatsRouteImport } from './routes/stats'
 import { Route as RulesRouteImport } from './routes/rules'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PlayersRouteImport } from './routes/players'
@@ -25,11 +26,17 @@ import { Route as UNicknameRouteImport } from './routes/u.$nickname'
 import { Route as PaymentSuccessRouteImport } from './routes/payment.success'
 import { Route as PaymentPendingRouteImport } from './routes/payment.pending'
 import { Route as PaymentFailedRouteImport } from './routes/payment.failed'
+import { Route as CabinetStatsRouteImport } from './routes/cabinet.stats'
 import { Route as CabinetBankRouteImport } from './routes/cabinet.bank'
 import { Route as CabinetBankTransferRouteImport } from './routes/cabinet.bank.transfer'
 import { Route as CabinetBankHistoryRouteImport } from './routes/cabinet.bank.history'
 import { Route as CabinetBankCardsRouteImport } from './routes/cabinet.bank.cards'
 
+const StatsRoute = StatsRouteImport.update({
+  id: '/stats',
+  path: '/stats',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RulesRoute = RulesRouteImport.update({
   id: '/rules',
   path: '/rules',
@@ -110,6 +117,11 @@ const PaymentFailedRoute = PaymentFailedRouteImport.update({
   path: '/failed',
   getParentRoute: () => PaymentRoute,
 } as any)
+const CabinetStatsRoute = CabinetStatsRouteImport.update({
+  id: '/stats',
+  path: '/stats',
+  getParentRoute: () => CabinetRoute,
+} as any)
 const CabinetBankRoute = CabinetBankRouteImport.update({
   id: '/bank',
   path: '/bank',
@@ -144,7 +156,9 @@ export interface FileRoutesByFullPath {
   '/players': typeof PlayersRoute
   '/privacy': typeof PrivacyRoute
   '/rules': typeof RulesRoute
+  '/stats': typeof StatsRoute
   '/cabinet/bank': typeof CabinetBankRouteWithChildren
+  '/cabinet/stats': typeof CabinetStatsRoute
   '/payment/failed': typeof PaymentFailedRoute
   '/payment/pending': typeof PaymentPendingRoute
   '/payment/success': typeof PaymentSuccessRoute
@@ -166,7 +180,9 @@ export interface FileRoutesByTo {
   '/players': typeof PlayersRoute
   '/privacy': typeof PrivacyRoute
   '/rules': typeof RulesRoute
+  '/stats': typeof StatsRoute
   '/cabinet/bank': typeof CabinetBankRouteWithChildren
+  '/cabinet/stats': typeof CabinetStatsRoute
   '/payment/failed': typeof PaymentFailedRoute
   '/payment/pending': typeof PaymentPendingRoute
   '/payment/success': typeof PaymentSuccessRoute
@@ -189,7 +205,9 @@ export interface FileRoutesById {
   '/players': typeof PlayersRoute
   '/privacy': typeof PrivacyRoute
   '/rules': typeof RulesRoute
+  '/stats': typeof StatsRoute
   '/cabinet/bank': typeof CabinetBankRouteWithChildren
+  '/cabinet/stats': typeof CabinetStatsRoute
   '/payment/failed': typeof PaymentFailedRoute
   '/payment/pending': typeof PaymentPendingRoute
   '/payment/success': typeof PaymentSuccessRoute
@@ -213,7 +231,9 @@ export interface FileRouteTypes {
     | '/players'
     | '/privacy'
     | '/rules'
+    | '/stats'
     | '/cabinet/bank'
+    | '/cabinet/stats'
     | '/payment/failed'
     | '/payment/pending'
     | '/payment/success'
@@ -235,7 +255,9 @@ export interface FileRouteTypes {
     | '/players'
     | '/privacy'
     | '/rules'
+    | '/stats'
     | '/cabinet/bank'
+    | '/cabinet/stats'
     | '/payment/failed'
     | '/payment/pending'
     | '/payment/success'
@@ -257,7 +279,9 @@ export interface FileRouteTypes {
     | '/players'
     | '/privacy'
     | '/rules'
+    | '/stats'
     | '/cabinet/bank'
+    | '/cabinet/stats'
     | '/payment/failed'
     | '/payment/pending'
     | '/payment/success'
@@ -280,11 +304,19 @@ export interface RootRouteChildren {
   PlayersRoute: typeof PlayersRoute
   PrivacyRoute: typeof PrivacyRoute
   RulesRoute: typeof RulesRoute
+  StatsRoute: typeof StatsRoute
   UNicknameRoute: typeof UNicknameRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/stats': {
+      id: '/stats'
+      path: '/stats'
+      fullPath: '/stats'
+      preLoaderRoute: typeof StatsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/rules': {
       id: '/rules'
       path: '/rules'
@@ -397,6 +429,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PaymentFailedRouteImport
       parentRoute: typeof PaymentRoute
     }
+    '/cabinet/stats': {
+      id: '/cabinet/stats'
+      path: '/stats'
+      fullPath: '/cabinet/stats'
+      preLoaderRoute: typeof CabinetStatsRouteImport
+      parentRoute: typeof CabinetRoute
+    }
     '/cabinet/bank': {
       id: '/cabinet/bank'
       path: '/bank'
@@ -446,10 +485,12 @@ const CabinetBankRouteWithChildren = CabinetBankRoute._addFileChildren(
 
 interface CabinetRouteChildren {
   CabinetBankRoute: typeof CabinetBankRouteWithChildren
+  CabinetStatsRoute: typeof CabinetStatsRoute
 }
 
 const CabinetRouteChildren: CabinetRouteChildren = {
   CabinetBankRoute: CabinetBankRouteWithChildren,
+  CabinetStatsRoute: CabinetStatsRoute,
 }
 
 const CabinetRouteWithChildren =
@@ -483,6 +524,7 @@ const rootRouteChildren: RootRouteChildren = {
   PlayersRoute: PlayersRoute,
   PrivacyRoute: PrivacyRoute,
   RulesRoute: RulesRoute,
+  StatsRoute: StatsRoute,
   UNicknameRoute: UNicknameRoute,
 }
 export const routeTree = rootRouteImport
