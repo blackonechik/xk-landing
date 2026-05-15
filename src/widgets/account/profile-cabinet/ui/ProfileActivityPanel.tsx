@@ -1,5 +1,6 @@
 import { Card, Text } from '@heroui/react'
-import { formatPlayedHours, type PublicPlayerProfile } from '@/entities/player'
+import { formatPlayedHours } from '@/entities/player'
+import type { PublicPlayerProfile } from '@/entities/player'
 
 type ProfileActivityPanelProps = {
   player: PublicPlayerProfile
@@ -33,7 +34,7 @@ function getHeatmapDates() {
 
 function getCellClassName(hours: number) {
   if (hours <= 0) {
-    return 'bg-white/[0.04]'
+    return 'bg-surface-secondary'
   }
 
   if (hours < 1) {
@@ -86,7 +87,7 @@ export function ProfileActivityPanel({ player }: ProfileActivityPanelProps) {
         </div>
 
         <div className="overflow-x-auto pb-1">
-          <div className="grid w-max grid-flow-col grid-rows-7 gap-1">
+          <div className="grid w-full grid-flow-col grid-rows-7 gap-1">
             {dates.map((date) => {
               const key = getDateKey(date)
               const hours = activityByDate.get(key) ?? 0
@@ -95,7 +96,7 @@ export function ProfileActivityPanel({ player }: ProfileActivityPanelProps) {
                 <span
                   key={key}
                   className={[
-                    'size-3 rounded-[3px] border border-white/5',
+                    'size-4 rounded-[3px] border border-separator/60',
                     getCellClassName(hours),
                   ].join(' ')}
                   title={`${dayFormatter.format(date)}: ${formatPlayedHours(hours)}`}

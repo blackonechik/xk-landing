@@ -1,28 +1,21 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { Alert, Card, Chip, Spinner, Text } from '@heroui/react'
-import { Radio, Server, Trophy, UsersRound } from 'lucide-react'
-import AnimatedLink from '@/components/AnimatedLink'
+import { Clock3, Crown, Radio, Server, UsersRound } from 'lucide-react'
 import {
   fetchAccountCached,
   getCachedAccount,
-  PlayerAvatar,
-  type AccountPayload,
+  PlayerAvatar
+  
 } from '@/entities/account'
+import type {AccountPayload} from '@/entities/account';
 import {
   fetchPlayers,
-  formatPlayedHours,
-  type PublicPlayerProfile,
+  formatPlayedHours
+  
 } from '@/entities/player'
+import type {PublicPlayerProfile} from '@/entities/player';
 import { AccountLayout } from '@/widgets/account/layout'
-
-function getPercent(value: number, max: number) {
-  if (max <= 0) {
-    return 0
-  }
-
-  return Math.max(6, Math.round((value / max) * 100))
-}
 
 export function StatsPage() {
   const navigate = useNavigate()
@@ -78,7 +71,7 @@ export function StatsPage() {
   const stats = useMemo(() => {
     const totalHours = players.reduce((sum, player) => sum + player.playedHours, 0)
     const onlineCount = players.filter((player) => player.isOnline).length
-    const leader = players[0]
+    const leader = players.at(0) ?? null
 
     return {
       leader,
@@ -86,8 +79,6 @@ export function StatsPage() {
       totalHours,
     }
   }, [players])
-
-  const maxPlayedHours = stats.leader?.playedHours ?? 0
 
   if (!account) {
     return (
@@ -118,7 +109,7 @@ export function StatsPage() {
       }}
       eyebrow="PlayTimeManager"
       title="Статистика"
-      description="Игроки, онлайн и наигранное время из таблиц PlayTimeManager."
+      description="Игроки, онлайн и наигранное время"
     >
       {isLoading ? (
         <Alert status="accent">
@@ -161,7 +152,7 @@ export function StatsPage() {
                 <div className="grid grid-cols-1 divide-y divide-[var(--separator)] sm:grid-cols-3 sm:divide-x sm:divide-y-0">
                   <div className="p-5">
                     <Text color="muted" type="body-sm">
-                      Игроков в статистике
+                      Всего игроков
                     </Text>
                     <Text className="mt-1 text-3xl font-semibold">
                       {players.length}
@@ -188,81 +179,79 @@ export function StatsPage() {
             </Card>
 
             <Card className="border border-[var(--separator)] bg-[var(--surface)]">
-              <Card.Header className="flex items-start justify-between gap-4 p-5">
-                <div>
-                  <Card.Description>Лидер</Card.Description>
-                  <Card.Title>
-                    {stats.leader?.nickname ?? 'нет данных'}
-                  </Card.Title>
-                </div>
-                <Trophy className="text-muted" size={22} />
-              </Card.Header>
-              {stats.leader ? (
-                <Card.Content className="p-5 pt-0">
-                  <Text className="text-2xl font-semibold">
-                    {formatPlayedHours(stats.leader.playedHours)}
+              <Card.Content>
+                <Text className="text-muted">Лидер по игровому времени:</Text>
+                {stats.leader ? (
+                  <div className="flex flex-row items-center justify-between gap-5">
+                    <div>
+                      <Card.Title>{stats.leader.nickname}</Card.Title>
+                      <PlayerAvatar
+                        size="lg"
+                        nickname={stats.leader.nickname}
+                      />
+                    </div>
+                    <Text className="text-2xl font-semibold">
+                      {formatPlayedHours(stats.leader.playedHours)}
+                    </Text>
+                  </div>
+                ) : (
+                  <Text className="mt-3" color="muted" type="body-sm">
+                    Пока нет данных по игрокам.
                   </Text>
-                </Card.Content>
-              ) : null}
+                )}
+              </Card.Content>
             </Card>
           </div>
 
           <Card className="border border-[var(--separator)] bg-[var(--surface)]">
-            <Card.Header className="flex items-start justify-between gap-4 p-5">
-              <div>
+            <Card.Header className="flex items-start justify-between">
                 <Card.Title>Игроки</Card.Title>
                 <Card.Description>
-                  Рейтинг по игровому времени из PlayTimeManager.
+                  Рейтинг по игровому времени
                 </Card.Description>
-              </div>
-              <div className="flex items-center gap-2 text-muted">
-                <UsersRound size={18} />
-                <Radio size={18} />
-              </div>
             </Card.Header>
             <Card.Content className="p-5 pt-0">
-              <div className="grid grid-cols-[repeat(auto-fill,minmax(255px,1fr))] gap-4">
-                {players.map((player) => (
-                  <AnimatedLink
+              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                {players.map((player, index) => (
+                  <Link
                     key={player.nickname}
-                    className="group flex items-center gap-5 rounded-lg border border-[var(--separator)] p-5 transition-colors hover:bg-[var(--surface-secondary)]"
+                    className="group flex items-center gap-4 rounded-lg border border-[var(--separator)] bg-[var(--surface)] p-3 transition duration-200 hover:-translate-y-0.5 hover:border-[var(--accent)] hover:bg-[var(--surface-elevated)]"
                     params={{ nickname: player.nickname }}
                     to="/u/$nickname"
                   >
-                    <div className="relative size-14 shrink-0">
+                    <div className="relative shrink-0">
                       <PlayerAvatar
-                        className="size-14 rounded-md border border-[var(--separator)] bg-[var(--surface-secondary)]"
+                        alt={player.nickname}
+                        className="size-14 border border-white/10 bg-black/20"
                         nickname={player.nickname}
                       />
-                      {player.isOnline ? (
-                        <span
-                          className="absolute -bottom-1 -right-1 size-4 rounded-full border-2 border-[var(--surface)] bg-success"
-                          title="Онлайн"
-                        />
-                      ) : null}
+                      <span
+                        className="absolute -bottom-1 -right-1 grid size-5 place-items-center rounded-full border border-[var(--surface)] bg-[var(--accent)] text-[var(--accent-foreground)] shadow"
+                        title="XK HARDCORE"
+                      >
+                        <Server size={11} />
+                      </span>
                     </div>
+
                     <div className="min-w-0 flex-1">
-                      <div className="flex min-w-0 items-center gap-2">
-                        <Text className="truncate font-semibold">
+                      <div className="flex items-center gap-2">
+                        <Text className="truncate" type="body" weight="semibold">
                           {player.nickname}
                         </Text>
+                        {index < 3 ? (
+                          <Crown className="shrink-0 text-[var(--accent)]" size={15} />
+                        ) : null}
                       </div>
-                      <Text color="muted" type="body-sm">
-                        Наиграл:{' '}
-                        <span className="font-semibold text-foreground">
-                          {formatPlayedHours(player.playedHours)}
-                        </span>
+                      <Text
+                        className="mt-1 flex items-center gap-1.5"
+                        color="muted"
+                        type="body-sm"
+                      >
+                        <Clock3 size={14} />
+                        Наиграл: <span>{formatPlayedHours(player.playedHours)}</span>
                       </Text>
-                      <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[var(--surface-secondary)]">
-                        <div
-                          className="h-full rounded-full bg-accent"
-                          style={{
-                            width: `${getPercent(player.playedHours, maxPlayedHours)}%`,
-                          }}
-                        />
-                      </div>
                     </div>
-                  </AnimatedLink>
+                  </Link>
                 ))}
               </div>
             </Card.Content>

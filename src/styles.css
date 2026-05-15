@@ -331,10 +331,6 @@ a {
 .xk-account-layout {
   min-height: 100svh;
   padding-top: var(--xk-header-height);
-  background:
-    radial-gradient(circle at top left, rgba(188, 255, 115, 0.1), transparent 28%),
-    radial-gradient(circle at top right, rgba(91, 140, 255, 0.1), transparent 32%),
-    linear-gradient(180deg, color-mix(in srgb, var(--background) 92%, #000), var(--background));
 }
 
 .xk-account-layout__frame {
@@ -396,44 +392,6 @@ a {
   padding-bottom: 28px;
 }
 
-.xk-theme-switch {
-  width: fit-content;
-}
-
-.xk-theme-switch__control {
-  position: relative;
-  flex: 0 0 auto;
-  width: 68px;
-  height: 40px;
-  padding: 4px;
-  border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--separator) 72%, transparent);
-  background: linear-gradient(180deg, var(--surface), var(--surface-secondary));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 8px 20px rgba(0, 0, 0, 0.12);
-}
-
-.xk-theme-switch__thumb {
-  width: 30px;
-  height: 30px;
-  display: flex;
-  place-items: center;
-  border-radius: 999px;
-  color: var(--foreground);
-  background: linear-gradient(180deg, #fffdf6, var(--surface));
-  box-shadow:
-    0 8px 18px rgba(0, 0, 0, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.34);
-}
-
-.xk-theme-switch__icon {
-  display: grid;
-  place-items: center;
-  height: 30px;
-  width: 30px;
-}
-
 @media (min-width: 1024px) {
   .xk-account-layout {
     height: 100svh;
@@ -468,9 +426,6 @@ a {
     overflow-x: hidden;
     padding: 12px clamp(20px, 3vw, 34px) 26px;
     border-radius: 30px;
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 34%),
-      var(--surface);
     border: 1px solid var(--separator);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
   }

@@ -72,19 +72,6 @@ function NotFoundPage() {
       actions={<HeroLinkButton to="/">На главную</HeroLinkButton>}
       narrow
     >
-      <HeroSectionCard title="Что можно открыть">
-        <div className="flex flex-wrap gap-3">
-          <HeroLinkButton to="/rules" variant="secondary">
-            Правила
-          </HeroLinkButton>
-          <HeroLinkButton to="/payment" variant="secondary">
-            Оплата
-          </HeroLinkButton>
-          <HeroLinkButton to="/cabinet" variant="secondary">
-            Кабинет
-          </HeroLinkButton>
-        </div>
-      </HeroSectionCard>
     </HeroPage>
   )
 }

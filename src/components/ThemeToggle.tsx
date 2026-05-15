@@ -53,18 +53,21 @@ export default function ThemeToggle() {
         applyThemeMode(nextMode)
         window.localStorage.setItem('theme', nextMode)
       }}
-      size="md"
-      className={['xk-theme-switch', isDark ? 'is-dark' : 'is-light']
-        .filter(Boolean)
-        .join(' ')}
+      size="lg"
     >
-      <Switch.Control className="xk-theme-switch__control">
-        <Switch.Thumb className="xk-theme-switch__thumb">
-          <Switch.Icon className="xk-theme-switch__icon">
-            {isDark ? <Moon size={14} /> : <SunMedium size={14} />}
-          </Switch.Icon>
-        </Switch.Thumb>
-      </Switch.Control>
+      {({ isSelected }) => (
+        <Switch.Control>
+          <Switch.Thumb>
+            <Switch.Icon>
+              {isSelected ? (
+                <SunMedium className="size-3 text-inherit opacity-100" />
+              ) : (
+                <Moon className="size-3 text-inherit opacity-70" />
+              )}
+            </Switch.Icon>
+          </Switch.Thumb>
+        </Switch.Control>
+      )}
     </Switch>
   )
 }

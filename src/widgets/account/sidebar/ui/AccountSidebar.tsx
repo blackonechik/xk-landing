@@ -30,7 +30,7 @@ export function AccountSidebar({
 
   return (
     <Card
-      className="flex h-full flex-col gap-5 rounded-[28px] border border-[var(--separator)] bg-[var(--surface)] p-5 shadow-[0_24px_48px_rgba(0,0,0,0.2)]"
+      className="flex h-full flex-col gap-5 rounded-[28px] border p-5 shadow-[0_24px_48px_rgba(0,0,0,0.2)]"
       variant="secondary"
     >
       <Card.Header className="flex flex-col gap-4 p-0">

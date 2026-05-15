@@ -2,35 +2,52 @@ import { useEffect, useState } from 'react'
 import {
   Button,
   Card,
+  ColorArea,
+  ColorField,
+  ColorPicker,
+  ColorSlider,
+  ColorSwatchPicker,
   Label,
   ListBox,
   Modal,
   Select,
   Text,
+  parseColor,
   useOverlayState,
 } from '@heroui/react'
 import { Pencil } from 'lucide-react'
 import { SkinViewer } from '@/entities/account'
+import type { PublicPlayerProfile } from '@/entities/player'
 import {
   defaultProfileAppearance,
+  getProfileBackgroundColor,
+  getProfileBackgroundLabel,
+  isCustomProfileBackground,
   profileAnimations,
   profilePaletteBackgrounds,
   profilePanoramaBackgrounds,
-  type ProfileAppearance,
 } from '../model/profile-appearance'
+import type { ProfileAppearance } from '../model/profile-appearance'
+import { ProfileRatingPanel } from './ProfileRatingPanel'
 
 type ProfileCharacterPanelProps = {
+  player: PublicPlayerProfile
   nickname: string
   appearance?: ProfileAppearance
   isEditable?: boolean
+  isOwnProfile?: boolean
   onAppearanceChange?: (appearance: ProfileAppearance) => void
+  onPlayerChange?: (player: PublicPlayerProfile) => void
 }
 
 export function ProfileCharacterPanel({
+  player,
   nickname,
   appearance = defaultProfileAppearance,
   isEditable = false,
+  isOwnProfile = false,
   onAppearanceChange,
+  onPlayerChange,
 }: ProfileCharacterPanelProps) {
   const modalState = useOverlayState()
   const [draftAppearance, setDraftAppearance] =
@@ -54,17 +71,46 @@ export function ProfileCharacterPanel({
     modalState.close()
   }
 
+  function resolveBackgroundIdByColor(
+    items: typeof profilePaletteBackgrounds | typeof profilePanoramaBackgrounds,
+    colorValue: string,
+  ) {
+    return items.find(
+      (item) => parseColor(item.background).toString('hex') === colorValue,
+    )?.id
+  }
+
+  const palettePickerValue = isCustomProfileBackground(draftAppearance.background)
+    ? draftAppearance.background
+    : profilePaletteBackgrounds.some(
+          (item) => item.id === draftAppearance.background,
+        )
+      ? getProfileBackgroundColor(draftAppearance.background)
+      : undefined
+
+  const panoramaPickerValue = profilePanoramaBackgrounds.some(
+    (item) => item.id === draftAppearance.background,
+  )
+    ? getProfileBackgroundColor(draftAppearance.background)
+    : undefined
+
+  const customColorValue = isCustomProfileBackground(draftAppearance.background)
+    ? draftAppearance.background
+    : getProfileBackgroundColor('palette-slate')
+  const isCustomPaletteSelected = isCustomProfileBackground(
+    draftAppearance.background,
+  )
+
   return (
-    <Card>
+    <Card className='max-h-max'>
       <Card.Header className="flex items-start justify-between gap-4">
         <div>
           <Card.Title>Персонаж</Card.Title>
           <Card.Description>А кто это у нас такой красивый?</Card.Description>
         </div>
       </Card.Header>
-      <Card.Content>
-        <>
-          <SkinViewer
+      <Card.Content className='gap-2'>
+        <SkinViewer
             animation={appearance.animation}
             background={appearance.background}
             nickname={nickname}
@@ -74,7 +120,7 @@ export function ProfileCharacterPanel({
                   isIconOnly
                   size="sm"
                   variant="secondary"
-                  title="Настроить профиль"
+                  aria-label="Настроить профиль"
                   onPress={() => modalState.open()}
                 >
                   <Pencil size={16} />
@@ -82,12 +128,17 @@ export function ProfileCharacterPanel({
               ) : null
             }
           />
+          <ProfileRatingPanel
+            isOwnProfile={isOwnProfile}
+            onPlayerChange={onPlayerChange}
+            player={player}
+          />
           <Modal.Backdrop
             isOpen={modalState.isOpen}
             onOpenChange={modalState.setOpen}
           >
             <Modal.Container placement="auto">
-              <Modal.Dialog className="font-sans sm:max-w-3xl [&_*]:font-sans">
+              <Modal.Dialog className="font-sans sm:max-w-3xl **:font-sans">
                 <Modal.CloseTrigger />
                 <Modal.Header>
                   <Modal.Heading>Настройка профиля</Modal.Heading>
@@ -130,52 +181,129 @@ export function ProfileCharacterPanel({
 
                     <div className="grid gap-3">
                       <Label>Палитра профиля</Label>
-                      <div className="flex flex-wrap gap-2">
-                        {profilePaletteBackgrounds.map((item) => (
-                          <button
-                            key={item.id}
-                            className={[
-                              'size-9 rounded-full border transition hover:scale-105',
-                              item.swatch,
-                              draftAppearance.background === item.id
-                                ? 'border-[var(--accent)] ring-2 ring-[var(--accent)]/35'
-                                : 'border-[var(--separator)] hover:border-[var(--accent)]/70',
-                            ].join(' ')}
-                            title={item.label}
-                            type="button"
-                            onClick={() =>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <ColorSwatchPicker
+                          aria-label="Выбор палитры профиля"
+                          className="contents"
+                          layout="grid"
+                          size="lg"
+                          value={palettePickerValue ? parseColor(palettePickerValue) : undefined}
+                          onChange={(color) => {
+                            const nextBackground = resolveBackgroundIdByColor(
+                              profilePaletteBackgrounds,
+                              color.toString('hex'),
+                            )
+
+                            if (nextBackground) {
                               updateDraftAppearance({
-                                background: item.id,
+                                background: nextBackground,
                               })
                             }
-                          />
-                        ))}
+                          }}
+                        >
+                          {profilePaletteBackgrounds.map((item) => (
+                            <ColorSwatchPicker.Item
+                              key={item.id}
+                              color={item.background}
+                            >
+                              <ColorSwatchPicker.Swatch />
+                              <ColorSwatchPicker.Indicator />
+                            </ColorSwatchPicker.Item>
+                          ))}
+                        </ColorSwatchPicker>
+
+                        <ColorPicker
+                          aria-label="Выбор своего цвета профиля"
+                          value={parseColor(customColorValue)}
+                          onChange={(color) => {
+                            updateDraftAppearance({
+                              background: color.toString('hex') as ProfileAppearance['background'],
+                            })
+                          }}
+                        >
+                          <ColorPicker.Trigger
+                            className={[
+                              'relative grid size-10 shrink-0 place-items-center overflow-hidden rounded-full border transition-transform hover:scale-105',
+                              isCustomPaletteSelected
+                                ? 'border-accent ring-2 ring-(--accent)/35'
+                                : 'border-separator hover:border-(--accent)/70',
+                            ].join(' ')}
+                          >
+                            <span
+                              aria-hidden
+                              className="absolute inset-0"
+                              style={{
+                                backgroundImage:
+                                  'conic-gradient(from 180deg, #ff4d4d, #ff9f1c, #ffe66d, #2ec4b6, #3a86ff, #8338ec, #ff006e, #ff4d4d)',
+                              }}
+                            />
+                            <span
+                              aria-hidden
+                              className="relative z-1 size-5 rounded-full border border-white/70 shadow-sm"
+                              style={{ backgroundColor: customColorValue }}
+                            />
+                          </ColorPicker.Trigger>
+                          <ColorPicker.Popover placement="bottom start">
+                            <div className="grid gap-4 p-4">
+                              <ColorArea
+                                colorSpace="hsb"
+                                xChannel="saturation"
+                                yChannel="brightness"
+                              >
+                                <ColorArea.Thumb />
+                              </ColorArea>
+                              <ColorSlider colorSpace="hsb" channel="hue">
+                                <ColorSlider.Track>
+                                  <ColorSlider.Thumb />
+                                </ColorSlider.Track>
+                              </ColorSlider>
+                              <ColorField aria-label="HEX цвет профиля">
+                                <ColorField.Group>
+                                  <ColorField.Input />
+                                </ColorField.Group>
+                              </ColorField>
+                            </div>
+                          </ColorPicker.Popover>
+                        </ColorPicker>
                       </div>
+                      <Text color="muted" type="body-sm">
+                        {getProfileBackgroundLabel(draftAppearance.background)}
+                      </Text>
                     </div>
 
                     <div className="grid gap-3">
                       <Label>3D-фон</Label>
-                      <div className="flex flex-wrap gap-2">
+                      <ColorSwatchPicker
+                        aria-label="Выбор 3D-фона"
+                        layout="grid"
+                        size="lg"
+                        value={panoramaPickerValue ? parseColor(panoramaPickerValue) : undefined}
+                        onChange={(color) => {
+                          const nextBackground = resolveBackgroundIdByColor(
+                            profilePanoramaBackgrounds,
+                            color.toString('hex'),
+                          )
+
+                          if (nextBackground) {
+                            updateDraftAppearance({
+                              background: nextBackground,
+                            })
+                          }
+                        }}
+                      >
                         {profilePanoramaBackgrounds.map((item) => (
-                          <button
+                          <ColorSwatchPicker.Item
                             key={item.id}
-                            className={[
-                              'size-9 rounded-full border transition hover:scale-105',
-                              item.swatch,
-                              draftAppearance.background === item.id
-                                ? 'border-[var(--accent)] ring-2 ring-[var(--accent)]/35'
-                                : 'border-[var(--separator)] hover:border-[var(--accent)]/70',
-                            ].join(' ')}
-                            title={item.label}
-                            type="button"
-                            onClick={() =>
-                              updateDraftAppearance({
-                                background: item.id,
-                              })
-                            }
-                          />
+                            color={item.background}
+                          >
+                            <ColorSwatchPicker.Swatch />
+                            <ColorSwatchPicker.Indicator />
+                          </ColorSwatchPicker.Item>
                         ))}
-                      </div>
+                      </ColorSwatchPicker>
+                      <Text color="muted" type="body-sm">
+                        {getProfileBackgroundLabel(draftAppearance.background)}
+                      </Text>
                     </div>
                   </div>
 
@@ -194,7 +322,6 @@ export function ProfileCharacterPanel({
               </Modal.Dialog>
             </Modal.Container>
           </Modal.Backdrop>
-        </>
       </Card.Content>
     </Card>
   )

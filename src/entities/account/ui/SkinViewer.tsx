@@ -19,7 +19,11 @@ import type {
   ProfileAnimation,
   ProfileBackground,
 } from '@/widgets/account/profile-cabinet/model/profile-appearance'
-import { profileBackgrounds } from '@/widgets/account/profile-cabinet/model/profile-appearance'
+import {
+  getProfileBackgroundColor,
+  isCustomProfileBackground,
+  profileBackgrounds,
+} from '@/widgets/account/profile-cabinet/model/profile-appearance'
 
 type SkinViewerProps = {
   nickname: string
@@ -121,20 +125,21 @@ export function SkinViewer({
     const backgroundConfig =
       profileBackgrounds.find((item) => item.id === background) ??
       profileBackgrounds[0]
+    const viewerBackground = getProfileBackgroundColor(background)
 
     const viewer = new Skin3dRender({
       canvas,
       width: 320,
       height: 408,
       skin: skinSource,
-      background: backgroundConfig.background,
+      background: viewerBackground,
       zoom: 0.68,
       allowRotateX: false,
       allowRotateY: true,
       allowZoom: false,
     })
 
-    const cubeTexture = backgroundConfig.panorama
+    const cubeTexture = !isCustomProfileBackground(background) && backgroundConfig.panorama
       ? new CubeTextureLoader().load([
           `${backgroundConfig.panorama}/panorama_1.png`,
           `${backgroundConfig.panorama}/panorama_3.png`,

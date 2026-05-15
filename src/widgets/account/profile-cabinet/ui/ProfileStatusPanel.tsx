@@ -1,6 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { Card, Chip } from '@heroui/react'
 import {
+  Circle,
   Construction,
   Gem,
   HeartPulse,
@@ -186,12 +187,17 @@ export function ProfileStatusPanel({
         <div>
           <div className="flex flex-wrap items-center gap-3">
             <Card.Title>{isOwnProfile ? 'Ваш аккаунт:' : 'Профиль игрока:'}</Card.Title>
-            <Chip
-              color={player.isOnline ? 'success' : 'default'}
-              variant="soft"
-            >
-              {player.isOnline ? 'Онлайн' : 'Оффлайн'}
-            </Chip>
+
+            {player.isOnline ?
+              <Chip color="success">
+                <Circle width={6} fill="currentColor" strokeWidth={0} size={16} />
+                <Chip.Label>Онлайн</Chip.Label>
+              </Chip>
+              :
+              <Chip color="danger">
+                <Circle width={6} fill="currentColor" strokeWidth={0} size={16} />
+                <Chip.Label>Оффлайн</Chip.Label>
+              </Chip>}
           </div>
         </div>
         {actions ? <div className="flex flex-wrap gap-2">{actions}</div> : null}
@@ -226,8 +232,6 @@ export function ProfileStatusPanel({
             />
           ) : null}
         </div>
-
-        {ratingSlot ? <div className="flex justify-start">{ratingSlot}</div> : null}
 
         {isOwnProfile ? (
           <>

@@ -7,6 +7,9 @@ export type ProfileAnimation =
   | 'fly'
   | 'crouch'
   | 'hit'
+
+export type CustomProfileBackground = `#${string}`
+
 export type ProfileBackground =
   | 'palette-slate'
   | 'palette-emerald'
@@ -18,6 +21,7 @@ export type ProfileBackground =
   | 'plains'
   | 'nether'
   | 'end'
+  | CustomProfileBackground
 
 export type ProfileAppearance = {
   animation: ProfileAnimation
@@ -134,3 +138,31 @@ export const profilePaletteBackgrounds = profileBackgrounds.filter(
 export const profilePanoramaBackgrounds = profileBackgrounds.filter(
   (item) => item.kind === 'panorama',
 )
+
+export function isCustomProfileBackground(
+  background: string,
+): background is CustomProfileBackground {
+  return /^#[0-9a-f]{6}$/i.test(background)
+}
+
+export function getProfileBackgroundColor(background: ProfileBackground) {
+  if (isCustomProfileBackground(background)) {
+    return background
+  }
+
+  return (
+    profileBackgrounds.find((item) => item.id === background)?.background ??
+    profilePaletteBackgrounds[0].background
+  )
+}
+
+export function getProfileBackgroundLabel(background: ProfileBackground) {
+  if (isCustomProfileBackground(background)) {
+    return `Свой цвет ${background.toUpperCase()}`
+  }
+
+  return (
+    profileBackgrounds.find((item) => item.id === background)?.label ??
+    profilePaletteBackgrounds[0].label
+  )
+}

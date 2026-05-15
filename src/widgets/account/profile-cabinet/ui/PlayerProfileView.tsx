@@ -2,7 +2,6 @@ import type { ReactNode } from 'react'
 import type { PublicPlayerProfile } from '@/entities/player'
 import { ProfileActivityPanel } from './ProfileActivityPanel'
 import { ProfileCharacterPanel } from './ProfileCharacterPanel'
-import { ProfileRatingPanel } from './ProfileRatingPanel'
 import { ProfileStatusPanel } from './ProfileStatusPanel'
 import type { ProfileAppearance } from '../model/profile-appearance'
 
@@ -30,20 +29,16 @@ export function PlayerProfileView({
       <ProfileCharacterPanel
         appearance={appearance}
         isEditable={isOwnProfile}
+        isOwnProfile={isOwnProfile}
         nickname={player.nickname}
         onAppearanceChange={onAppearanceChange}
+        onPlayerChange={onPlayerChange}
+        player={player}
       />
       <ProfileStatusPanel
         actions={actions}
         isOwnProfile={isOwnProfile}
         player={player}
-        ratingSlot={
-          <ProfileRatingPanel
-            isOwnProfile={isOwnProfile}
-            onPlayerChange={onPlayerChange}
-            player={player}
-          />
-        }
         totalDiamonds={totalDiamonds}
       />
       <div className="xl:col-span-2">

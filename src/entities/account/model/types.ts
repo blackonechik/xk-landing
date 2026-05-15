@@ -1,5 +1,7 @@
 import type { BankCard, BankLimits, BankTransfer } from '@/entities/bank'
 
+type CustomHexColor = `#${string}`
+
 export type CabinetPlayer = {
   nickname: string
   lowercaseNickname: string
@@ -38,6 +40,7 @@ export type PlayerProfileAppearance = {
     | 'palette-violet'
     | 'palette-sky'
     | 'palette-zinc'
+    | CustomHexColor
 }
 
 export type AccountPayload = {

@@ -1,4 +1,4 @@
-import { Avatar } from '@heroui/react'
+import { Avatar, type AvatarProps } from '@heroui/react'
 import { UserRound } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { getSkinProxyUrl } from '../api/account-api'
@@ -7,6 +7,7 @@ type PlayerAvatarProps = {
   nickname: string
   className?: string
   alt?: string
+  size?: AvatarProps['size']
 }
 
 type PlayerHeadImageProps = {
@@ -235,14 +236,14 @@ export function usePlayerAppearance(identifier: string) {
   return { avatarSource, skinSource }
 }
 
-export function PlayerAvatar({ nickname, className, alt = '' }: PlayerAvatarProps) {
+export function PlayerAvatar({ nickname, className, alt = '', size = "lg" }: PlayerAvatarProps) {
   const { avatarSource } = usePlayerAppearance(nickname)
 
   return (
-    <Avatar className={className}>
+    <Avatar size={size} className={className}>
       {avatarSource ? <Avatar.Image alt={alt} src={avatarSource} /> : null}
       <Avatar.Fallback>
-        <UserRound size={18} />
+        <UserRound size={size === "lg" ? 18 : 14} />
       </Avatar.Fallback>
     </Avatar>
   )

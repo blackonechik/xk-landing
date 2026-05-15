@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as StatsRouteImport } from './routes/stats'
 import { Route as RulesRouteImport } from './routes/rules'
 import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as PlayersRouteImport } from './routes/players'
 import { Route as PersonalDataConsentRouteImport } from './routes/personal-data-consent'
 import { Route as PaymentRouteImport } from './routes/payment'
 import { Route as OfferRouteImport } from './routes/offer'
@@ -45,11 +44,6 @@ const RulesRoute = RulesRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PlayersRoute = PlayersRouteImport.update({
-  id: '/players',
-  path: '/players',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PersonalDataConsentRoute = PersonalDataConsentRouteImport.update({
@@ -153,7 +147,6 @@ export interface FileRoutesByFullPath {
   '/offer': typeof OfferRoute
   '/payment': typeof PaymentRouteWithChildren
   '/personal-data-consent': typeof PersonalDataConsentRoute
-  '/players': typeof PlayersRoute
   '/privacy': typeof PrivacyRoute
   '/rules': typeof RulesRoute
   '/stats': typeof StatsRoute
@@ -177,7 +170,6 @@ export interface FileRoutesByTo {
   '/offer': typeof OfferRoute
   '/payment': typeof PaymentRouteWithChildren
   '/personal-data-consent': typeof PersonalDataConsentRoute
-  '/players': typeof PlayersRoute
   '/privacy': typeof PrivacyRoute
   '/rules': typeof RulesRoute
   '/stats': typeof StatsRoute
@@ -202,7 +194,6 @@ export interface FileRoutesById {
   '/offer': typeof OfferRoute
   '/payment': typeof PaymentRouteWithChildren
   '/personal-data-consent': typeof PersonalDataConsentRoute
-  '/players': typeof PlayersRoute
   '/privacy': typeof PrivacyRoute
   '/rules': typeof RulesRoute
   '/stats': typeof StatsRoute
@@ -228,7 +219,6 @@ export interface FileRouteTypes {
     | '/offer'
     | '/payment'
     | '/personal-data-consent'
-    | '/players'
     | '/privacy'
     | '/rules'
     | '/stats'
@@ -252,7 +242,6 @@ export interface FileRouteTypes {
     | '/offer'
     | '/payment'
     | '/personal-data-consent'
-    | '/players'
     | '/privacy'
     | '/rules'
     | '/stats'
@@ -276,7 +265,6 @@ export interface FileRouteTypes {
     | '/offer'
     | '/payment'
     | '/personal-data-consent'
-    | '/players'
     | '/privacy'
     | '/rules'
     | '/stats'
@@ -301,7 +289,6 @@ export interface RootRouteChildren {
   OfferRoute: typeof OfferRoute
   PaymentRoute: typeof PaymentRouteWithChildren
   PersonalDataConsentRoute: typeof PersonalDataConsentRoute
-  PlayersRoute: typeof PlayersRoute
   PrivacyRoute: typeof PrivacyRoute
   RulesRoute: typeof RulesRoute
   StatsRoute: typeof StatsRoute
@@ -329,13 +316,6 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/players': {
-      id: '/players'
-      path: '/players'
-      fullPath: '/players'
-      preLoaderRoute: typeof PlayersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/personal-data-consent': {
@@ -521,7 +501,6 @@ const rootRouteChildren: RootRouteChildren = {
   OfferRoute: OfferRoute,
   PaymentRoute: PaymentRouteWithChildren,
   PersonalDataConsentRoute: PersonalDataConsentRoute,
-  PlayersRoute: PlayersRoute,
   PrivacyRoute: PrivacyRoute,
   RulesRoute: RulesRoute,
   StatsRoute: StatsRoute,
