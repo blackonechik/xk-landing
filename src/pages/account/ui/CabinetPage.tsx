@@ -49,7 +49,7 @@ export function CabinetPage() {
     void loadAccount()
     void fetchSiteSettingsCached()
       .then((payload) => setSettings(payload))
-      .catch(() => setSettings({ navigation: { showBank: true } }))
+      .catch(() => setSettings({ navigation: { showBank: true, items: [] } }))
   }, [])
 
   useEffect(() => {

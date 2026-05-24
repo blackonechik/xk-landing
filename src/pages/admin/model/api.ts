@@ -1,4 +1,5 @@
 import { apiBaseUrl } from '@/shared/api/config'
+import type { SiteNavigationItem } from '@/entities/site'
 
 export type AdminPaymentRow = {
   id: string
@@ -83,6 +84,7 @@ export type AdminPlayerRow = {
 export type AdminSettings = {
   navigation: {
     showBank: boolean
+    items: SiteNavigationItem[]
   }
 }
 
@@ -314,14 +316,14 @@ export async function updateAdminPost(postId: string, payload: UpdatePostPayload
   return data.post
 }
 
-export async function updateAdminNavigation(showBank: boolean) {
+export async function updateAdminNavigation(items: SiteNavigationItem[]) {
   const response = await fetch(`${apiBaseUrl}/api/admin/settings/navigation`, {
     method: 'PATCH',
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ showBank }),
+    body: JSON.stringify({ items }),
   })
 
   const data = (await response.json().catch(() => undefined)) as

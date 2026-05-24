@@ -3,6 +3,7 @@ import ThemeToggle from '@/components/ThemeToggle'
 import {
   getPrimaryRoleLabel,
   isAdminRole,
+  normalizePlayerRoles,
   PlayerAvatar,
 } from '@/entities/account'
 import type { AccountPayload } from '@/entities/account'
@@ -47,7 +48,7 @@ export function AccountSidebar({
       })
       .catch(() => {
         if (isActive) {
-          setSettings({ navigation: { showBank: true } })
+          setSettings({ navigation: { showBank: true, items: [] } })
         }
       })
 
@@ -61,8 +62,10 @@ export function AccountSidebar({
     activeBankView,
     activeAdminView,
     hasBankCards: account.bank.cards.length > 0,
-    isAdmin: isAdminRole(account.player.roles),
-    showBank: settings?.navigation.showBank ?? true,
+    roles: normalizePlayerRoles(account.player.roles, account.player.siteRole) as Array<
+      'player' | 'moderator' | 'admin'
+    >,
+    navigationItems: settings?.navigation.items,
     onBankViewNavigate,
     onAdminViewNavigate,
   })

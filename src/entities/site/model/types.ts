@@ -1,5 +1,35 @@
+export type SiteNavigationRole = 'player' | 'moderator' | 'admin'
+
+export type SiteNavigationItemKey =
+  | 'home'
+  | 'bank'
+  | 'stats'
+  | 'news'
+  | 'kingdoms'
+  | 'admin'
+
+export type SiteNavigationIconKey =
+  | 'house'
+  | 'landmark'
+  | 'bar-chart-3'
+  | 'newspaper'
+  | 'crown'
+  | 'shield-check'
+
+export type SiteNavigationItem = {
+  key: SiteNavigationItemKey
+  label: string
+  icon: SiteNavigationIconKey
+  audiences: SiteNavigationRole[]
+  visible: boolean
+  deleted: boolean
+  order: number
+  section: 'primary' | 'secondary'
+}
+
 export type SiteNavigationSettings = {
   showBank: boolean
+  items: SiteNavigationItem[]
 }
 
 export type SiteSettings = {

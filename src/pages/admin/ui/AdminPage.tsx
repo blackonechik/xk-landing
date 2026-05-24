@@ -1,15 +1,17 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
-import { useNavigate } from '@tanstack/react-router'
+import { useNavigate, useRouterState } from '@tanstack/react-router'
 import {
   Alert,
   AlertDialog,
   Button,
   Card,
+  Checkbox,
+  CheckboxGroup,
   Chip,
   Input,
+  Modal,
   Spinner,
-  Switch,
   Table,
   Text,
   toast,
@@ -49,11 +51,18 @@ import {
   logout,
   type AccountPayload,
 } from '@/entities/account'
-import { clearSiteSettingsCache } from '@/entities/site'
+import { clearSiteSettingsCache, type SiteNavigationIconKey, type SiteNavigationItem, type SiteNavigationRole } from '@/entities/site'
 import { AccountLayout } from '@/widgets/account/layout'
 import { HeroLinkButton, HeroMetricCard, HeroPage } from '@/shared/ui/hero-page'
 import { LexicalRichTextEditor } from '@/shared/ui/rich-text-editor'
-import type { AdminView } from '@/widgets/account/sidebar/model/account-sidebar-menu'
+import {
+  defaultSiteNavigationItems,
+  getAdminViewFromPathname,
+  getAdminViewPath,
+  getNavigationIcon,
+  navigationIconOptions,
+  type AdminView,
+} from '@/widgets/account/sidebar/model/account-sidebar-menu'
 
 const paymentStatusMeta: Record<
   string,
@@ -170,6 +179,19 @@ type ConfirmationState = {
   onConfirm: () => void | Promise<void>
 } | null
 
+type NavigationEditorState = {
+  key: SiteNavigationItem['key']
+  label: string
+  icon: SiteNavigationIconKey
+  audiences: SiteNavigationRole[]
+} | null
+
+const navigationRoleOptions: { value: SiteNavigationRole; label: string }[] = [
+  { value: 'player', label: 'Игроки' },
+  { value: 'moderator', label: 'Модераторы' },
+  { value: 'admin', label: 'Админы' },
+]
+
 function normalizePostContentHtml(value: string) {
   const trimmed = value.trim()
 
@@ -189,6 +211,9 @@ function normalizePostContentHtml(value: string) {
 
 export function AdminPage() {
   const navigate = useNavigate()
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  })
   const [account, setAccount] = useState<AccountPayload | null>(() => getCachedAccount())
   const [dashboard, setDashboard] = useState<AdminDashboard | null>(null)
   const [promoCodes, setPromoCodes] = useState<AdminPromoCodeRow[]>([])
@@ -197,7 +222,6 @@ export function AdminPage() {
   const [isSavingPost, setIsSavingPost] = useState(false)
   const [isSavingSettings, setIsSavingSettings] = useState(false)
   const [error, setError] = useState('')
-  const [selectedTab, setSelectedTab] = useState<AdminView>('overview')
   const [promoCode, setPromoCode] = useState('')
   const [discountType, setDiscountType] = useState<'percent' | 'fixed'>('percent')
   const [discountValue, setDiscountValue] = useState('10')
@@ -215,8 +239,10 @@ export function AdminPage() {
   const [postPublished, setPostPublished] = useState(true)
   const [applicationNotes, setApplicationNotes] = useState<Record<string, string>>({})
   const [confirmState, setConfirmState] = useState<ConfirmationState>(null)
+  const [navigationEditor, setNavigationEditor] = useState<NavigationEditorState>(null)
 
   const isSessionAdmin = account?.player.siteRole === 'admin'
+  const selectedTab = getAdminViewFromPathname(pathname)
 
   function showErrorToast(message: string, description?: string) {
     toast.danger(message, {
@@ -264,6 +290,12 @@ export function AdminPage() {
   }, [])
 
   useEffect(() => {
+    if (pathname === '/cabinet/admin') {
+      void navigate({ replace: true, to: getAdminViewPath('overview') })
+    }
+  }, [navigate, pathname])
+
+  useEffect(() => {
     if (isSessionAdmin) {
       void loadDashboard()
     }
@@ -290,6 +322,15 @@ export function AdminPage() {
       totalWhitelist: dashboard?.whitelist.length ?? 0,
     }
   }, [dashboard, promoCodes])
+
+  const navigationItems = useMemo(
+    () =>
+      (dashboard?.settings.navigation.items?.length
+        ? [...dashboard.settings.navigation.items]
+        : [...defaultSiteNavigationItems]
+      ).sort((left, right) => left.order - right.order),
+    [dashboard?.settings.navigation.items],
+  )
 
   async function loadDashboard() {
     if (!isSessionAdmin) {
@@ -521,10 +562,10 @@ export function AdminPage() {
     setPostAuthorName(post.authorName ?? '')
     setPostCoverTone(post.coverTone)
     setPostPublished(post.isPublished)
-    setSelectedTab('posts')
+    void navigate({ to: getAdminViewPath('posts') })
   }
 
-  async function handleToggleBankVisibility(nextValue: boolean) {
+  async function handleSaveNavigation(items: SiteNavigationItem[], successMessage: string, description?: string) {
     if (!isSessionAdmin) {
       showErrorToast('Доступ запрещен', 'Нужен вход под пользователем с ролью администратора сайта.')
       return
@@ -533,12 +574,10 @@ export function AdminPage() {
     setIsSavingSettings(true)
 
     try {
-      const settings = await updateAdminNavigation(nextValue)
+      const settings = await updateAdminNavigation(items)
       clearSiteSettingsCache()
       setDashboard((prev) => (prev ? { ...prev, settings } : prev))
-      showSuccessToast(
-        nextValue ? 'Банк снова виден игрокам' : 'Банк скрыт из кабинета',
-      )
+      showSuccessToast(successMessage, description)
     } catch (requestError) {
       showErrorToast(
         'Не удалось обновить навигацию',
@@ -547,6 +586,46 @@ export function AdminPage() {
     } finally {
       setIsSavingSettings(false)
     }
+  }
+
+  function openNavigationEditor(item: SiteNavigationItem) {
+    setNavigationEditor({
+      key: item.key,
+      label: item.label,
+      icon: item.icon,
+      audiences: [...item.audiences],
+    })
+  }
+
+  async function handleSaveNavigationEditor() {
+    if (!navigationEditor) {
+      return
+    }
+
+    if (!navigationEditor.label.trim()) {
+      showInfoToast('Укажите название раздела')
+      return
+    }
+
+    if (navigationEditor.audiences.length === 0) {
+      showInfoToast('Выберите хотя бы одну группу игроков')
+      return
+    }
+
+    const nextItems = navigationItems.map((item) =>
+      item.key === navigationEditor.key
+        ? {
+            ...item,
+            label: navigationEditor.label.trim(),
+            icon: navigationEditor.icon,
+            audiences: [...navigationEditor.audiences],
+            deleted: false,
+          }
+        : item,
+    )
+
+    await handleSaveNavigation(nextItems, 'Навигация обновлена', `Раздел ${navigationEditor.label.trim()} сохранен.`)
+    setNavigationEditor(null)
   }
 
   async function handleTogglePlayerBlocked(player: AdminPlayerRow) {
@@ -901,46 +980,117 @@ export function AdminPage() {
       {selectedTab === 'navigation' ? (
         <AdminTableCard
           title="Навигация сайта"
-          description="Управление видимостью разделов кабинета и клиентской навигации."
+          description="Редактирование названий, иконок, аудитории и статуса пунктов меню кабинета."
         >
           <Table variant="secondary">
             <Table.ScrollContainer>
-              <Table.Content aria-label="Настройки навигации" className="min-w-[720px]">
+              <Table.Content aria-label="Настройки навигации" className="min-w-[1120px]">
                 <Table.Header>
                   <Table.Column isRowHeader>Раздел</Table.Column>
-                  <Table.Column>Описание</Table.Column>
+                  <Table.Column>Секция</Table.Column>
+                  <Table.Column>Аудитория</Table.Column>
                   <Table.Column>Статус</Table.Column>
-                  <Table.Column>Действие</Table.Column>
+                  <Table.Column>Действия</Table.Column>
                 </Table.Header>
-                <Table.Body>
-                  <Table.Row id="bank-navigation">
-                    <Table.Cell>Банк</Table.Cell>
-                    <Table.Cell>Показывать банковый раздел в кабинете игроков.</Table.Cell>
-                    <Table.Cell>
-                      <Chip color={dashboard?.settings.navigation.showBank ? 'success' : 'default'} variant="soft">
-                        {dashboard?.settings.navigation.showBank ? 'Виден игрокам' : 'Скрыт'}
-                      </Chip>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <Switch
-                        isDisabled={isSavingSettings}
-                        isSelected={dashboard?.settings.navigation.showBank ?? true}
-                        onValueChange={(value) => {
-                          requestConfirmation({
-                            title: value ? 'Открыть доступ к банку?' : 'Скрыть банк из кабинета?',
-                            description: value
-                              ? 'Раздел банка снова появится у игроков в кабинете.'
-                              : 'Раздел банка перестанет отображаться у игроков.',
-                            confirmLabel: value ? 'Включить' : 'Скрыть',
-                            confirmColor: value ? 'success' : 'danger',
-                            onConfirm: () => handleToggleBankVisibility(value),
-                          })
-                        }}
-                      >
-                        Показывать банк
-                      </Switch>
-                    </Table.Cell>
-                  </Table.Row>
+                <Table.Body renderEmptyState={renderTableEmptyState('Разделов навигации пока нет.')}>
+                  {navigationItems.map((item) => (
+                    <Table.Row key={item.key} id={item.key}>
+                      <Table.Cell>
+                        <div className="flex items-center gap-3">
+                          <span className="text-muted">{getNavigationIcon(item.icon)}</span>
+                          <div className="grid gap-1">
+                            <Text type="body-sm">{item.label}</Text>
+                            <Text color="muted" type="body-sm">{item.key}</Text>
+                          </div>
+                        </div>
+                      </Table.Cell>
+                      <Table.Cell>{item.section === 'primary' ? 'Основное меню' : 'Дополнительно'}</Table.Cell>
+                      <Table.Cell>
+                        <div className="flex flex-wrap gap-2">
+                          {item.audiences.map((role) => (
+                            <Chip key={`${item.key}-${role}`} variant="soft">
+                              {navigationRoleOptions.find((option) => option.value === role)?.label ?? role}
+                            </Chip>
+                          ))}
+                        </div>
+                      </Table.Cell>
+                      <Table.Cell>
+                        <Chip
+                          color={item.deleted ? 'danger' : item.visible ? 'success' : 'default'}
+                          variant="soft"
+                        >
+                          {item.deleted ? 'Удален' : item.visible ? 'Виден' : 'Скрыт'}
+                        </Chip>
+                      </Table.Cell>
+                      <Table.Cell>
+                        <div className="flex flex-wrap gap-2">
+                          <Button
+                            isDisabled={isSavingSettings}
+                            size="sm"
+                            variant="ghost"
+                            onPress={() => openNavigationEditor(item)}
+                          >
+                            Редактировать
+                          </Button>
+                          <Button
+                            isDisabled={isSavingSettings}
+                            size="sm"
+                            variant="ghost"
+                            onPress={() =>
+                              requestConfirmation({
+                                title: item.visible ? 'Скрыть раздел?' : 'Показать раздел?',
+                                description: item.visible
+                                  ? `Раздел ${item.label} исчезнет из меню для выбранных групп.`
+                                  : `Раздел ${item.label} снова появится в меню.`,
+                                confirmLabel: item.visible ? 'Скрыть' : 'Показать',
+                                confirmColor: item.visible ? 'warning' : 'success',
+                                onConfirm: () =>
+                                  handleSaveNavigation(
+                                    navigationItems.map((candidate) =>
+                                      candidate.key === item.key
+                                        ? { ...candidate, visible: !candidate.visible, deleted: false }
+                                        : candidate,
+                                    ),
+                                    item.visible ? 'Раздел скрыт' : 'Раздел показан',
+                                    item.label,
+                                  ),
+                              })
+                            }
+                          >
+                            {item.visible ? 'Скрыть' : 'Показать'}
+                          </Button>
+                          <Button
+                            color={item.deleted ? 'success' : 'danger'}
+                            isDisabled={isSavingSettings}
+                            size="sm"
+                            variant={item.deleted ? 'secondary' : 'ghost'}
+                            onPress={() =>
+                              requestConfirmation({
+                                title: item.deleted ? 'Вернуть раздел?' : 'Удалить раздел?',
+                                description: item.deleted
+                                  ? `Раздел ${item.label} снова появится в настройках и сможет отображаться в меню.`
+                                  : `Раздел ${item.label} будет удален из навигации.`,
+                                confirmLabel: item.deleted ? 'Вернуть' : 'Удалить',
+                                confirmColor: item.deleted ? 'success' : 'danger',
+                                onConfirm: () =>
+                                  handleSaveNavigation(
+                                    navigationItems.map((candidate) =>
+                                      candidate.key === item.key
+                                        ? { ...candidate, deleted: !candidate.deleted, visible: candidate.deleted ? true : candidate.visible }
+                                        : candidate,
+                                    ),
+                                    item.deleted ? 'Раздел восстановлен' : 'Раздел удален',
+                                    item.label,
+                                  ),
+                              })
+                            }
+                          >
+                            {item.deleted ? 'Вернуть' : 'Удалить'}
+                          </Button>
+                        </div>
+                      </Table.Cell>
+                    </Table.Row>
+                  ))}
                 </Table.Body>
               </Table.Content>
             </Table.ScrollContainer>
@@ -1185,6 +1335,107 @@ export function AdminPage() {
         </div>
       ) : null}
 
+      <Modal.Backdrop
+        isOpen={Boolean(navigationEditor)}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) {
+            setNavigationEditor(null)
+          }
+        }}
+      >
+        <Modal.Container placement="auto">
+          <Modal.Dialog className="sm:max-w-2xl">
+            <Modal.CloseTrigger />
+            <Modal.Header>
+              <Modal.Heading>Редактирование пункта навигации</Modal.Heading>
+            </Modal.Header>
+            <Modal.Body className="grid gap-5">
+              <Input
+                label="Название раздела"
+                value={navigationEditor?.label ?? ''}
+                onChange={(event) =>
+                  setNavigationEditor((prev) =>
+                    prev
+                      ? {
+                          ...prev,
+                          label: event.target.value,
+                        }
+                      : prev,
+                  )
+                }
+              />
+
+              <div className="grid gap-3">
+                <Text color="muted" type="body-sm">Иконка</Text>
+                <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                  {navigationIconOptions.map((option) => {
+                    const selected = navigationEditor?.icon === option.key
+
+                    return (
+                      <Button
+                        key={option.key}
+                        className="justify-start"
+                        color={selected ? 'accent' : 'default'}
+                        variant={selected ? 'secondary' : 'ghost'}
+                        onPress={() =>
+                          setNavigationEditor((prev) =>
+                            prev
+                              ? {
+                                  ...prev,
+                                  icon: option.key,
+                                }
+                              : prev,
+                          )
+                        }
+                      >
+                        <span className="mr-2 inline-flex text-muted">{option.icon}</span>
+                        {option.label}
+                      </Button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              <div className="grid gap-3">
+                <Text color="muted" type="body-sm">Кому показывать</Text>
+                <CheckboxGroup
+                  value={navigationEditor?.audiences ?? []}
+                  onChange={(value) =>
+                    setNavigationEditor((prev) =>
+                      prev
+                        ? {
+                            ...prev,
+                            audiences: value as SiteNavigationRole[],
+                          }
+                        : prev,
+                    )
+                  }
+                >
+                  <div className="grid gap-2 sm:grid-cols-3">
+                    {navigationRoleOptions.map((option) => (
+                      <Checkbox key={option.value} value={option.value}>
+                        <Checkbox.Control>
+                          <Checkbox.Indicator />
+                        </Checkbox.Control>
+                        <Checkbox.Content>{option.label}</Checkbox.Content>
+                      </Checkbox>
+                    ))}
+                  </div>
+                </CheckboxGroup>
+              </div>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button slot="close" variant="secondary">
+                Отмена
+              </Button>
+              <Button isDisabled={isSavingSettings} onPress={() => void handleSaveNavigationEditor()}>
+                {isSavingSettings ? <Spinner color="current" size="sm" /> : 'Сохранить'}
+              </Button>
+            </Modal.Footer>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+
       <AlertDialog.Backdrop
         isOpen={Boolean(confirmState)}
         onOpenChange={(isOpen) => {
@@ -1242,7 +1493,9 @@ export function AdminPage() {
         onNavigate={(to) => {
           void navigate({ to })
         }}
-        onAdminViewNavigate={setSelectedTab}
+        onAdminViewNavigate={(view) => {
+          void navigate({ to: getAdminViewPath(view) })
+        }}
         onBankViewNavigate={(view) => {
           void navigate({ to: `/cabinet/bank/${view}` })
         }}

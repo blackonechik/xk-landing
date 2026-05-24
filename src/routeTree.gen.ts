@@ -36,6 +36,14 @@ import { Route as CabinetNewsSlugRouteImport } from './routes/cabinet.news.$slug
 import { Route as CabinetBankTransferRouteImport } from './routes/cabinet.bank.transfer'
 import { Route as CabinetBankHistoryRouteImport } from './routes/cabinet.bank.history'
 import { Route as CabinetBankCardsRouteImport } from './routes/cabinet.bank.cards'
+import { Route as CabinetAdminWhitelistRouteImport } from './routes/cabinet.admin.whitelist'
+import { Route as CabinetAdminUsersRouteImport } from './routes/cabinet.admin.users'
+import { Route as CabinetAdminPromosRouteImport } from './routes/cabinet.admin.promos'
+import { Route as CabinetAdminPostsRouteImport } from './routes/cabinet.admin.posts'
+import { Route as CabinetAdminPaymentsRouteImport } from './routes/cabinet.admin.payments'
+import { Route as CabinetAdminOverviewRouteImport } from './routes/cabinet.admin.overview'
+import { Route as CabinetAdminNavigationRouteImport } from './routes/cabinet.admin.navigation'
+import { Route as CabinetAdminApplicationsRouteImport } from './routes/cabinet.admin.applications'
 
 const StatsRoute = StatsRouteImport.update({
   id: '/stats',
@@ -172,6 +180,47 @@ const CabinetBankCardsRoute = CabinetBankCardsRouteImport.update({
   path: '/cards',
   getParentRoute: () => CabinetBankRoute,
 } as any)
+const CabinetAdminWhitelistRoute = CabinetAdminWhitelistRouteImport.update({
+  id: '/whitelist',
+  path: '/whitelist',
+  getParentRoute: () => CabinetAdminRoute,
+} as any)
+const CabinetAdminUsersRoute = CabinetAdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => CabinetAdminRoute,
+} as any)
+const CabinetAdminPromosRoute = CabinetAdminPromosRouteImport.update({
+  id: '/promos',
+  path: '/promos',
+  getParentRoute: () => CabinetAdminRoute,
+} as any)
+const CabinetAdminPostsRoute = CabinetAdminPostsRouteImport.update({
+  id: '/posts',
+  path: '/posts',
+  getParentRoute: () => CabinetAdminRoute,
+} as any)
+const CabinetAdminPaymentsRoute = CabinetAdminPaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => CabinetAdminRoute,
+} as any)
+const CabinetAdminOverviewRoute = CabinetAdminOverviewRouteImport.update({
+  id: '/overview',
+  path: '/overview',
+  getParentRoute: () => CabinetAdminRoute,
+} as any)
+const CabinetAdminNavigationRoute = CabinetAdminNavigationRouteImport.update({
+  id: '/navigation',
+  path: '/navigation',
+  getParentRoute: () => CabinetAdminRoute,
+} as any)
+const CabinetAdminApplicationsRoute =
+  CabinetAdminApplicationsRouteImport.update({
+    id: '/applications',
+    path: '/applications',
+    getParentRoute: () => CabinetAdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -188,7 +237,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/rules': typeof RulesRoute
   '/stats': typeof StatsRoute
-  '/cabinet/admin': typeof CabinetAdminRoute
+  '/cabinet/admin': typeof CabinetAdminRouteWithChildren
   '/cabinet/bank': typeof CabinetBankRouteWithChildren
   '/cabinet/news': typeof CabinetNewsRouteWithChildren
   '/cabinet/stats': typeof CabinetStatsRoute
@@ -197,6 +246,14 @@ export interface FileRoutesByFullPath {
   '/payment/pending': typeof PaymentPendingRoute
   '/payment/success': typeof PaymentSuccessRoute
   '/u/$nickname': typeof UNicknameRoute
+  '/cabinet/admin/applications': typeof CabinetAdminApplicationsRoute
+  '/cabinet/admin/navigation': typeof CabinetAdminNavigationRoute
+  '/cabinet/admin/overview': typeof CabinetAdminOverviewRoute
+  '/cabinet/admin/payments': typeof CabinetAdminPaymentsRoute
+  '/cabinet/admin/posts': typeof CabinetAdminPostsRoute
+  '/cabinet/admin/promos': typeof CabinetAdminPromosRoute
+  '/cabinet/admin/users': typeof CabinetAdminUsersRoute
+  '/cabinet/admin/whitelist': typeof CabinetAdminWhitelistRoute
   '/cabinet/bank/cards': typeof CabinetBankCardsRoute
   '/cabinet/bank/history': typeof CabinetBankHistoryRoute
   '/cabinet/bank/transfer': typeof CabinetBankTransferRoute
@@ -217,7 +274,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/rules': typeof RulesRoute
   '/stats': typeof StatsRoute
-  '/cabinet/admin': typeof CabinetAdminRoute
+  '/cabinet/admin': typeof CabinetAdminRouteWithChildren
   '/cabinet/bank': typeof CabinetBankRouteWithChildren
   '/cabinet/news': typeof CabinetNewsRouteWithChildren
   '/cabinet/stats': typeof CabinetStatsRoute
@@ -226,6 +283,14 @@ export interface FileRoutesByTo {
   '/payment/pending': typeof PaymentPendingRoute
   '/payment/success': typeof PaymentSuccessRoute
   '/u/$nickname': typeof UNicknameRoute
+  '/cabinet/admin/applications': typeof CabinetAdminApplicationsRoute
+  '/cabinet/admin/navigation': typeof CabinetAdminNavigationRoute
+  '/cabinet/admin/overview': typeof CabinetAdminOverviewRoute
+  '/cabinet/admin/payments': typeof CabinetAdminPaymentsRoute
+  '/cabinet/admin/posts': typeof CabinetAdminPostsRoute
+  '/cabinet/admin/promos': typeof CabinetAdminPromosRoute
+  '/cabinet/admin/users': typeof CabinetAdminUsersRoute
+  '/cabinet/admin/whitelist': typeof CabinetAdminWhitelistRoute
   '/cabinet/bank/cards': typeof CabinetBankCardsRoute
   '/cabinet/bank/history': typeof CabinetBankHistoryRoute
   '/cabinet/bank/transfer': typeof CabinetBankTransferRoute
@@ -247,7 +312,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/rules': typeof RulesRoute
   '/stats': typeof StatsRoute
-  '/cabinet/admin': typeof CabinetAdminRoute
+  '/cabinet/admin': typeof CabinetAdminRouteWithChildren
   '/cabinet/bank': typeof CabinetBankRouteWithChildren
   '/cabinet/news': typeof CabinetNewsRouteWithChildren
   '/cabinet/stats': typeof CabinetStatsRoute
@@ -256,6 +321,14 @@ export interface FileRoutesById {
   '/payment/pending': typeof PaymentPendingRoute
   '/payment/success': typeof PaymentSuccessRoute
   '/u/$nickname': typeof UNicknameRoute
+  '/cabinet/admin/applications': typeof CabinetAdminApplicationsRoute
+  '/cabinet/admin/navigation': typeof CabinetAdminNavigationRoute
+  '/cabinet/admin/overview': typeof CabinetAdminOverviewRoute
+  '/cabinet/admin/payments': typeof CabinetAdminPaymentsRoute
+  '/cabinet/admin/posts': typeof CabinetAdminPostsRoute
+  '/cabinet/admin/promos': typeof CabinetAdminPromosRoute
+  '/cabinet/admin/users': typeof CabinetAdminUsersRoute
+  '/cabinet/admin/whitelist': typeof CabinetAdminWhitelistRoute
   '/cabinet/bank/cards': typeof CabinetBankCardsRoute
   '/cabinet/bank/history': typeof CabinetBankHistoryRoute
   '/cabinet/bank/transfer': typeof CabinetBankTransferRoute
@@ -287,6 +360,14 @@ export interface FileRouteTypes {
     | '/payment/pending'
     | '/payment/success'
     | '/u/$nickname'
+    | '/cabinet/admin/applications'
+    | '/cabinet/admin/navigation'
+    | '/cabinet/admin/overview'
+    | '/cabinet/admin/payments'
+    | '/cabinet/admin/posts'
+    | '/cabinet/admin/promos'
+    | '/cabinet/admin/users'
+    | '/cabinet/admin/whitelist'
     | '/cabinet/bank/cards'
     | '/cabinet/bank/history'
     | '/cabinet/bank/transfer'
@@ -316,6 +397,14 @@ export interface FileRouteTypes {
     | '/payment/pending'
     | '/payment/success'
     | '/u/$nickname'
+    | '/cabinet/admin/applications'
+    | '/cabinet/admin/navigation'
+    | '/cabinet/admin/overview'
+    | '/cabinet/admin/payments'
+    | '/cabinet/admin/posts'
+    | '/cabinet/admin/promos'
+    | '/cabinet/admin/users'
+    | '/cabinet/admin/whitelist'
     | '/cabinet/bank/cards'
     | '/cabinet/bank/history'
     | '/cabinet/bank/transfer'
@@ -345,6 +434,14 @@ export interface FileRouteTypes {
     | '/payment/pending'
     | '/payment/success'
     | '/u/$nickname'
+    | '/cabinet/admin/applications'
+    | '/cabinet/admin/navigation'
+    | '/cabinet/admin/overview'
+    | '/cabinet/admin/payments'
+    | '/cabinet/admin/posts'
+    | '/cabinet/admin/promos'
+    | '/cabinet/admin/users'
+    | '/cabinet/admin/whitelist'
     | '/cabinet/bank/cards'
     | '/cabinet/bank/history'
     | '/cabinet/bank/transfer'
@@ -560,8 +657,90 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CabinetBankCardsRouteImport
       parentRoute: typeof CabinetBankRoute
     }
+    '/cabinet/admin/whitelist': {
+      id: '/cabinet/admin/whitelist'
+      path: '/whitelist'
+      fullPath: '/cabinet/admin/whitelist'
+      preLoaderRoute: typeof CabinetAdminWhitelistRouteImport
+      parentRoute: typeof CabinetAdminRoute
+    }
+    '/cabinet/admin/users': {
+      id: '/cabinet/admin/users'
+      path: '/users'
+      fullPath: '/cabinet/admin/users'
+      preLoaderRoute: typeof CabinetAdminUsersRouteImport
+      parentRoute: typeof CabinetAdminRoute
+    }
+    '/cabinet/admin/promos': {
+      id: '/cabinet/admin/promos'
+      path: '/promos'
+      fullPath: '/cabinet/admin/promos'
+      preLoaderRoute: typeof CabinetAdminPromosRouteImport
+      parentRoute: typeof CabinetAdminRoute
+    }
+    '/cabinet/admin/posts': {
+      id: '/cabinet/admin/posts'
+      path: '/posts'
+      fullPath: '/cabinet/admin/posts'
+      preLoaderRoute: typeof CabinetAdminPostsRouteImport
+      parentRoute: typeof CabinetAdminRoute
+    }
+    '/cabinet/admin/payments': {
+      id: '/cabinet/admin/payments'
+      path: '/payments'
+      fullPath: '/cabinet/admin/payments'
+      preLoaderRoute: typeof CabinetAdminPaymentsRouteImport
+      parentRoute: typeof CabinetAdminRoute
+    }
+    '/cabinet/admin/overview': {
+      id: '/cabinet/admin/overview'
+      path: '/overview'
+      fullPath: '/cabinet/admin/overview'
+      preLoaderRoute: typeof CabinetAdminOverviewRouteImport
+      parentRoute: typeof CabinetAdminRoute
+    }
+    '/cabinet/admin/navigation': {
+      id: '/cabinet/admin/navigation'
+      path: '/navigation'
+      fullPath: '/cabinet/admin/navigation'
+      preLoaderRoute: typeof CabinetAdminNavigationRouteImport
+      parentRoute: typeof CabinetAdminRoute
+    }
+    '/cabinet/admin/applications': {
+      id: '/cabinet/admin/applications'
+      path: '/applications'
+      fullPath: '/cabinet/admin/applications'
+      preLoaderRoute: typeof CabinetAdminApplicationsRouteImport
+      parentRoute: typeof CabinetAdminRoute
+    }
   }
 }
+
+interface CabinetAdminRouteChildren {
+  CabinetAdminApplicationsRoute: typeof CabinetAdminApplicationsRoute
+  CabinetAdminNavigationRoute: typeof CabinetAdminNavigationRoute
+  CabinetAdminOverviewRoute: typeof CabinetAdminOverviewRoute
+  CabinetAdminPaymentsRoute: typeof CabinetAdminPaymentsRoute
+  CabinetAdminPostsRoute: typeof CabinetAdminPostsRoute
+  CabinetAdminPromosRoute: typeof CabinetAdminPromosRoute
+  CabinetAdminUsersRoute: typeof CabinetAdminUsersRoute
+  CabinetAdminWhitelistRoute: typeof CabinetAdminWhitelistRoute
+}
+
+const CabinetAdminRouteChildren: CabinetAdminRouteChildren = {
+  CabinetAdminApplicationsRoute: CabinetAdminApplicationsRoute,
+  CabinetAdminNavigationRoute: CabinetAdminNavigationRoute,
+  CabinetAdminOverviewRoute: CabinetAdminOverviewRoute,
+  CabinetAdminPaymentsRoute: CabinetAdminPaymentsRoute,
+  CabinetAdminPostsRoute: CabinetAdminPostsRoute,
+  CabinetAdminPromosRoute: CabinetAdminPromosRoute,
+  CabinetAdminUsersRoute: CabinetAdminUsersRoute,
+  CabinetAdminWhitelistRoute: CabinetAdminWhitelistRoute,
+}
+
+const CabinetAdminRouteWithChildren = CabinetAdminRoute._addFileChildren(
+  CabinetAdminRouteChildren,
+)
 
 interface CabinetBankRouteChildren {
   CabinetBankCardsRoute: typeof CabinetBankCardsRoute
@@ -592,14 +771,14 @@ const CabinetNewsRouteWithChildren = CabinetNewsRoute._addFileChildren(
 )
 
 interface CabinetRouteChildren {
-  CabinetAdminRoute: typeof CabinetAdminRoute
+  CabinetAdminRoute: typeof CabinetAdminRouteWithChildren
   CabinetBankRoute: typeof CabinetBankRouteWithChildren
   CabinetNewsRoute: typeof CabinetNewsRouteWithChildren
   CabinetStatsRoute: typeof CabinetStatsRoute
 }
 
 const CabinetRouteChildren: CabinetRouteChildren = {
-  CabinetAdminRoute: CabinetAdminRoute,
+  CabinetAdminRoute: CabinetAdminRouteWithChildren,
   CabinetBankRoute: CabinetBankRouteWithChildren,
   CabinetNewsRoute: CabinetNewsRouteWithChildren,
   CabinetStatsRoute: CabinetStatsRoute,

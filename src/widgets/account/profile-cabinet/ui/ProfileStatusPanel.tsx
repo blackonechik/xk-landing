@@ -210,7 +210,7 @@ export function ProfileStatusPanel({
       })
       .catch(() => {
         if (isActive) {
-          setSettings({ navigation: { showBank: true } })
+          setSettings({ navigation: { showBank: true, items: [] } })
         }
       })
 
