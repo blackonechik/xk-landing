@@ -9,6 +9,7 @@ import {
   House,
   Landmark,
   LayoutDashboard,
+  Newspaper,
   ReceiptText,
   Settings2,
   ShieldCheck,
@@ -46,7 +47,7 @@ export type AccountSidebarMenuSection = {
 }
 
 type GetAccountSidebarMenuSectionsParams = {
-  currentSection: 'home' | 'bank' | 'stats' | 'admin'
+  currentSection: 'home' | 'bank' | 'stats' | 'news' | 'admin'
   activeBankView: BankView
   activeAdminView?: AdminView
   hasBankCards: boolean
@@ -185,6 +186,13 @@ export function getAccountSidebarMenuSections({
           label: 'Статистика',
           to: '/cabinet/stats',
           current: currentSection === 'stats',
+        },
+        {
+          key: 'news',
+          icon: <Newspaper size={18} />,
+          label: 'Посты',
+          to: '/cabinet/news',
+          current: currentSection === 'news',
         },
         {
           key: 'kingdoms',

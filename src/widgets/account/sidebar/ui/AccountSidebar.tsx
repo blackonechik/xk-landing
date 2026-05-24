@@ -17,7 +17,7 @@ import { useEffect, useState } from 'react'
 
 type AccountSidebarProps = {
   account: AccountPayload
-  currentSection: 'home' | 'bank' | 'stats' | 'admin'
+  currentSection: 'home' | 'bank' | 'stats' | 'news' | 'admin'
   activeBankView?: BankView
   activeAdminView?: AdminView
   onNavigate: (to: string) => void

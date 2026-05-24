@@ -8,13 +8,14 @@ import {
   Input,
   Spinner,
   Switch,
+  Table,
   Text,
 } from '@heroui/react'
 import {
   FileText,
-  ReceiptText,
   ShieldCheck,
   TicketPercent,
+  Users,
   Wallet,
 } from 'lucide-react'
 import {
@@ -120,6 +121,39 @@ function parseOptionalPositiveInt(value: string) {
 
 function formatPromoDiscount(promo: AdminPromoCodeRow) {
   return promo.discountType === 'percent' ? `${promo.discountValue}%` : `${promo.discountValue} руб.`
+}
+
+function renderTableEmptyState(message: string) {
+  return () => (
+    <div className="px-4 py-6 text-sm text-muted">
+      {message}
+    </div>
+  )
+}
+
+function AdminTableCard({
+  title,
+  description,
+  action,
+  children,
+}: {
+  title: string
+  description?: string
+  action?: React.ReactNode
+  children: React.ReactNode
+}) {
+  return (
+    <Card>
+      <Card.Header className="flex items-start justify-between gap-4">
+        <div className="grid gap-1">
+          <Card.Title>{title}</Card.Title>
+          {description ? <Card.Description>{description}</Card.Description> : null}
+        </div>
+        {action}
+      </Card.Header>
+      <Card.Content>{children}</Card.Content>
+    </Card>
+  )
 }
 
 export function AdminPage() {
@@ -514,11 +548,8 @@ export function AdminPage() {
 
       {selectedTab === 'overview' ? (
         <div className="grid gap-6 xl:grid-cols-2">
-          <Card>
-            <Card.Header>
-              <Card.Title>Сводка</Card.Title>
-            </Card.Header>
-            <Card.Content className="grid gap-4 sm:grid-cols-2">
+          <AdminTableCard title="Сводка" description="Главные показатели по сайту и серверу.">
+            <div className="grid gap-4 sm:grid-cols-2">
               <HeroMetricCard label="Оплачено" value={stats.paidCount} />
               <HeroMetricCard label="В ожидании" value={stats.pendingCount} />
               <HeroMetricCard label="Логов жизней" value={stats.totalLifeLogs} />
@@ -527,86 +558,128 @@ export function AdminPage() {
               <HeroMetricCard label="Опубликованных постов" value={stats.publishedPosts} />
               <HeroMetricCard label="Заблокированных игроков" value={stats.blockedPlayers} />
               <HeroMetricCard label="В whitelist" value={stats.totalWhitelist} />
-            </Card.Content>
-          </Card>
+            </div>
+          </AdminTableCard>
 
-          <Card>
-            <Card.Header>
-              <Card.Title>Последние платежи</Card.Title>
-            </Card.Header>
-            <Card.Content className="grid gap-3">
-              {(dashboard?.payments ?? []).slice(0, 8).map((payment) => (
-                <div key={payment.id} className="flex items-start justify-between gap-4 rounded-xl border border-default-200 p-3">
-                  <div>
-                    <Text type="body-sm">{payment.nickname}</Text>
-                    <Text color="muted" type="body-sm">{payment.productName}</Text>
-                  </div>
-                  <div className="text-right">
-                    <Chip
-                      color={getPaymentStatusMeta(payment.status).color}
-                      variant="soft"
-                    >
-                      {getPaymentStatusMeta(payment.status).label}
-                    </Chip>
-                    <Text color="muted" type="body-sm">{payment.amountRub} руб.</Text>
-                  </div>
-                </div>
-              ))}
-            </Card.Content>
-          </Card>
+          <AdminTableCard
+            title="Последние платежи"
+            description="Свежие покупки и изменения статусов оплаты."
+          >
+            <Table variant="secondary">
+              <Table.ScrollContainer>
+                <Table.Content aria-label="Последние платежи" className="min-w-[620px]">
+                  <Table.Header>
+                    <Table.Column isRowHeader>Игрок</Table.Column>
+                    <Table.Column>Товар</Table.Column>
+                    <Table.Column>Сумма</Table.Column>
+                    <Table.Column>Статус</Table.Column>
+                    <Table.Column>Обновлен</Table.Column>
+                  </Table.Header>
+                  <Table.Body renderEmptyState={renderTableEmptyState('Платежей пока нет.')}>
+                    {(dashboard?.payments ?? []).slice(0, 8).map((payment) => (
+                      <Table.Row key={payment.id} id={payment.id}>
+                        <Table.Cell>{payment.nickname}</Table.Cell>
+                        <Table.Cell>{payment.productName}</Table.Cell>
+                        <Table.Cell>{payment.amountRub} руб.</Table.Cell>
+                        <Table.Cell>
+                          <Chip color={getPaymentStatusMeta(payment.status).color} variant="soft">
+                            {getPaymentStatusMeta(payment.status).label}
+                          </Chip>
+                        </Table.Cell>
+                        <Table.Cell>{formatDate(payment.updatedAt)}</Table.Cell>
+                      </Table.Row>
+                    ))}
+                  </Table.Body>
+                </Table.Content>
+              </Table.ScrollContainer>
+            </Table>
+          </AdminTableCard>
         </div>
       ) : null}
 
       {selectedTab === 'applications' ? (
-        <div className="grid gap-4">
-          {(dashboard?.applications ?? []).map((application) => (
-            <Card key={application.id}>
-              <Card.Header className="flex items-start justify-between gap-4">
-                <div>
-                  <Card.Title>{application.nickname}</Card.Title>
-                  <Card.Description>{application.telegram} • {application.discord} • {application.age} лет</Card.Description>
-                </div>
-                <Chip
-                  color={getApplicationStatusMeta(application.status).color}
-                  variant="soft"
-                >
-                  {getApplicationStatusMeta(application.status).label}
-                </Chip>
-              </Card.Header>
-              <Card.Content className="grid gap-4">
-                <Text type="body-sm">Контакт: {application.contact}</Text>
-                <Text type="body-sm">Планы: {application.serverPlans}</Text>
-                <label className="grid gap-2">
-                  <Text color="muted" type="body-sm">Комментарий администрации</Text>
-                  <textarea
-                    className="min-h-24 rounded-[calc(var(--radius-lg)-2px)] border border-default-200 bg-content1 px-3 py-2 text-sm outline-none transition-colors focus:border-primary"
-                    value={applicationNotes[application.id] ?? application.reviewNote ?? ''}
-                    onChange={(event) =>
-                      setApplicationNotes((prev) => ({
-                        ...prev,
-                        [application.id]: event.target.value,
-                      }))
-                    }
-                  />
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  <Button size="sm" onPress={() => void handleUpdateApplication(application, 'review')}>На рассмотрении</Button>
-                  <Button size="sm" color="success" onPress={() => void handleUpdateApplication(application, 'accepted')}>Принять</Button>
-                  <Button size="sm" color="danger" onPress={() => void handleUpdateApplication(application, 'rejected')}>Отклонить</Button>
-                </div>
-              </Card.Content>
-            </Card>
-          ))}
-        </div>
+        <AdminTableCard
+          title="Заявки"
+          description="Очередь вступления, контакты игроков и решения администрации."
+        >
+          <Table variant="secondary">
+            <Table.ScrollContainer>
+              <Table.Content aria-label="Заявки игроков" className="min-w-[1180px]">
+                <Table.Header>
+                  <Table.Column isRowHeader>Игрок</Table.Column>
+                  <Table.Column>Контакты</Table.Column>
+                  <Table.Column>Планы</Table.Column>
+                  <Table.Column>Статус</Table.Column>
+                  <Table.Column>Комментарий</Table.Column>
+                  <Table.Column>Обновлено</Table.Column>
+                  <Table.Column>Действия</Table.Column>
+                </Table.Header>
+                <Table.Body renderEmptyState={renderTableEmptyState('Новых заявок нет.')}>
+                  {(dashboard?.applications ?? []).map((application) => (
+                    <Table.Row key={application.id} id={application.id}>
+                      <Table.Cell>
+                        <div className="grid gap-1">
+                          <Text type="body-sm">{application.nickname}</Text>
+                          <Text color="muted" type="body-sm">{application.age} лет</Text>
+                        </div>
+                      </Table.Cell>
+                      <Table.Cell>
+                        <div className="grid gap-1 text-sm">
+                          <span>{application.contact}</span>
+                          <span className="text-muted">{application.telegram}</span>
+                          <span className="text-muted">{application.discord}</span>
+                        </div>
+                      </Table.Cell>
+                      <Table.Cell className="min-w-[240px]">
+                        <Text color="muted" type="body-sm">{application.serverPlans}</Text>
+                      </Table.Cell>
+                      <Table.Cell>
+                        <Chip color={getApplicationStatusMeta(application.status).color} variant="soft">
+                          {getApplicationStatusMeta(application.status).label}
+                        </Chip>
+                      </Table.Cell>
+                      <Table.Cell className="min-w-[260px]">
+                        <textarea
+                          className="min-h-24 w-full rounded-[calc(var(--radius-lg)-2px)] border border-default-200 bg-content1 px-3 py-2 text-sm outline-none transition-colors focus:border-primary"
+                          value={applicationNotes[application.id] ?? application.reviewNote ?? ''}
+                          onChange={(event) =>
+                            setApplicationNotes((prev) => ({
+                              ...prev,
+                              [application.id]: event.target.value,
+                            }))
+                          }
+                        />
+                      </Table.Cell>
+                      <Table.Cell>{formatDate(application.updatedAt)}</Table.Cell>
+                      <Table.Cell>
+                        <div className="flex flex-wrap gap-2">
+                          <Button size="sm" onPress={() => void handleUpdateApplication(application, 'review')}>
+                            На рассмотрении
+                          </Button>
+                          <Button size="sm" color="success" onPress={() => void handleUpdateApplication(application, 'accepted')}>
+                            Принять
+                          </Button>
+                          <Button size="sm" color="danger" onPress={() => void handleUpdateApplication(application, 'rejected')}>
+                            Отклонить
+                          </Button>
+                        </div>
+                      </Table.Cell>
+                    </Table.Row>
+                  ))}
+                </Table.Body>
+              </Table.Content>
+            </Table.ScrollContainer>
+          </Table>
+        </AdminTableCard>
       ) : null}
 
       {selectedTab === 'posts' ? (
-        <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
+        <div className="grid gap-6">
           <Card>
             <Card.Header>
               <Card.Title>{postId ? 'Редактирование поста' : 'Новый пост'}</Card.Title>
             </Card.Header>
-            <Card.Content className="grid gap-4">
+            <Card.Content className="grid gap-4 xl:grid-cols-2">
               <Input label="Заголовок" value={postTitle} onChange={(event) => setPostTitle(event.target.value)} />
               <Input label="Slug" value={postSlug} onChange={(event) => setPostSlug(event.target.value)} placeholder="оставьте пустым для автогенерации" />
               <Input label="Краткое описание" value={postSummary} onChange={(event) => setPostSummary(event.target.value)} />
@@ -632,144 +705,236 @@ export function AdminPage() {
             </Card.Content>
           </Card>
 
-          <Card>
-            <Card.Header>
-              <Card.Title>Список постов</Card.Title>
-            </Card.Header>
-            <Card.Content className="grid gap-3">
-              {(dashboard?.posts ?? []).map((post) => (
-                <div key={post.id} className="grid gap-3 rounded-xl border border-default-200 p-3">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <Text type="body-sm">{post.title}</Text>
-                      <Text color="muted" type="body-sm">/{post.slug}</Text>
-                    </div>
-                    <Chip variant="soft">{post.isPublished ? 'Опубликован' : 'Черновик'}</Chip>
-                  </div>
-                  <Text color="muted" type="body-sm">{post.summary}</Text>
-                  <Button size="sm" variant="ghost" onPress={() => editPost(post)}>Редактировать</Button>
-                </div>
-              ))}
-            </Card.Content>
-          </Card>
+          <AdminTableCard
+            title="Список постов"
+            description="Публикации сайта, статусы выхода и быстрый переход к редактированию."
+          >
+            <Table variant="secondary">
+              <Table.ScrollContainer>
+                <Table.Content aria-label="Список постов" className="min-w-[980px]">
+                  <Table.Header>
+                    <Table.Column isRowHeader>Пост</Table.Column>
+                    <Table.Column>Slug</Table.Column>
+                    <Table.Column>Автор</Table.Column>
+                    <Table.Column>Статус</Table.Column>
+                    <Table.Column>Опубликован</Table.Column>
+                    <Table.Column>Обновлен</Table.Column>
+                    <Table.Column>Действия</Table.Column>
+                  </Table.Header>
+                  <Table.Body renderEmptyState={renderTableEmptyState('Постов пока нет.')}>
+                    {(dashboard?.posts ?? []).map((post) => (
+                      <Table.Row key={post.id} id={post.id}>
+                        <Table.Cell>
+                          <div className="grid gap-1">
+                            <Text type="body-sm">{post.title}</Text>
+                            <Text color="muted" type="body-sm">{post.summary}</Text>
+                          </div>
+                        </Table.Cell>
+                        <Table.Cell>/{post.slug}</Table.Cell>
+                        <Table.Cell>{post.authorName ?? 'Команда XK HARDCORE'}</Table.Cell>
+                        <Table.Cell>
+                          <Chip color={post.isPublished ? 'success' : 'default'} variant="soft">
+                            {post.isPublished ? 'Опубликован' : 'Черновик'}
+                          </Chip>
+                        </Table.Cell>
+                        <Table.Cell>{formatDate(post.publishedAt)}</Table.Cell>
+                        <Table.Cell>{formatDate(post.updatedAt)}</Table.Cell>
+                        <Table.Cell>
+                          <Button size="sm" variant="ghost" onPress={() => editPost(post)}>
+                            Редактировать
+                          </Button>
+                        </Table.Cell>
+                      </Table.Row>
+                    ))}
+                  </Table.Body>
+                </Table.Content>
+              </Table.ScrollContainer>
+            </Table>
+          </AdminTableCard>
         </div>
       ) : null}
 
       {selectedTab === 'navigation' ? (
-        <Card>
-          <Card.Header>
-            <Card.Title>Навигация сайта</Card.Title>
-            <Card.Description>Можно временно скрывать разделы из кабинета игроков.</Card.Description>
-          </Card.Header>
-          <Card.Content>
-            <Switch
-              isDisabled={isSavingSettings}
-              isSelected={dashboard?.settings.navigation.showBank ?? true}
-              onValueChange={(value) => {
-                void handleToggleBankVisibility(value)
-              }}
-            >
-              Показывать банк игрокам
-            </Switch>
-          </Card.Content>
-        </Card>
+        <AdminTableCard
+          title="Навигация сайта"
+          description="Управление видимостью разделов кабинета и клиентской навигации."
+        >
+          <Table variant="secondary">
+            <Table.ScrollContainer>
+              <Table.Content aria-label="Настройки навигации" className="min-w-[720px]">
+                <Table.Header>
+                  <Table.Column isRowHeader>Раздел</Table.Column>
+                  <Table.Column>Описание</Table.Column>
+                  <Table.Column>Статус</Table.Column>
+                  <Table.Column>Действие</Table.Column>
+                </Table.Header>
+                <Table.Body>
+                  <Table.Row id="bank-navigation">
+                    <Table.Cell>Банк</Table.Cell>
+                    <Table.Cell>Показывать банковый раздел в кабинете игроков.</Table.Cell>
+                    <Table.Cell>
+                      <Chip color={dashboard?.settings.navigation.showBank ? 'success' : 'default'} variant="soft">
+                        {dashboard?.settings.navigation.showBank ? 'Виден игрокам' : 'Скрыт'}
+                      </Chip>
+                    </Table.Cell>
+                    <Table.Cell>
+                      <Switch
+                        isDisabled={isSavingSettings}
+                        isSelected={dashboard?.settings.navigation.showBank ?? true}
+                        onValueChange={(value) => {
+                          void handleToggleBankVisibility(value)
+                        }}
+                      >
+                        Показывать банк
+                      </Switch>
+                    </Table.Cell>
+                  </Table.Row>
+                </Table.Body>
+              </Table.Content>
+            </Table.ScrollContainer>
+          </Table>
+        </AdminTableCard>
       ) : null}
 
       {selectedTab === 'users' ? (
-        <div className="grid gap-4 xl:grid-cols-2">
-          {(dashboard?.players ?? []).map((player) => (
-            <Card key={player.lowercaseNickname}>
-              <Card.Header className="flex items-start justify-between gap-4">
-                <div>
-                  <Card.Title>{player.nickname}</Card.Title>
-                  <Card.Description>{player.discordId}</Card.Description>
-                </div>
-                <Chip color={player.blocked ? 'danger' : 'success'} variant="soft">
-                  {player.blocked ? 'Заблокирован' : 'Активен'}
-                </Chip>
-              </Card.Header>
-              <Card.Content className="grid gap-3">
-                <Text color="muted" type="body-sm">Последний вход: {formatDate(player.lastLoginAt)}</Text>
-                <Text color="muted" type="body-sm">Регистрация: {formatDate(player.registeredAt)}</Text>
-                <div className="flex flex-wrap gap-2">
-                  <Button
-                    size="sm"
-                    color={player.blocked ? 'success' : 'danger'}
-                    onPress={() => void handleTogglePlayerBlocked(player)}
-                  >
-                    {player.blocked ? 'Разблокировать' : 'Заблокировать'}
-                  </Button>
-                </div>
-              </Card.Content>
-            </Card>
-          ))}
-        </div>
+        <AdminTableCard
+          title="Пользователи"
+          description="Список игроков, привязанные Discord-аккаунты и блокировки."
+        >
+          <Table variant="secondary">
+            <Table.ScrollContainer>
+              <Table.Content aria-label="Пользователи" className="min-w-[900px]">
+                <Table.Header>
+                  <Table.Column isRowHeader>Игрок</Table.Column>
+                  <Table.Column>Discord ID</Table.Column>
+                  <Table.Column>Последний вход</Table.Column>
+                  <Table.Column>Регистрация</Table.Column>
+                  <Table.Column>Статус</Table.Column>
+                  <Table.Column>Действия</Table.Column>
+                </Table.Header>
+                <Table.Body renderEmptyState={renderTableEmptyState('Игроков пока нет.')}>
+                  {(dashboard?.players ?? []).map((player) => (
+                    <Table.Row key={player.lowercaseNickname} id={player.lowercaseNickname}>
+                      <Table.Cell>{player.nickname}</Table.Cell>
+                      <Table.Cell>{player.discordId}</Table.Cell>
+                      <Table.Cell>{formatDate(player.lastLoginAt)}</Table.Cell>
+                      <Table.Cell>{formatDate(player.registeredAt)}</Table.Cell>
+                      <Table.Cell>
+                        <Chip color={player.blocked ? 'danger' : 'success'} variant="soft">
+                          {player.blocked ? 'Заблокирован' : 'Активен'}
+                        </Chip>
+                      </Table.Cell>
+                      <Table.Cell>
+                        <Button
+                          size="sm"
+                          color={player.blocked ? 'success' : 'danger'}
+                          onPress={() => void handleTogglePlayerBlocked(player)}
+                        >
+                          {player.blocked ? 'Разблокировать' : 'Заблокировать'}
+                        </Button>
+                      </Table.Cell>
+                    </Table.Row>
+                  ))}
+                </Table.Body>
+              </Table.Content>
+            </Table.ScrollContainer>
+          </Table>
+        </AdminTableCard>
       ) : null}
 
       {selectedTab === 'payments' ? (
-        <div className="grid gap-4">
-          {(dashboard?.payments ?? []).map((payment) => (
-            <Card key={payment.id}>
-              <Card.Header className="flex items-start justify-between gap-4">
-                <div>
-                  <Card.Title>{payment.nickname}</Card.Title>
-                  <Card.Description>{payment.productName}</Card.Description>
-                </div>
-                <Chip
-                  color={getPaymentStatusMeta(payment.status).color}
-                  variant="soft"
-                >
-                  {getPaymentStatusMeta(payment.status).label}
-                </Chip>
-              </Card.Header>
-              <Card.Content className="grid gap-2 md:grid-cols-2">
-                <Text color="muted" type="body-sm">Сумма: {payment.amountRub} руб.</Text>
-                <Text color="muted" type="body-sm">Провайдер: {payment.provider}</Text>
-                <Text color="muted" type="body-sm">Создан: {formatDate(payment.createdAt)}</Text>
-                <Text color="muted" type="body-sm">Обновлён: {formatDate(payment.updatedAt)}</Text>
-                <Text color="muted" type="body-sm">ID платежа: {payment.id}</Text>
-                <Text color="muted" type="body-sm">Provider payment ID: {payment.providerPaymentId ?? '—'}</Text>
-              </Card.Content>
-            </Card>
-          ))}
-        </div>
+        <AdminTableCard
+          title="Покупки"
+          description="Полный журнал платежей, провайдеров и состояний оплаты."
+        >
+          <Table variant="secondary">
+            <Table.ScrollContainer>
+              <Table.Content aria-label="Покупки" className="min-w-[1140px]">
+                <Table.Header>
+                  <Table.Column isRowHeader>Игрок</Table.Column>
+                  <Table.Column>Товар</Table.Column>
+                  <Table.Column>Сумма</Table.Column>
+                  <Table.Column>Статус</Table.Column>
+                  <Table.Column>Провайдер</Table.Column>
+                  <Table.Column>Payment ID</Table.Column>
+                  <Table.Column>Создан</Table.Column>
+                  <Table.Column>Обновлен</Table.Column>
+                </Table.Header>
+                <Table.Body renderEmptyState={renderTableEmptyState('Покупок пока нет.')}>
+                  {(dashboard?.payments ?? []).map((payment) => (
+                    <Table.Row key={payment.id} id={payment.id}>
+                      <Table.Cell>{payment.nickname}</Table.Cell>
+                      <Table.Cell>{payment.productName}</Table.Cell>
+                      <Table.Cell>{payment.amountRub} руб.</Table.Cell>
+                      <Table.Cell>
+                        <Chip color={getPaymentStatusMeta(payment.status).color} variant="soft">
+                          {getPaymentStatusMeta(payment.status).label}
+                        </Chip>
+                      </Table.Cell>
+                      <Table.Cell>{payment.provider}</Table.Cell>
+                      <Table.Cell>{payment.providerPaymentId ?? payment.id}</Table.Cell>
+                      <Table.Cell>{formatDate(payment.createdAt)}</Table.Cell>
+                      <Table.Cell>{formatDate(payment.updatedAt)}</Table.Cell>
+                    </Table.Row>
+                  ))}
+                </Table.Body>
+              </Table.Content>
+            </Table.ScrollContainer>
+          </Table>
+        </AdminTableCard>
       ) : null}
 
       {selectedTab === 'whitelist' ? (
-        <div className="grid gap-4 xl:grid-cols-2">
-          {(dashboard?.whitelist ?? []).map((entry) => (
-            <Card key={entry.nickname}>
-              <Card.Header className="flex items-start justify-between gap-4">
-                <div>
-                  <Card.Title>{entry.nickname}</Card.Title>
-                  <Card.Description>{entry.source ?? 'Источник не указан'}</Card.Description>
-                </div>
-                <Chip color={entry.active ? 'success' : 'default'} variant="soft">
-                  {entry.active ? 'В whitelist' : 'Неактивен'}
-                </Chip>
-              </Card.Header>
-              <Card.Content className="grid gap-3">
-                <Text color="muted" type="body-sm">Покупка: {entry.purchaseId ?? '—'}</Text>
-                <Text color="muted" type="body-sm">Добавлен: {formatDate(entry.createdAt)}</Text>
-                <Text color="muted" type="body-sm">Обновлён: {formatDate(entry.updatedAt)}</Text>
-                <div className="flex flex-wrap gap-2">
-                  <Button size="sm" color="danger" onPress={() => void handleDeleteWhitelistEntry(entry)}>
-                    Удалить из whitelist
-                  </Button>
-                </div>
-              </Card.Content>
-            </Card>
-          ))}
-        </div>
+        <AdminTableCard
+          title="Whitelist"
+          description="Белый список, источник попадания и ручное удаление записей."
+        >
+          <Table variant="secondary">
+            <Table.ScrollContainer>
+              <Table.Content aria-label="Whitelist" className="min-w-[900px]">
+                <Table.Header>
+                  <Table.Column isRowHeader>Игрок</Table.Column>
+                  <Table.Column>Источник</Table.Column>
+                  <Table.Column>Покупка</Table.Column>
+                  <Table.Column>Статус</Table.Column>
+                  <Table.Column>Добавлен</Table.Column>
+                  <Table.Column>Обновлен</Table.Column>
+                  <Table.Column>Действия</Table.Column>
+                </Table.Header>
+                <Table.Body renderEmptyState={renderTableEmptyState('Whitelist пуст.')}>
+                  {(dashboard?.whitelist ?? []).map((entry) => (
+                    <Table.Row key={entry.nickname} id={entry.nickname}>
+                      <Table.Cell>{entry.nickname}</Table.Cell>
+                      <Table.Cell>{entry.source ?? 'Источник не указан'}</Table.Cell>
+                      <Table.Cell>{entry.purchaseId ?? '—'}</Table.Cell>
+                      <Table.Cell>
+                        <Chip color={entry.active ? 'success' : 'default'} variant="soft">
+                          {entry.active ? 'В whitelist' : 'Неактивен'}
+                        </Chip>
+                      </Table.Cell>
+                      <Table.Cell>{formatDate(entry.createdAt)}</Table.Cell>
+                      <Table.Cell>{formatDate(entry.updatedAt)}</Table.Cell>
+                      <Table.Cell>
+                        <Button size="sm" color="danger" onPress={() => void handleDeleteWhitelistEntry(entry)}>
+                          Удалить
+                        </Button>
+                      </Table.Cell>
+                    </Table.Row>
+                  ))}
+                </Table.Body>
+              </Table.Content>
+            </Table.ScrollContainer>
+          </Table>
+        </AdminTableCard>
       ) : null}
 
       {selectedTab === 'promos' ? (
-        <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+        <div className="grid gap-6">
           <Card>
             <Card.Header>
               <Card.Title>Создать промокод</Card.Title>
             </Card.Header>
-            <Card.Content className="grid gap-4">
+            <Card.Content className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               <Input label="Код" value={promoCode} onChange={(event) => setPromoCode(event.target.value.toUpperCase())} placeholder="WELCOME10" />
               <Input label="Тип скидки" value={discountType} onChange={(event) => setDiscountType(event.target.value as 'percent' | 'fixed')} placeholder="percent или fixed" />
               <Input label="Значение скидки" value={discountValue} onChange={(event) => setDiscountValue(event.target.value)} />
@@ -783,33 +948,54 @@ export function AdminPage() {
             </Card.Content>
           </Card>
 
-          <Card>
-            <Card.Header>
-              <Card.Title>Промокоды</Card.Title>
-            </Card.Header>
-            <Card.Content className="grid gap-3">
-              {promoCodes.map((row) => (
-                <div key={row.id} className="grid gap-3 rounded-xl border border-default-200 p-3">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <Text type="body-sm">{row.code}</Text>
-                      <Text color="muted" type="body-sm">{formatPromoDiscount(row)}</Text>
-                    </div>
-                    <Chip
-                      color={getPromoStatusMeta(row.isActive).color}
-                      variant="soft"
-                    >
-                      {getPromoStatusMeta(row.isActive).label}
-                    </Chip>
-                  </div>
-                  <Text color="muted" type="body-sm">Лимит: {row.maxUses ?? '—'} / На ник: {row.maxUsesPerNickname ?? '—'} / Использовано: {row.usedCount}</Text>
-                  <Button size="sm" variant="ghost" onPress={() => void handleTogglePromoActive(row)}>
-                    {row.isActive ? 'Отключить' : 'Включить'}
-                  </Button>
-                </div>
-              ))}
-            </Card.Content>
-          </Card>
+          <AdminTableCard
+            title="Промокоды"
+            description="Скидки, лимиты использования и состояние публикации."
+          >
+            <Table variant="secondary">
+              <Table.ScrollContainer>
+                <Table.Content aria-label="Промокоды" className="min-w-[1040px]">
+                  <Table.Header>
+                    <Table.Column isRowHeader>Код</Table.Column>
+                    <Table.Column>Скидка</Table.Column>
+                    <Table.Column>Лимит</Table.Column>
+                    <Table.Column>На ник</Table.Column>
+                    <Table.Column>Использовано</Table.Column>
+                    <Table.Column>Статус</Table.Column>
+                    <Table.Column>Период</Table.Column>
+                    <Table.Column>Действия</Table.Column>
+                  </Table.Header>
+                  <Table.Body renderEmptyState={renderTableEmptyState('Промокодов пока нет.')}>
+                    {promoCodes.map((row) => (
+                      <Table.Row key={row.id} id={row.id}>
+                        <Table.Cell>{row.code}</Table.Cell>
+                        <Table.Cell>{formatPromoDiscount(row)}</Table.Cell>
+                        <Table.Cell>{row.maxUses ?? '—'}</Table.Cell>
+                        <Table.Cell>{row.maxUsesPerNickname ?? '—'}</Table.Cell>
+                        <Table.Cell>{row.usedCount}</Table.Cell>
+                        <Table.Cell>
+                          <Chip color={getPromoStatusMeta(row.isActive).color} variant="soft">
+                            {getPromoStatusMeta(row.isActive).label}
+                          </Chip>
+                        </Table.Cell>
+                        <Table.Cell>
+                          <div className="grid gap-1">
+                            <Text color="muted" type="body-sm">c {formatDate(row.startsAt)}</Text>
+                            <Text color="muted" type="body-sm">до {formatDate(row.endsAt)}</Text>
+                          </div>
+                        </Table.Cell>
+                        <Table.Cell>
+                          <Button size="sm" variant="ghost" onPress={() => void handleTogglePromoActive(row)}>
+                            {row.isActive ? 'Отключить' : 'Включить'}
+                          </Button>
+                        </Table.Cell>
+                      </Table.Row>
+                    ))}
+                  </Table.Body>
+                </Table.Content>
+              </Table.ScrollContainer>
+            </Table>
+          </AdminTableCard>
         </div>
       ) : null}
     </div>
@@ -833,7 +1019,7 @@ export function AdminPage() {
         description="Заявки, посты, пользователи, навигация и платежные данные сайта."
         actions={
           <>
-            <HeroLinkButton to="/news" variant="secondary">Открыть ленту</HeroLinkButton>
+            <HeroLinkButton to="/cabinet/news" variant="secondary">Открыть ленту</HeroLinkButton>
             <HeroLinkButton to="/cabinet" variant="secondary">К кабинету</HeroLinkButton>
             <Button
               variant="ghost"

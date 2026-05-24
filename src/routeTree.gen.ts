@@ -29,8 +29,10 @@ import { Route as PaymentPendingRouteImport } from './routes/payment.pending'
 import { Route as PaymentFailedRouteImport } from './routes/payment.failed'
 import { Route as NewsSlugRouteImport } from './routes/news.$slug'
 import { Route as CabinetStatsRouteImport } from './routes/cabinet.stats'
+import { Route as CabinetNewsRouteImport } from './routes/cabinet.news'
 import { Route as CabinetBankRouteImport } from './routes/cabinet.bank'
 import { Route as CabinetAdminRouteImport } from './routes/cabinet.admin'
+import { Route as CabinetNewsSlugRouteImport } from './routes/cabinet.news.$slug'
 import { Route as CabinetBankTransferRouteImport } from './routes/cabinet.bank.transfer'
 import { Route as CabinetBankHistoryRouteImport } from './routes/cabinet.bank.history'
 import { Route as CabinetBankCardsRouteImport } from './routes/cabinet.bank.cards'
@@ -135,6 +137,11 @@ const CabinetStatsRoute = CabinetStatsRouteImport.update({
   path: '/stats',
   getParentRoute: () => CabinetRoute,
 } as any)
+const CabinetNewsRoute = CabinetNewsRouteImport.update({
+  id: '/news',
+  path: '/news',
+  getParentRoute: () => CabinetRoute,
+} as any)
 const CabinetBankRoute = CabinetBankRouteImport.update({
   id: '/bank',
   path: '/bank',
@@ -144,6 +151,11 @@ const CabinetAdminRoute = CabinetAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
   getParentRoute: () => CabinetRoute,
+} as any)
+const CabinetNewsSlugRoute = CabinetNewsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => CabinetNewsRoute,
 } as any)
 const CabinetBankTransferRoute = CabinetBankTransferRouteImport.update({
   id: '/transfer',
@@ -178,6 +190,7 @@ export interface FileRoutesByFullPath {
   '/stats': typeof StatsRoute
   '/cabinet/admin': typeof CabinetAdminRoute
   '/cabinet/bank': typeof CabinetBankRouteWithChildren
+  '/cabinet/news': typeof CabinetNewsRouteWithChildren
   '/cabinet/stats': typeof CabinetStatsRoute
   '/news/$slug': typeof NewsSlugRoute
   '/payment/failed': typeof PaymentFailedRoute
@@ -187,6 +200,7 @@ export interface FileRoutesByFullPath {
   '/cabinet/bank/cards': typeof CabinetBankCardsRoute
   '/cabinet/bank/history': typeof CabinetBankHistoryRoute
   '/cabinet/bank/transfer': typeof CabinetBankTransferRoute
+  '/cabinet/news/$slug': typeof CabinetNewsSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -205,6 +219,7 @@ export interface FileRoutesByTo {
   '/stats': typeof StatsRoute
   '/cabinet/admin': typeof CabinetAdminRoute
   '/cabinet/bank': typeof CabinetBankRouteWithChildren
+  '/cabinet/news': typeof CabinetNewsRouteWithChildren
   '/cabinet/stats': typeof CabinetStatsRoute
   '/news/$slug': typeof NewsSlugRoute
   '/payment/failed': typeof PaymentFailedRoute
@@ -214,6 +229,7 @@ export interface FileRoutesByTo {
   '/cabinet/bank/cards': typeof CabinetBankCardsRoute
   '/cabinet/bank/history': typeof CabinetBankHistoryRoute
   '/cabinet/bank/transfer': typeof CabinetBankTransferRoute
+  '/cabinet/news/$slug': typeof CabinetNewsSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -233,6 +249,7 @@ export interface FileRoutesById {
   '/stats': typeof StatsRoute
   '/cabinet/admin': typeof CabinetAdminRoute
   '/cabinet/bank': typeof CabinetBankRouteWithChildren
+  '/cabinet/news': typeof CabinetNewsRouteWithChildren
   '/cabinet/stats': typeof CabinetStatsRoute
   '/news/$slug': typeof NewsSlugRoute
   '/payment/failed': typeof PaymentFailedRoute
@@ -242,6 +259,7 @@ export interface FileRoutesById {
   '/cabinet/bank/cards': typeof CabinetBankCardsRoute
   '/cabinet/bank/history': typeof CabinetBankHistoryRoute
   '/cabinet/bank/transfer': typeof CabinetBankTransferRoute
+  '/cabinet/news/$slug': typeof CabinetNewsSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -262,6 +280,7 @@ export interface FileRouteTypes {
     | '/stats'
     | '/cabinet/admin'
     | '/cabinet/bank'
+    | '/cabinet/news'
     | '/cabinet/stats'
     | '/news/$slug'
     | '/payment/failed'
@@ -271,6 +290,7 @@ export interface FileRouteTypes {
     | '/cabinet/bank/cards'
     | '/cabinet/bank/history'
     | '/cabinet/bank/transfer'
+    | '/cabinet/news/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -289,6 +309,7 @@ export interface FileRouteTypes {
     | '/stats'
     | '/cabinet/admin'
     | '/cabinet/bank'
+    | '/cabinet/news'
     | '/cabinet/stats'
     | '/news/$slug'
     | '/payment/failed'
@@ -298,6 +319,7 @@ export interface FileRouteTypes {
     | '/cabinet/bank/cards'
     | '/cabinet/bank/history'
     | '/cabinet/bank/transfer'
+    | '/cabinet/news/$slug'
   id:
     | '__root__'
     | '/'
@@ -316,6 +338,7 @@ export interface FileRouteTypes {
     | '/stats'
     | '/cabinet/admin'
     | '/cabinet/bank'
+    | '/cabinet/news'
     | '/cabinet/stats'
     | '/news/$slug'
     | '/payment/failed'
@@ -325,6 +348,7 @@ export interface FileRouteTypes {
     | '/cabinet/bank/cards'
     | '/cabinet/bank/history'
     | '/cabinet/bank/transfer'
+    | '/cabinet/news/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -487,6 +511,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CabinetStatsRouteImport
       parentRoute: typeof CabinetRoute
     }
+    '/cabinet/news': {
+      id: '/cabinet/news'
+      path: '/news'
+      fullPath: '/cabinet/news'
+      preLoaderRoute: typeof CabinetNewsRouteImport
+      parentRoute: typeof CabinetRoute
+    }
     '/cabinet/bank': {
       id: '/cabinet/bank'
       path: '/bank'
@@ -500,6 +531,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/cabinet/admin'
       preLoaderRoute: typeof CabinetAdminRouteImport
       parentRoute: typeof CabinetRoute
+    }
+    '/cabinet/news/$slug': {
+      id: '/cabinet/news/$slug'
+      path: '/$slug'
+      fullPath: '/cabinet/news/$slug'
+      preLoaderRoute: typeof CabinetNewsSlugRouteImport
+      parentRoute: typeof CabinetNewsRoute
     }
     '/cabinet/bank/transfer': {
       id: '/cabinet/bank/transfer'
@@ -541,15 +579,29 @@ const CabinetBankRouteWithChildren = CabinetBankRoute._addFileChildren(
   CabinetBankRouteChildren,
 )
 
+interface CabinetNewsRouteChildren {
+  CabinetNewsSlugRoute: typeof CabinetNewsSlugRoute
+}
+
+const CabinetNewsRouteChildren: CabinetNewsRouteChildren = {
+  CabinetNewsSlugRoute: CabinetNewsSlugRoute,
+}
+
+const CabinetNewsRouteWithChildren = CabinetNewsRoute._addFileChildren(
+  CabinetNewsRouteChildren,
+)
+
 interface CabinetRouteChildren {
   CabinetAdminRoute: typeof CabinetAdminRoute
   CabinetBankRoute: typeof CabinetBankRouteWithChildren
+  CabinetNewsRoute: typeof CabinetNewsRouteWithChildren
   CabinetStatsRoute: typeof CabinetStatsRoute
 }
 
 const CabinetRouteChildren: CabinetRouteChildren = {
   CabinetAdminRoute: CabinetAdminRoute,
   CabinetBankRoute: CabinetBankRouteWithChildren,
+  CabinetNewsRoute: CabinetNewsRouteWithChildren,
   CabinetStatsRoute: CabinetStatsRoute,
 }
 

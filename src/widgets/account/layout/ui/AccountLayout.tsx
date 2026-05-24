@@ -7,7 +7,7 @@ import type { AdminView } from '@/widgets/account/sidebar/model/account-sidebar-
 
 type AccountLayoutProps = {
   account: AccountPayload
-  currentSection: 'home' | 'bank' | 'stats' | 'admin'
+  currentSection: 'home' | 'bank' | 'stats' | 'news' | 'admin'
   activeBankView?: BankView
   activeAdminView?: AdminView
   onBankViewNavigate: (view: BankView) => void

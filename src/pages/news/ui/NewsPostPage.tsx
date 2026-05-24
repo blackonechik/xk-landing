@@ -5,6 +5,8 @@ import { HeroLinkButton, HeroPage } from '@/shared/ui/hero-page'
 
 type NewsPostPageProps = {
   slug: string
+  backTo?: '/news' | '/cabinet/news'
+  embedded?: boolean
 }
 
 function formatDate(value: string | null) {
@@ -18,7 +20,11 @@ function formatDate(value: string | null) {
   }).format(new Date(value))
 }
 
-export function NewsPostPage({ slug }: NewsPostPageProps) {
+export function NewsPostPage({
+  slug,
+  backTo = '/news',
+  embedded = false,
+}: NewsPostPageProps) {
   const [post, setPost] = useState<SitePost | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
@@ -57,14 +63,8 @@ export function NewsPostPage({ slug }: NewsPostPageProps) {
     }
   }, [slug])
 
-  return (
-    <HeroPage
-      eyebrow="Новости"
-      title={post?.title ?? 'Загружаем пост'}
-      description={post?.summary ?? 'Подгружаем публикацию сервера.'}
-      actions={<HeroLinkButton to="/news" variant="secondary">К ленте</HeroLinkButton>}
-      narrow
-    >
+  const content = (
+    <>
       {isLoading ? (
         <Alert status="accent">
           <Alert.Indicator>
@@ -100,6 +100,22 @@ export function NewsPostPage({ slug }: NewsPostPageProps) {
           </Card.Content>
         </Card>
       ) : null}
+    </>
+  )
+
+  if (embedded) {
+    return content
+  }
+
+  return (
+    <HeroPage
+      eyebrow="Новости"
+      title={post?.title ?? 'Загружаем пост'}
+      description={post?.summary ?? 'Подгружаем публикацию сервера.'}
+      actions={<HeroLinkButton to={backTo} variant="secondary">К ленте</HeroLinkButton>}
+      narrow
+    >
+      {content}
     </HeroPage>
   )
 }
