@@ -95,7 +95,11 @@ export function CabinetBankPage() {
 
     const hasBankCards = account.bank.cards.length > 0
 
-    if (!hasBankCards && pathname !== '/cabinet/bank') {
+    if (
+      !hasBankCards &&
+      pathname.startsWith('/cabinet/bank/') &&
+      pathname !== '/cabinet/bank'
+    ) {
       void navigate({ replace: true, to: '/cabinet/bank' })
       return
     }

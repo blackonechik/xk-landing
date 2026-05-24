@@ -1,4 +1,5 @@
 import type { PlayerProfileAppearance } from '@/entities/account'
+import type { SiteRole } from '@/entities/account'
 
 export type PlayerDailyActivity = {
   date: string
@@ -12,6 +13,8 @@ export type PublicPlayerProfile = {
   lastLoginAt: string | null
   playedHours: number
   isOnline: boolean
+  siteRole: SiteRole
+  roles: SiteRole[]
   stats: {
     totalHours: number
     monthHours: number

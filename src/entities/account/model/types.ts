@@ -2,7 +2,7 @@ import type { BankCard, BankLimits, BankTransfer } from '@/entities/bank'
 
 type CustomHexColor = `#${string}`
 
-export type SiteRole = 'player' | 'admin'
+export type SiteRole = string
 
 export type CabinetPlayer = {
   nickname: string
@@ -13,6 +13,7 @@ export type CabinetPlayer = {
   lastLoginAt: string | null
   lives: number
   siteRole: SiteRole
+  roles: SiteRole[]
   appearance: PlayerProfileAppearance
   social: {
     discordId: string

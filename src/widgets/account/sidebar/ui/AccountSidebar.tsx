@@ -1,6 +1,10 @@
 import { Button, Card, Chip, Text } from '@heroui/react'
 import ThemeToggle from '@/components/ThemeToggle'
-import { PlayerAvatar } from '@/entities/account'
+import {
+  getPrimaryRoleLabel,
+  isAdminRole,
+  PlayerAvatar,
+} from '@/entities/account'
 import type { AccountPayload } from '@/entities/account'
 import { fetchSiteSettingsCached, type SiteSettings } from '@/entities/site'
 import type { BankView } from '@/widgets/account/bank-cabinet'
@@ -49,7 +53,7 @@ export function AccountSidebar({
     currentSection,
     activeBankView,
     hasBankCards: account.bank.cards.length > 0,
-    isAdmin: account.player.siteRole === 'admin',
+    isAdmin: isAdminRole(account.player.roles),
     showBank: settings?.navigation.showBank ?? true,
     onBankViewNavigate,
   })
@@ -60,7 +64,6 @@ export function AccountSidebar({
       variant="secondary"
     >
       <Card.Header className="flex flex-col gap-4 p-0">
-
         <div className="flex items-center gap-3">
           <PlayerAvatar
             className="size-14 shrink-0 border border-[var(--separator)] bg-[var(--surface-secondary)]"
@@ -71,11 +74,12 @@ export function AccountSidebar({
               {account.player.nickname}
             </Text>
             <div className="flex flex-wrap items-center gap-2">
-              {account.player.siteRole === 'admin' ? (
-                <Chip color="accent" variant="soft">
-                  Администратор сайта
-                </Chip>
-              ) : null}
+              <Chip
+                color={isAdminRole(account.player.roles) ? 'accent' : 'default'}
+                variant="soft"
+              >
+                {getPrimaryRoleLabel(account.player.roles)}
+              </Chip>
             </div>
           </div>
         </div>
@@ -85,7 +89,10 @@ export function AccountSidebar({
 
       <Card.Content className="flex min-h-0 flex-1 flex-col gap-4 p-0">
         <div className="grid gap-2">
-          <Text className="text-[12px] uppercase tracking-[0.08em]" color="muted">
+          <Text
+            className="text-[12px] uppercase tracking-[0.08em]"
+            color="muted"
+          >
             Навигация
           </Text>
           {sections.flatMap((section) =>

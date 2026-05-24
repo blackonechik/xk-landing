@@ -118,7 +118,7 @@ export function ProfileCharacterPanel({
                 <Modal.Header>
                   <Modal.Heading>Настройка профиля</Modal.Heading>
                   <Text className="mt-2" color="muted" type="body-sm">
-                    Выберите анимацию персонажа и градиент профиля. Анимация проигрывается не постоянно, а периодически, чтобы не перегружать страницу.
+                    Выберите анимацию персонажа и градиент профиля. Ваши друзья увидят эти настройки, когда будут посещать ваш профиль.
                   </Text>
                 </Modal.Header>
                 <Modal.Body className="grid gap-5 p-6 md:grid-cols-[0.9fr_1.1fr]">
@@ -184,9 +184,6 @@ export function ProfileCharacterPanel({
                           ))}
                         </ColorSwatchPicker>
                       </div>
-                      <Text color="muted" type="body-sm">
-                        {getProfileBackgroundLabel(draftAppearance.background)}
-                      </Text>
                     </div>
                   </div>
 

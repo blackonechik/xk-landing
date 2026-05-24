@@ -1,14 +1,9 @@
 import type { ReactNode } from 'react'
 import { useEffect, useState } from 'react'
 import { Card, Chip } from '@heroui/react'
-import {
-  Circle,
-  Gem,
-  HeartPulse,
-  Radio,
-  ScrollText,
-} from 'lucide-react'
+import { Circle, Gem, HeartPulse, Radio, ScrollText } from 'lucide-react'
 import AnimatedLink from '@/components/AnimatedLink'
+import { getPrimaryRoleLabel, isAdminRole } from '@/entities/account'
 import type { PublicPlayerProfile } from '@/entities/player'
 import { formatPlayedHours } from '@/entities/player'
 import { fetchSiteSettingsCached, type SiteSettings } from '@/entities/site'
@@ -139,7 +134,9 @@ function QuickSectionCard({
         'relative h-[310px] w-full overflow-hidden rounded-2xl',
         href ? 'cursor-pointer' : '',
         cardClassName,
-      ].filter(Boolean).join(' ')}
+      ]
+        .filter(Boolean)
+        .join(' ')}
       style={{ backgroundImage: gradient }}
     >
       <img
@@ -148,7 +145,9 @@ function QuickSectionCard({
         className={[
           'pointer-events-none absolute bottom-0 right-0 z-0 h-full w-auto object-contain object-bottom-right',
           imageClassName,
-        ].filter(Boolean).join(' ')}
+        ]
+          .filter(Boolean)
+          .join(' ')}
         src={imageSrc}
       />
 
@@ -161,10 +160,9 @@ function QuickSectionCard({
         </div>
 
         <div
-          className={[
-            'mt-[22px] grid gap-2',
-            textClassName,
-          ].filter(Boolean).join(' ')}
+          className={['mt-[22px] grid gap-2', textClassName]
+            .filter(Boolean)
+            .join(' ')}
           style={{ filter: 'drop-shadow(-2px 1px 0px #2d3935)' }}
         >
           <p className="text-5xl font-bold leading-none text-left text-[#fdfcfc]">
@@ -224,7 +222,8 @@ export function ProfileStatusPanel({
   const sections: QuickSection[] = [
     {
       cardClassName: 'xl:col-start-1 xl:row-start-1 xl:w-[613px]',
-      description: 'Объединяйтесь в страны, города, королевства и развивайте их.',
+      description:
+        'Объединяйтесь в страны, города, королевства и развивайте их.',
       gradient:
         'linear-gradient(180deg, rgb(152 200 255 / 0.26) 0%, rgb(101 161 194 / 0.26) 100%)',
       icon: <QuickSectionFlagIcon />,
@@ -238,7 +237,8 @@ export function ProfileStatusPanel({
       : [
           {
             cardClassName: 'xl:col-start-2 xl:row-start-1 xl:w-[613px]',
-            description: 'Переводы, карты и управление игровой валютой в одном месте.',
+            description:
+              'Переводы, карты и управление игровой валютой в одном месте.',
             gradient:
               'linear-gradient(180deg, rgb(255 186 152 / 0.26) 0%, rgb(237 46 24 / 0.26) 100%)',
             href: '/cabinet/bank',
@@ -268,17 +268,34 @@ export function ProfileStatusPanel({
       <Card.Header className="flex items-start justify-between gap-4">
         <div>
           <div className="flex flex-wrap items-center gap-3">
-            {player.isOnline ?
+            {player.isOnline ? (
               <Chip color="success">
-                <Circle width={6} fill="currentColor" strokeWidth={0} size={16} />
+                <Circle
+                  width={6}
+                  fill="currentColor"
+                  strokeWidth={0}
+                  size={16}
+                />
                 <Chip.Label>Онлайн</Chip.Label>
               </Chip>
-              :
+            ) : (
               <Chip color="danger">
-                <Circle width={6} fill="currentColor" strokeWidth={0} size={16} />
+                <Circle
+                  width={6}
+                  fill="currentColor"
+                  strokeWidth={0}
+                  size={16}
+                />
                 <Chip.Label>Оффлайн</Chip.Label>
-              </Chip>}
-            <Card.Title className='text-lg'>{player.nickname}</Card.Title>
+              </Chip>
+            )}
+            <Chip
+              color={isAdminRole(player.roles) ? 'accent' : 'default'}
+              variant="soft"
+            >
+              {getPrimaryRoleLabel(player.roles)}
+            </Chip>
+            <Card.Title className="text-lg">{player.nickname}</Card.Title>
           </div>
         </div>
         {actions ? <div className="flex flex-wrap gap-2">{actions}</div> : null}

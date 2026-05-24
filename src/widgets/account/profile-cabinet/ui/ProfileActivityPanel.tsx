@@ -69,19 +69,27 @@ export function ProfileActivityPanel({ player }: ProfileActivityPanelProps) {
       <Card.Content className="grid gap-5">
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <div className="rounded-lg border border-[var(--separator)] p-4">
-            <Text color="muted" type="body-sm">Наиграл</Text>
+            <Text color="muted" type="body-sm">
+              Наиграл
+            </Text>
             <Text type="h4">{formatPlayedHours(player.stats.totalHours)}</Text>
           </div>
           <div className="rounded-lg border border-[var(--separator)] p-4">
-            <Text color="muted" type="body-sm">Месяц</Text>
+            <Text color="muted" type="body-sm">
+              Месяц
+            </Text>
             <Text type="h4">{formatPlayedHours(player.stats.monthHours)}</Text>
           </div>
           <div className="rounded-lg border border-[var(--separator)] p-4">
-            <Text color="muted" type="body-sm">Неделя</Text>
+            <Text color="muted" type="body-sm">
+              Неделя
+            </Text>
             <Text type="h4">{formatPlayedHours(player.stats.weekHours)}</Text>
           </div>
           <div className="rounded-lg border border-[var(--separator)] p-4">
-            <Text color="muted" type="body-sm">Сегодня</Text>
+            <Text color="muted" type="body-sm">
+              Сегодня
+            </Text>
             <Text type="h4">{formatPlayedHours(player.stats.todayHours)}</Text>
           </div>
         </div>
@@ -95,18 +103,16 @@ export function ProfileActivityPanel({ player }: ProfileActivityPanelProps) {
               const formattedHours = formatPlayedHours(hours)
 
               return (
-                <Tooltip
-                  key={key}
-                  delay={100}
-                >
+                <Tooltip key={key} delay={100}>
                   <Tooltip.Trigger
                     aria-label={`${formattedDate}: ${formattedHours}`}
                     className={[
-                      'aspect-square w-full rounded-[3px] border border-separator/60',
+                      'block aspect-square w-full rounded-[3px] border border-separator/60',
                       getCellClassName(hours),
                     ].join(' ')}
                   />
-                  <Tooltip.Content placement="top">
+                  <Tooltip.Content showArrow placement="top">
+                    <Tooltip.Arrow />
                     <div className="grid gap-0.5 text-center">
                       <span>{formattedDate}</span>
                       <span className="text-muted">{formattedHours}</span>
