@@ -25,23 +25,25 @@ export function PlayerProfileView({
   onPlayerChange,
 }: PlayerProfileViewProps) {
   return (
-    <div className="grid gap-6 xl:grid-cols-[minmax(0,0.44fr)_minmax(0,1fr)]">
-      <ProfileCharacterPanel
-        appearance={appearance}
-        isEditable={isOwnProfile}
-        isOwnProfile={isOwnProfile}
-        nickname={player.nickname}
-        onAppearanceChange={onAppearanceChange}
-        onPlayerChange={onPlayerChange}
-        player={player}
-      />
-      <ProfileStatusPanel
-        actions={actions}
-        isOwnProfile={isOwnProfile}
-        player={player}
-        totalDiamonds={totalDiamonds}
-      />
-      <div className="xl:col-span-2">
+    <div className="grid items-start gap-6 xl:grid-cols-[minmax(320px,0.44fr)_minmax(0,1fr)]">
+      <div className="xl:sticky xl:top-0 xl:self-start">
+        <ProfileCharacterPanel
+          appearance={appearance}
+          isEditable={isOwnProfile}
+          isOwnProfile={isOwnProfile}
+          nickname={player.nickname}
+          onAppearanceChange={onAppearanceChange}
+          onPlayerChange={onPlayerChange}
+          player={player}
+        />
+      </div>
+      <div className="grid gap-6">
+        <ProfileStatusPanel
+          actions={actions}
+          isOwnProfile={isOwnProfile}
+          player={player}
+          totalDiamonds={totalDiamonds}
+        />
         <ProfileActivityPanel player={player} />
       </div>
     </div>

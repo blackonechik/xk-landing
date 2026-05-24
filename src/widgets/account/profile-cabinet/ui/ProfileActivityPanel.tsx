@@ -1,4 +1,4 @@
-import { Card, Text } from '@heroui/react'
+import { Card, Text, Tooltip } from '@heroui/react'
 import { formatPlayedHours } from '@/entities/player'
 import type { PublicPlayerProfile } from '@/entities/player'
 
@@ -87,20 +87,32 @@ export function ProfileActivityPanel({ player }: ProfileActivityPanelProps) {
         </div>
 
         <div className="overflow-x-auto pb-1">
-          <div className="grid w-full grid-flow-col grid-rows-7 gap-1">
+          <div className="grid w-full auto-cols-fr grid-flow-col grid-rows-7 gap-1">
             {dates.map((date) => {
               const key = getDateKey(date)
               const hours = activityByDate.get(key) ?? 0
+              const formattedDate = dayFormatter.format(date)
+              const formattedHours = formatPlayedHours(hours)
 
               return (
-                <span
+                <Tooltip
                   key={key}
-                  className={[
-                    'size-4 rounded-[3px] border border-separator/60',
-                    getCellClassName(hours),
-                  ].join(' ')}
-                  title={`${dayFormatter.format(date)}: ${formatPlayedHours(hours)}`}
-                />
+                  delay={100}
+                >
+                  <Tooltip.Trigger
+                    aria-label={`${formattedDate}: ${formattedHours}`}
+                    className={[
+                      'aspect-square w-full rounded-[3px] border border-separator/60',
+                      getCellClassName(hours),
+                    ].join(' ')}
+                  />
+                  <Tooltip.Content placement="top">
+                    <div className="grid gap-0.5 text-center">
+                      <span>{formattedDate}</span>
+                      <span className="text-muted">{formattedHours}</span>
+                    </div>
+                  </Tooltip.Content>
+                </Tooltip>
               )
             })}
           </div>
