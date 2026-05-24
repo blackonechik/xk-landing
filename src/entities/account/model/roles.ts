@@ -1,5 +1,5 @@
 const roleLabels: Record<string, string> = {
-  admin: 'Администратор сайта',
+  admin: 'Админ',
   moderator: 'Модератор',
   player: 'Игрок',
 }

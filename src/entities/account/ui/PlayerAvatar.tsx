@@ -24,14 +24,9 @@ type CachedAppearance = {
 
 const appearanceCache = new Map<string, CachedAppearance>()
 const appearanceRequests = new Map<string, Promise<CachedAppearance>>()
+let defaultSteveAppearance: CachedAppearance | null = null
 
-function getHueSeed(name: string) {
-  return name
-    .split('')
-    .reduce((accumulator, char) => accumulator + char.charCodeAt(0), 0) % 360
-}
-
-function createFallbackSkinDataUrl(name: string) {
+function createSteveSkinDataUrl() {
   if (typeof document === 'undefined') {
     return ''
   }
@@ -44,52 +39,125 @@ function createFallbackSkinDataUrl(name: string) {
   if (!context) {
     return ''
   }
-
-  const hue = getHueSeed(name)
-
-  context.fillStyle = '#000000'
-  context.fillRect(0, 0, 64, 64)
-  context.fillStyle = `hsl(${hue}, 65%, 48%)`
-  context.fillRect(8, 8, 24, 24)
-  context.fillStyle = `hsl(${(hue + 28) % 360}, 72%, 34%)`
-  context.fillRect(8, 32, 24, 24)
-  context.fillStyle = 'rgba(255,255,255,0.16)'
-  context.fillRect(32, 8, 24, 48)
-
-  return canvas.toDataURL('image/png')
-}
-
-function createFallbackHeadDataUrl(name: string) {
-  if (typeof document === 'undefined') {
-    return ''
-  }
-
-  const canvas = document.createElement('canvas')
-  canvas.width = 64
-  canvas.height = 64
-
-  const context = canvas.getContext('2d')
-  if (!context) {
-    return ''
-  }
-
-  const hue = getHueSeed(name)
 
   context.imageSmoothingEnabled = false
   context.clearRect(0, 0, 64, 64)
-  context.fillStyle = `hsl(${hue}, 58%, 52%)`
-  context.fillRect(0, 0, 64, 64)
-  context.fillStyle = `hsl(${(hue + 14) % 360}, 55%, 38%)`
-  context.fillRect(0, 0, 64, 10)
-  context.fillStyle = 'rgba(255,255,255,0.18)'
-  context.fillRect(8, 12, 12, 12)
-  context.fillRect(44, 12, 12, 12)
-  context.fillStyle = 'rgba(0,0,0,0.5)'
-  context.fillRect(14, 26, 36, 6)
-  context.fillStyle = 'rgba(255,255,255,0.1)'
-  context.fillRect(0, 0, 64, 64)
+
+  const paint = (
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    color: string,
+  ) => {
+    context.fillStyle = color
+    context.fillRect(x, y, width, height)
+  }
+
+  const skin = '#d7a37b'
+  const skinShade = '#b97d57'
+  const hair = '#6b4b34'
+  const hairShade = '#4b311f'
+  const shirt = '#4c88c7'
+  const shirtShade = '#2c5f97'
+  const trousers = '#3657a6'
+  const trousersShade = '#233d78'
+  const shoes = '#5a5a5a'
+  const shoesShade = '#3f3f3f'
+
+  paint(8, 8, 8, 8, skin)
+  paint(8, 8, 8, 2, hair)
+  paint(8, 10, 1, 6, hair)
+  paint(15, 10, 1, 6, hair)
+  paint(10, 11, 2, 2, '#2f2017')
+  paint(12, 11, 2, 2, '#2f2017')
+  paint(11, 14, 2, 1, hairShade)
+
+  paint(20, 20, 8, 12, shirt)
+  paint(20, 20, 8, 2, shirtShade)
+
+  paint(44, 20, 4, 12, skin)
+  paint(44, 20, 4, 2, skinShade)
+  paint(36, 52, 4, 12, skin)
+  paint(36, 52, 4, 2, skinShade)
+
+  paint(4, 20, 4, 12, shirt)
+  paint(4, 20, 4, 2, shirtShade)
+  paint(20, 52, 4, 12, shirt)
+  paint(20, 52, 4, 2, shirtShade)
+
+  paint(4, 16, 4, 4, skin)
+  paint(4, 16, 4, 1, skinShade)
+  paint(44, 16, 4, 4, skin)
+  paint(44, 16, 4, 1, skinShade)
+
+  paint(4, 32, 4, 12, trousers)
+  paint(4, 32, 4, 2, trousersShade)
+  paint(4, 44, 4, 4, shoes)
+  paint(4, 44, 4, 2, shoesShade)
+  paint(20, 48, 4, 12, trousers)
+  paint(20, 48, 4, 2, trousersShade)
+  paint(20, 60, 4, 4, shoes)
+  paint(20, 60, 4, 2, shoesShade)
+
+  paint(28, 52, 4, 12, trousers)
+  paint(28, 52, 4, 2, trousersShade)
+  paint(28, 60, 4, 4, shoes)
+  paint(28, 60, 4, 2, shoesShade)
+
+  paint(12, 48, 4, 12, trousers)
+  paint(12, 48, 4, 2, trousersShade)
+  paint(12, 60, 4, 4, shoes)
+  paint(12, 60, 4, 2, shoesShade)
+
+  paint(20, 32, 8, 4, trousers)
+  paint(20, 32, 8, 1, trousersShade)
 
   return canvas.toDataURL('image/png')
+}
+
+function createSteveHeadDataUrl() {
+  if (typeof document === 'undefined') {
+    return ''
+  }
+
+  const canvas = document.createElement('canvas')
+  canvas.width = 64
+  canvas.height = 64
+
+  const context = canvas.getContext('2d')
+  if (!context) {
+    return ''
+  }
+
+  context.imageSmoothingEnabled = false
+  context.clearRect(0, 0, 64, 64)
+  context.fillStyle = '#d7a37b'
+  context.fillRect(0, 0, 64, 64)
+  context.fillStyle = '#6b4b34'
+  context.fillRect(0, 0, 64, 10)
+  context.fillRect(0, 10, 8, 54)
+  context.fillRect(56, 10, 8, 54)
+  context.fillStyle = '#2f2017'
+  context.fillRect(12, 18, 12, 12)
+  context.fillRect(40, 18, 12, 12)
+  context.fillStyle = '#b97d57'
+  context.fillRect(24, 38, 16, 8)
+
+  return canvas.toDataURL('image/png')
+}
+
+function getDefaultSteveAppearance() {
+  if (defaultSteveAppearance) {
+    return defaultSteveAppearance
+  }
+
+  defaultSteveAppearance = {
+    skinSource: createSteveSkinDataUrl(),
+    avatarSource: createSteveHeadDataUrl(),
+  }
+
+  return defaultSteveAppearance
 }
 
 function loadImage(source: string) {
@@ -129,8 +197,7 @@ function getCachedAppearance(identifier: string) {
 }
 
 async function loadAppearance(identifier: string) {
-  const fallbackSkin = createFallbackSkinDataUrl(identifier)
-  const fallbackAvatar = createFallbackHeadDataUrl(identifier)
+  const fallbackAppearance = getDefaultSteveAppearance()
 
   if (appearanceCache.has(identifier)) {
     return appearanceCache.get(identifier)!
@@ -148,8 +215,14 @@ async function loadAppearance(identifier: string) {
       }
 
       const blob = await response.blob()
+      if (!blob.size || !blob.type.startsWith('image/')) {
+        throw new Error('SKIN_FETCH_FAILED')
+      }
+
       const objectUrl = URL.createObjectURL(blob)
-      const avatarSource = (await createHeadDataUrlFromSkin(objectUrl)) || fallbackAvatar
+      const avatarSource =
+        (await createHeadDataUrlFromSkin(objectUrl)) ||
+        fallbackAppearance.avatarSource
       const appearance = {
         skinSource: objectUrl,
         avatarSource,
@@ -161,8 +234,8 @@ async function loadAppearance(identifier: string) {
     })
     .catch(() => {
       const appearance = {
-        skinSource: fallbackSkin,
-        avatarSource: fallbackAvatar,
+        skinSource: fallbackAppearance.skinSource,
+        avatarSource: fallbackAppearance.avatarSource,
       }
 
       appearanceCache.set(identifier, appearance)
@@ -200,12 +273,12 @@ export function clearPlayerAppearanceCache(identifier?: string) {
 
 export function usePlayerAppearance(identifier: string) {
   const cachedAppearance = getCachedAppearance(identifier)
+  const fallbackAppearance = getDefaultSteveAppearance()
   const [skinSource, setSkinSource] = useState(
-    () => cachedAppearance?.skinSource ?? createFallbackSkinDataUrl(identifier),
+    () => cachedAppearance?.skinSource ?? fallbackAppearance.skinSource,
   )
   const [avatarSource, setAvatarSource] = useState(
-    () =>
-      cachedAppearance?.avatarSource ?? createFallbackHeadDataUrl(identifier),
+    () => cachedAppearance?.avatarSource ?? fallbackAppearance.avatarSource,
   )
 
   useEffect(() => {

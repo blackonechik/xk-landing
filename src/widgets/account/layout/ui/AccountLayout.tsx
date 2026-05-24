@@ -3,12 +3,15 @@ import { Chip, Text } from '@heroui/react'
 import { AccountSidebar } from '@/widgets/account/sidebar'
 import type { AccountPayload } from '@/entities/account'
 import type { BankView } from '@/widgets/account/bank-cabinet'
+import type { AdminView } from '@/widgets/account/sidebar/model/account-sidebar-menu'
 
 type AccountLayoutProps = {
   account: AccountPayload
   currentSection: 'home' | 'bank' | 'stats' | 'admin'
   activeBankView?: BankView
+  activeAdminView?: AdminView
   onBankViewNavigate: (view: BankView) => void
+  onAdminViewNavigate?: (view: AdminView) => void
   onNavigate: (to: string) => void
   eyebrow?: string
   title: string
@@ -21,7 +24,9 @@ export function AccountLayout({
   account,
   currentSection,
   activeBankView,
+  activeAdminView,
   onBankViewNavigate,
+  onAdminViewNavigate,
   onNavigate,
   eyebrow,
   title,
@@ -35,9 +40,11 @@ export function AccountLayout({
         <div className="xk-account-layout__rail">
           <AccountSidebar
             account={account}
+            activeAdminView={activeAdminView}
             activeBankView={activeBankView}
             currentSection={currentSection}
             onNavigate={onNavigate}
+            onAdminViewNavigate={onAdminViewNavigate}
             onBankViewNavigate={onBankViewNavigate}
           />
         </div>

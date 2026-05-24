@@ -5,11 +5,18 @@ import {
   Button,
   Card,
   Chip,
+  Input,
   Spinner,
   Switch,
-  Tabs,
   Text,
 } from '@heroui/react'
+import {
+  FileText,
+  ReceiptText,
+  ShieldCheck,
+  TicketPercent,
+  Wallet,
+} from 'lucide-react'
 import {
   createPromoCode,
   createAdminPost,
@@ -38,7 +45,45 @@ import {
 } from '@/entities/account'
 import { clearSiteSettingsCache } from '@/entities/site'
 import { AccountLayout } from '@/widgets/account/layout'
-import { HeroLinkButton, HeroPage } from '@/shared/ui/hero-page'
+import { HeroLinkButton, HeroMetricCard, HeroPage } from '@/shared/ui/hero-page'
+import type { AdminView } from '@/widgets/account/sidebar/model/account-sidebar-menu'
+
+const paymentStatusMeta: Record<
+  string,
+  { label: string; color: 'success' | 'warning' | 'danger' | 'default' | 'accent' }
+> = {
+  paid: { label: 'Оплачено', color: 'success' },
+  pending: { label: 'Ожидает оплату', color: 'warning' },
+  failed: { label: 'Ошибка оплаты', color: 'danger' },
+  canceled: { label: 'Отменено', color: 'default' },
+}
+
+const applicationStatusMeta: Record<
+  string,
+  { label: string; color: 'success' | 'warning' | 'danger' | 'default' | 'accent' }
+> = {
+  new: { label: 'Новая', color: 'accent' },
+  review: { label: 'На рассмотрении', color: 'warning' },
+  accepted: { label: 'Принята', color: 'success' },
+  rejected: { label: 'Отклонена', color: 'danger' },
+}
+
+const promoStatusMeta = {
+  active: { label: 'Активен', color: 'success' as const },
+  disabled: { label: 'Выключен', color: 'default' as const },
+}
+
+function getPaymentStatusMeta(status: string) {
+  return paymentStatusMeta[status] ?? { label: status, color: 'default' as const }
+}
+
+function getApplicationStatusMeta(status: string) {
+  return applicationStatusMeta[status] ?? { label: status, color: 'default' as const }
+}
+
+function getPromoStatusMeta(isActive: boolean) {
+  return isActive ? promoStatusMeta.active : promoStatusMeta.disabled
+}
 
 function formatDate(value: string | null) {
   if (!value) {
@@ -87,7 +132,7 @@ export function AdminPage() {
   const [isSavingPost, setIsSavingPost] = useState(false)
   const [isSavingSettings, setIsSavingSettings] = useState(false)
   const [error, setError] = useState('')
-  const [selectedTab, setSelectedTab] = useState('overview')
+  const [selectedTab, setSelectedTab] = useState<AdminView>('overview')
   const [promoCode, setPromoCode] = useState('')
   const [discountType, setDiscountType] = useState<'percent' | 'fixed'>('percent')
   const [discountValue, setDiscountValue] = useState('10')
@@ -354,7 +399,7 @@ export function AdminPage() {
 
   function editPost(post: AdminPostRow) {
     setPostId(post.id)
-    setPostTitle(post.title)
+      setPostTitle(post.title)
     setPostSlug(post.slug)
     setPostSummary(post.summary)
     setPostContent(post.content)
@@ -431,25 +476,6 @@ export function AdminPage() {
 
   const content = (
     <div className="grid gap-6">
-      <Card>
-        <Card.Header className="flex items-start justify-between gap-4">
-          <div>
-            <Card.Title>Доступ</Card.Title>
-            <Card.Description>
-              {isSessionAdmin
-                ? 'Доступ подтверждён через роль администратора сайта.'
-                : 'Войти в админку может только пользователь с ролью администратора сайта.'}
-            </Card.Description>
-          </div>
-          {isSessionAdmin ? <Chip color="success">Роль подтверждена</Chip> : null}
-        </Card.Header>
-        <Card.Content className="flex justify-end">
-          <Button onPress={() => void loadDashboard()} isDisabled={isLoading}>
-            {isLoading ? <Spinner color="current" size="sm" /> : 'Обновить данные'}
-          </Button>
-        </Card.Content>
-      </Card>
-
       {error ? (
         <Alert status="danger">
           <Alert.Indicator />
@@ -460,26 +486,31 @@ export function AdminPage() {
       ) : null}
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <Card><Card.Header><Card.Description>Платежи</Card.Description><Card.Title>{stats.totalPayments}</Card.Title></Card.Header></Card>
-        <Card><Card.Header><Card.Description>Заявки</Card.Description><Card.Title>{stats.totalApplications}</Card.Title></Card.Header></Card>
-        <Card><Card.Header><Card.Description>Посты</Card.Description><Card.Title>{stats.totalPosts}</Card.Title></Card.Header></Card>
-        <Card><Card.Header><Card.Description>Whitelist</Card.Description><Card.Title>{stats.totalWhitelist}</Card.Title></Card.Header></Card>
+        <HeroMetricCard
+          icon={<Wallet size={18} />}
+          label="Платежи"
+          value={stats.totalPayments}
+          description={`${stats.paidCount} оплачено, ${stats.pendingCount} ожидают`}
+        />
+        <HeroMetricCard
+          icon={<ShieldCheck size={18} />}
+          label="Заявки"
+          value={stats.totalApplications}
+          description={`${stats.pendingApplications} новых`}
+        />
+        <HeroMetricCard
+          icon={<FileText size={18} />}
+          label="Посты"
+          value={stats.totalPosts}
+          description={`${stats.publishedPosts} опубликовано`}
+        />
+        <HeroMetricCard
+          icon={<TicketPercent size={18} />}
+          label="Whitelist"
+          value={stats.totalWhitelist}
+          description={`${stats.blockedPlayers} игроков заблокировано`}
+        />
       </div>
-
-      <Tabs selectedKey={selectedTab} onSelectionChange={(key) => setSelectedTab(String(key))}>
-        <Tabs.ListContainer>
-          <Tabs.List aria-label="Разделы админки">
-            <Tabs.Tab id="overview">Обзор<Tabs.Indicator /></Tabs.Tab>
-            <Tabs.Tab id="applications">Заявки<Tabs.Indicator /></Tabs.Tab>
-            <Tabs.Tab id="posts">Посты<Tabs.Indicator /></Tabs.Tab>
-            <Tabs.Tab id="navigation">Навигация<Tabs.Indicator /></Tabs.Tab>
-            <Tabs.Tab id="users">Пользователи<Tabs.Indicator /></Tabs.Tab>
-            <Tabs.Tab id="payments">Покупки<Tabs.Indicator /></Tabs.Tab>
-            <Tabs.Tab id="whitelist">Whitelist<Tabs.Indicator /></Tabs.Tab>
-            <Tabs.Tab id="promos">Промокоды<Tabs.Indicator /></Tabs.Tab>
-          </Tabs.List>
-        </Tabs.ListContainer>
-      </Tabs>
 
       {selectedTab === 'overview' ? (
         <div className="grid gap-6 xl:grid-cols-2">
@@ -487,15 +518,15 @@ export function AdminPage() {
             <Card.Header>
               <Card.Title>Сводка</Card.Title>
             </Card.Header>
-            <Card.Content className="grid gap-2">
-              <Text type="body-sm">Оплачено: {stats.paidCount}</Text>
-              <Text type="body-sm">В ожидании: {stats.pendingCount}</Text>
-              <Text type="body-sm">Логов жизней: {stats.totalLifeLogs}</Text>
-              <Text type="body-sm">Активных промокодов: {stats.activePromoCodes}</Text>
-              <Text type="body-sm">Новых заявок: {stats.pendingApplications}</Text>
-              <Text type="body-sm">Опубликованных постов: {stats.publishedPosts}</Text>
-              <Text type="body-sm">Заблокированных игроков: {stats.blockedPlayers}</Text>
-              <Text type="body-sm">В whitelist: {stats.totalWhitelist}</Text>
+            <Card.Content className="grid gap-4 sm:grid-cols-2">
+              <HeroMetricCard label="Оплачено" value={stats.paidCount} />
+              <HeroMetricCard label="В ожидании" value={stats.pendingCount} />
+              <HeroMetricCard label="Логов жизней" value={stats.totalLifeLogs} />
+              <HeroMetricCard label="Активных промокодов" value={stats.activePromoCodes} />
+              <HeroMetricCard label="Новых заявок" value={stats.pendingApplications} />
+              <HeroMetricCard label="Опубликованных постов" value={stats.publishedPosts} />
+              <HeroMetricCard label="Заблокированных игроков" value={stats.blockedPlayers} />
+              <HeroMetricCard label="В whitelist" value={stats.totalWhitelist} />
             </Card.Content>
           </Card>
 
@@ -511,7 +542,12 @@ export function AdminPage() {
                     <Text color="muted" type="body-sm">{payment.productName}</Text>
                   </div>
                   <div className="text-right">
-                    <Chip variant="soft">{payment.status}</Chip>
+                    <Chip
+                      color={getPaymentStatusMeta(payment.status).color}
+                      variant="soft"
+                    >
+                      {getPaymentStatusMeta(payment.status).label}
+                    </Chip>
                     <Text color="muted" type="body-sm">{payment.amountRub} руб.</Text>
                   </div>
                 </div>
@@ -530,7 +566,12 @@ export function AdminPage() {
                   <Card.Title>{application.nickname}</Card.Title>
                   <Card.Description>{application.telegram} • {application.discord} • {application.age} лет</Card.Description>
                 </div>
-                <Chip variant="soft">{application.status}</Chip>
+                <Chip
+                  color={getApplicationStatusMeta(application.status).color}
+                  variant="soft"
+                >
+                  {getApplicationStatusMeta(application.status).label}
+                </Chip>
               </Card.Header>
               <Card.Content className="grid gap-4">
                 <Text type="body-sm">Контакт: {application.contact}</Text>
@@ -674,7 +715,12 @@ export function AdminPage() {
                   <Card.Title>{payment.nickname}</Card.Title>
                   <Card.Description>{payment.productName}</Card.Description>
                 </div>
-                <Chip variant="soft">{payment.status}</Chip>
+                <Chip
+                  color={getPaymentStatusMeta(payment.status).color}
+                  variant="soft"
+                >
+                  {getPaymentStatusMeta(payment.status).label}
+                </Chip>
               </Card.Header>
               <Card.Content className="grid gap-2 md:grid-cols-2">
                 <Text color="muted" type="body-sm">Сумма: {payment.amountRub} руб.</Text>
@@ -749,7 +795,12 @@ export function AdminPage() {
                       <Text type="body-sm">{row.code}</Text>
                       <Text color="muted" type="body-sm">{formatPromoDiscount(row)}</Text>
                     </div>
-                    <Chip variant="soft">{row.isActive ? 'active' : 'disabled'}</Chip>
+                    <Chip
+                      color={getPromoStatusMeta(row.isActive).color}
+                      variant="soft"
+                    >
+                      {getPromoStatusMeta(row.isActive).label}
+                    </Chip>
                   </div>
                   <Text color="muted" type="body-sm">Лимит: {row.maxUses ?? '—'} / На ник: {row.maxUsesPerNickname ?? '—'} / Использовано: {row.usedCount}</Text>
                   <Button size="sm" variant="ghost" onPress={() => void handleTogglePromoActive(row)}>
@@ -768,10 +819,12 @@ export function AdminPage() {
     return (
       <AccountLayout
         account={account}
+        activeAdminView={selectedTab}
         currentSection="admin"
         onNavigate={(to) => {
           void navigate({ to })
         }}
+        onAdminViewNavigate={setSelectedTab}
         onBankViewNavigate={(view) => {
           void navigate({ to: `/cabinet/bank/${view}` })
         }}

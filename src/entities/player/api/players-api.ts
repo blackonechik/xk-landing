@@ -29,6 +29,9 @@ export async function fetchPlayers(limit = 60) {
 export async function fetchPlayerProfile(nickname: string) {
   const response = await fetch(
     `${apiBaseUrl}/api/players/${encodeURIComponent(nickname)}`,
+    {
+      credentials: 'include',
+    },
   )
 
   if (!response.ok) {

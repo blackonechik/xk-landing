@@ -4,11 +4,28 @@ import {
   BarChart3,
   CreditCard,
   Crown,
+  FileText,
   History,
   House,
   Landmark,
+  LayoutDashboard,
+  ReceiptText,
+  Settings2,
+  ShieldCheck,
+  TicketPercent,
+  Users,
 } from 'lucide-react'
 import type { BankView } from '@/widgets/account/bank-cabinet'
+
+export type AdminView =
+  | 'overview'
+  | 'applications'
+  | 'posts'
+  | 'navigation'
+  | 'users'
+  | 'payments'
+  | 'whitelist'
+  | 'promos'
 
 export type AccountSidebarMenuItem = {
   key: string
@@ -31,10 +48,12 @@ export type AccountSidebarMenuSection = {
 type GetAccountSidebarMenuSectionsParams = {
   currentSection: 'home' | 'bank' | 'stats' | 'admin'
   activeBankView: BankView
+  activeAdminView?: AdminView
   hasBankCards: boolean
   isAdmin: boolean
   showBank: boolean
   onBankViewNavigate: (view: BankView) => void
+  onAdminViewNavigate?: (view: AdminView) => void
 }
 
 const bankItems = [
@@ -55,13 +74,58 @@ const bankItems = [
   },
 ] satisfies { icon: ReactNode; label: string; view: BankView }[]
 
+const adminItems = [
+  {
+    icon: <LayoutDashboard size={18} />,
+    label: 'Обзор',
+    view: 'overview',
+  },
+  {
+    icon: <ShieldCheck size={18} />,
+    label: 'Заявки',
+    view: 'applications',
+  },
+  {
+    icon: <FileText size={18} />,
+    label: 'Посты',
+    view: 'posts',
+  },
+  {
+    icon: <Settings2 size={18} />,
+    label: 'Навигация',
+    view: 'navigation',
+  },
+  {
+    icon: <Users size={18} />,
+    label: 'Пользователи',
+    view: 'users',
+  },
+  {
+    icon: <ReceiptText size={18} />,
+    label: 'Покупки',
+    view: 'payments',
+  },
+  {
+    icon: <ShieldCheck size={18} />,
+    label: 'Whitelist',
+    view: 'whitelist',
+  },
+  {
+    icon: <TicketPercent size={18} />,
+    label: 'Промокоды',
+    view: 'promos',
+  },
+] satisfies { icon: ReactNode; label: string; view: AdminView }[]
+
 export function getAccountSidebarMenuSections({
   currentSection,
   activeBankView,
+  activeAdminView = 'overview',
   hasBankCards,
   isAdmin,
   showBank,
   onBankViewNavigate,
+  onAdminViewNavigate,
 }: GetAccountSidebarMenuSectionsParams): AccountSidebarMenuSection[] {
   const bankChildren = hasBankCards
     ? bankItems.map((item) => ({
@@ -73,6 +137,18 @@ export function getAccountSidebarMenuSections({
         size: 'sm' as const,
       }))
     : undefined
+
+  const adminChildren =
+    isAdmin && onAdminViewNavigate
+      ? adminItems.map((item) => ({
+          key: item.view,
+          icon: item.icon,
+          label: item.label,
+          onPress: () => onAdminViewNavigate(item.view),
+          current: currentSection === 'admin' && activeAdminView === item.view,
+          size: 'sm' as const,
+        }))
+      : undefined
 
   return [
     {
@@ -121,9 +197,14 @@ export function getAccountSidebarMenuSections({
                 key: 'admin',
                 icon: <Landmark size={18} />,
                 label: 'Админка',
-                to: '/cabinet/admin',
+                to: currentSection === 'admin' ? undefined : '/cabinet/admin',
+                onPress:
+                  currentSection === 'admin' && onAdminViewNavigate
+                    ? () => onAdminViewNavigate('overview')
+                    : undefined,
                 badge: 'site',
                 current: currentSection === 'admin',
+                children: adminChildren,
               },
             ]
           : []),

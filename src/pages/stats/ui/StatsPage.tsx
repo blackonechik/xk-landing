@@ -107,7 +107,6 @@ export function StatsPage() {
       onBankViewNavigate={(view) => {
         void navigate({ to: `/cabinet/bank/${view}` })
       }}
-      eyebrow="PlayTimeManager"
       title="Статистика"
       description="Игроки, онлайн и наигранное время"
     >

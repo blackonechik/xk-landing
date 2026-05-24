@@ -8,7 +8,10 @@ import {
 import type { AccountPayload } from '@/entities/account'
 import { fetchSiteSettingsCached, type SiteSettings } from '@/entities/site'
 import type { BankView } from '@/widgets/account/bank-cabinet'
-import { getAccountSidebarMenuSections } from '../model/account-sidebar-menu'
+import {
+  getAccountSidebarMenuSections,
+  type AdminView,
+} from '../model/account-sidebar-menu'
 import { SidebarMenuItem } from './SidebarMenuItem'
 import { useEffect, useState } from 'react'
 
@@ -16,16 +19,20 @@ type AccountSidebarProps = {
   account: AccountPayload
   currentSection: 'home' | 'bank' | 'stats' | 'admin'
   activeBankView?: BankView
+  activeAdminView?: AdminView
   onNavigate: (to: string) => void
   onBankViewNavigate: (view: BankView) => void
+  onAdminViewNavigate?: (view: AdminView) => void
 }
 
 export function AccountSidebar({
   account,
   currentSection,
   activeBankView = 'cards',
+  activeAdminView = 'overview',
   onNavigate,
   onBankViewNavigate,
+  onAdminViewNavigate,
 }: AccountSidebarProps) {
   const [settings, setSettings] = useState<SiteSettings | null>(null)
 
@@ -52,10 +59,12 @@ export function AccountSidebar({
   const sections = getAccountSidebarMenuSections({
     currentSection,
     activeBankView,
+    activeAdminView,
     hasBankCards: account.bank.cards.length > 0,
     isAdmin: isAdminRole(account.player.roles),
     showBank: settings?.navigation.showBank ?? true,
     onBankViewNavigate,
+    onAdminViewNavigate,
   })
 
   return (

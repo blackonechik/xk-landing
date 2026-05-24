@@ -51,8 +51,8 @@ export function PublicPlayerPage({ nickname }: PublicPlayerPageProps) {
       title={player?.nickname ?? nickname}
       description="Публичная страница игрока XK HARDCORE."
       actions={
-        <HeroLinkButton to="/players" variant="secondary">
-          Все игроки
+        <HeroLinkButton to="/cabinet/stats" variant="secondary">
+          Назад к статистике
         </HeroLinkButton>
       }
     >
