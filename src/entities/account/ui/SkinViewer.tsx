@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import { Avatar } from '@heroui/react'
 import { UserRound } from 'lucide-react'
 import { useEffect, useRef } from 'react'
-import { CubeTextureLoader, NoToneMapping } from 'three'
+import { NoToneMapping } from 'three'
 import {
   CrouchAnimation,
   FlyingAnimation,
@@ -21,8 +21,6 @@ import type {
 } from '@/widgets/account/profile-cabinet/model/profile-appearance'
 import {
   getProfileBackgroundColor,
-  isCustomProfileBackground,
-  profileBackgrounds,
 } from '@/widgets/account/profile-cabinet/model/profile-appearance'
 
 type SkinViewerProps = {
@@ -122,9 +120,6 @@ export function SkinViewer({
       return undefined
     }
 
-    const backgroundConfig =
-      profileBackgrounds.find((item) => item.id === background) ??
-      profileBackgrounds[0]
     const viewerBackground = getProfileBackgroundColor(background)
 
     const viewer = new Skin3dRender({
@@ -139,31 +134,39 @@ export function SkinViewer({
       allowZoom: false,
     })
 
-    const cubeTexture = !isCustomProfileBackground(background) && backgroundConfig.panorama
-      ? new CubeTextureLoader().load([
-          `${backgroundConfig.panorama}/panorama_1.png`,
-          `${backgroundConfig.panorama}/panorama_3.png`,
-          `${backgroundConfig.panorama}/panorama_4.png`,
-          `${backgroundConfig.panorama}/panorama_5.png`,
-          `${backgroundConfig.panorama}/panorama_0.png`,
-          `${backgroundConfig.panorama}/panorama_2.png`,
-        ])
-      : null
-
-    if (cubeTexture) {
-      viewer.scene.background = cubeTexture
-      viewer.scene.backgroundIntensity = 1.75
-    }
-
     viewer.renderer.toneMapping = NoToneMapping
 
     viewer.camera.position.set(0, 14, 1)
     viewer.adjustCameraDistance()
-    viewer.animation = createAnimation(animation)
     viewer.controls.enablePan = false
     viewer.controls.enableZoom = false
     viewer.controls.minPolarAngle = Math.PI / 2
     viewer.controls.maxPolarAngle = Math.PI / 2
+
+    let revertTimer: ReturnType<typeof window.setTimeout> | null = null
+
+    const playSelectedAnimation = () => {
+      if (revertTimer) {
+        window.clearTimeout(revertTimer)
+        revertTimer = null
+      }
+
+      if (animation === 'idle') {
+        viewer.animation = createAnimation('idle')
+        return
+      }
+
+      viewer.animation = createAnimation(animation)
+      revertTimer = window.setTimeout(() => {
+        viewer.animation = createAnimation('idle')
+      }, 5600)
+    }
+
+    playSelectedAnimation()
+    const animationInterval =
+      animation === 'idle'
+        ? null
+        : window.setInterval(playSelectedAnimation, 90000)
 
     const resizeViewer = () => {
       const container = containerRef.current
@@ -184,7 +187,12 @@ export function SkinViewer({
 
     return () => {
       resizeObserver.disconnect()
-      cubeTexture?.dispose()
+      if (revertTimer) {
+        window.clearTimeout(revertTimer)
+      }
+      if (animationInterval) {
+        window.clearInterval(animationInterval)
+      }
       viewer.dispose()
     }
   }, [animation, background, nickname, skinSource])

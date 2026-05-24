@@ -91,6 +91,12 @@ export default function Header() {
           XK HARDCORE
         </AnimatedLink>
         <nav className="xk-site-header__nav" aria-label="Основная навигация">
+          <AnimatedLink className="xk-site-header__nav-link" to="/join">
+            Заявка
+          </AnimatedLink>
+          <AnimatedLink className="xk-site-header__nav-link" to="/news">
+            Новости
+          </AnimatedLink>
           <AnimatedLink className="xk-site-header__nav-link" to="/payment">
             Оплата
           </AnimatedLink>

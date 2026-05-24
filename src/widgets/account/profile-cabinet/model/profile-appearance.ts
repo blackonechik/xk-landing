@@ -94,49 +94,16 @@ export const profileBackgrounds = [
     swatch: 'bg-[linear-gradient(135deg,#09090b,#71717a,#fafafa)]',
     background: '#09090b',
   },
-  {
-    id: 'plains',
-    kind: 'panorama',
-    label: 'Оверворлд',
-    swatch: 'bg-[linear-gradient(180deg,#7ec8ff_0_48%,#62a84f_48%_100%)]',
-    background: '#8ac7ff',
-    panorama: '/assets/img/profile/panoramas/trails',
-    source: 'Modrinth: Shader Panorama of 1.20',
-  },
-  {
-    id: 'nether',
-    kind: 'panorama',
-    label: 'Пещера',
-    swatch: 'bg-[linear-gradient(135deg,#102a1f,#31523f,#94a3b8)]',
-    background: '#102a1f',
-    panorama: '/assets/img/profile/panoramas/m4sub',
-    source: 'Modrinth: m4sub panorama',
-  },
-  {
-    id: 'end',
-    kind: 'panorama',
-    label: 'Горы',
-    swatch: 'bg-[linear-gradient(135deg,#0f172a,#475569,#dbeafe)]',
-    background: '#0f172a',
-    panorama: '/assets/img/profile/panoramas/jamp',
-    source: 'Modrinth: Jamp',
-  },
 ] satisfies {
   id: ProfileBackground
-  kind: 'palette' | 'panorama'
+  kind: 'palette'
   label: string
   swatch: string
   background: string
-  panorama?: string
-  source?: string
 }[]
 
 export const profilePaletteBackgrounds = profileBackgrounds.filter(
   (item) => item.kind === 'palette',
-)
-
-export const profilePanoramaBackgrounds = profileBackgrounds.filter(
-  (item) => item.kind === 'panorama',
 )
 
 export function isCustomProfileBackground(

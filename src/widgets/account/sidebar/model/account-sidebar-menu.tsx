@@ -29,9 +29,11 @@ export type AccountSidebarMenuSection = {
 }
 
 type GetAccountSidebarMenuSectionsParams = {
-  currentSection: 'home' | 'bank' | 'stats'
+  currentSection: 'home' | 'bank' | 'stats' | 'admin'
   activeBankView: BankView
   hasBankCards: boolean
+  isAdmin: boolean
+  showBank: boolean
   onBankViewNavigate: (view: BankView) => void
 }
 
@@ -57,6 +59,8 @@ export function getAccountSidebarMenuSections({
   currentSection,
   activeBankView,
   hasBankCards,
+  isAdmin,
+  showBank,
   onBankViewNavigate,
 }: GetAccountSidebarMenuSectionsParams): AccountSidebarMenuSection[] {
   const bankChildren = hasBankCards
@@ -81,15 +85,19 @@ export function getAccountSidebarMenuSections({
           to: '/cabinet',
           current: currentSection === 'home',
         },
-        {
-          key: 'bank',
-          icon: <Landmark size={18} />,
-          label: 'Банк',
-          to: hasBankCards ? undefined : '/cabinet/bank',
-          onPress: hasBankCards ? () => onBankViewNavigate('cards') : undefined,
-          current: currentSection === 'bank',
-          children: bankChildren,
-        },
+        ...(showBank
+          ? [
+              {
+                key: 'bank',
+                icon: <Landmark size={18} />,
+                label: 'Банк',
+                to: hasBankCards ? undefined : '/cabinet/bank',
+                onPress: hasBankCards ? () => onBankViewNavigate('cards') : undefined,
+                current: currentSection === 'bank',
+                children: bankChildren,
+              },
+            ]
+          : []),
       ],
     },
     {
@@ -107,6 +115,18 @@ export function getAccountSidebarMenuSections({
           icon: <Crown size={18} />,
           label: 'Королевства',
         },
+        ...(isAdmin
+          ? [
+              {
+                key: 'admin',
+                icon: <Landmark size={18} />,
+                label: 'Админка',
+                to: '/cabinet/admin',
+                badge: 'site',
+                current: currentSection === 'admin',
+              },
+            ]
+          : []),
       ],
     },
   ]

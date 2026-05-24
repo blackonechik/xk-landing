@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { useEffect, useState } from 'react'
 import { Card, Chip } from '@heroui/react'
 import {
   Circle,
@@ -10,6 +11,7 @@ import {
 import AnimatedLink from '@/components/AnimatedLink'
 import type { PublicPlayerProfile } from '@/entities/player'
 import { formatPlayedHours } from '@/entities/player'
+import { fetchSiteSettingsCached, type SiteSettings } from '@/entities/site'
 import { formatLastSeen } from '@/shared/lib/date/format-date'
 import { HeroMetricCard } from '@/shared/ui/hero-page'
 
@@ -197,6 +199,28 @@ export function ProfileStatusPanel({
   player,
   totalDiamonds,
 }: ProfileStatusPanelProps) {
+  const [settings, setSettings] = useState<SiteSettings | null>(null)
+
+  useEffect(() => {
+    let isActive = true
+
+    void fetchSiteSettingsCached()
+      .then((payload) => {
+        if (isActive) {
+          setSettings(payload)
+        }
+      })
+      .catch(() => {
+        if (isActive) {
+          setSettings({ navigation: { showBank: true } })
+        }
+      })
+
+    return () => {
+      isActive = false
+    }
+  }, [])
+
   const sections: QuickSection[] = [
     {
       cardClassName: 'xl:col-start-1 xl:row-start-1 xl:w-[613px]',
@@ -209,18 +233,22 @@ export function ProfileStatusPanel({
       textClassName: 'max-w-[353px]',
       title: 'Королевства',
     },
-    {
-      cardClassName: 'xl:col-start-2 xl:row-start-1 xl:w-[613px]',
-      description: 'Переводы, карты и управление игровой валютой в одном месте.',
-      gradient:
-        'linear-gradient(180deg, rgb(255 186 152 / 0.26) 0%, rgb(237 46 24 / 0.26) 100%)',
-      href: '/cabinet/bank',
-      icon: <QuickSectionBankIcon />,
-      imageSrc: '/assets/img/profile/players/forid.png',
-      imageClassName: 'max-w-[43%]',
-      textClassName: 'max-w-[353px]',
-      title: 'Банк',
-    },
+    ...(settings?.navigation.showBank === false
+      ? []
+      : [
+          {
+            cardClassName: 'xl:col-start-2 xl:row-start-1 xl:w-[613px]',
+            description: 'Переводы, карты и управление игровой валютой в одном месте.',
+            gradient:
+              'linear-gradient(180deg, rgb(255 186 152 / 0.26) 0%, rgb(237 46 24 / 0.26) 100%)',
+            href: '/cabinet/bank',
+            icon: <QuickSectionBankIcon />,
+            imageSrc: '/assets/img/profile/players/forid.png',
+            imageClassName: 'max-w-[43%]',
+            textClassName: 'max-w-[353px]',
+            title: 'Банк',
+          },
+        ]),
     {
       cardClassName: 'xl:col-start-1 xl:row-start-2 xl:w-[500px]',
       description: 'Открой актуальные правила, ограничения и уточнения.',
@@ -233,7 +261,7 @@ export function ProfileStatusPanel({
       textClassName: 'max-w-[253px]',
       title: 'Правила',
     },
-  ] as const
+  ] as QuickSection[]
 
   return (
     <Card>

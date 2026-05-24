@@ -39,6 +39,7 @@ export function CabinetBankPage() {
     getCachedAccount(),
   )
   const [error, setError] = useState('')
+  const [transferError, setTransferError] = useState('')
   const activeView = getBankViewFromPathname(pathname)
 
   async function loadAccount() {
@@ -58,8 +59,12 @@ export function CabinetBankPage() {
   async function runBankAction(
     action: () => Promise<void>,
     fallbackMessage: string,
+    options?: {
+      scope?: 'global' | 'transfer'
+    },
   ) {
     setError('')
+    setTransferError('')
 
     try {
       await action()
@@ -68,7 +73,14 @@ export function CabinetBankPage() {
     } catch (actionError) {
       const message =
         actionError instanceof Error ? actionError.message : fallbackMessage
-      setError(errorMessages[message] ?? fallbackMessage)
+      const nextMessage = errorMessages[message] ?? fallbackMessage
+
+      if (options?.scope === 'transfer') {
+        setTransferError(nextMessage)
+        return
+      }
+
+      setError(nextMessage)
     }
   }
 
@@ -202,9 +214,19 @@ export function CabinetBankPage() {
               runBankAction(
                 () => transferDiamonds(payload),
                 'Не получилось выполнить перевод.',
+                { scope: 'transfer' },
               )
             }
           />
+        ) : null}
+
+        {activeView === 'transfer' && transferError ? (
+          <Alert status="danger">
+            <Alert.Indicator />
+            <Alert.Content>
+              <Alert.Title>{transferError}</Alert.Title>
+            </Alert.Content>
+          </Alert>
         ) : null}
 
         {hasCards && activeView === 'history' ? (

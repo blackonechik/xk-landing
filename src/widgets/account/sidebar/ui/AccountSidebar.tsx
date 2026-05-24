@@ -2,13 +2,15 @@ import { Button, Card, Chip, Text } from '@heroui/react'
 import ThemeToggle from '@/components/ThemeToggle'
 import { PlayerAvatar } from '@/entities/account'
 import type { AccountPayload } from '@/entities/account'
+import { fetchSiteSettingsCached, type SiteSettings } from '@/entities/site'
 import type { BankView } from '@/widgets/account/bank-cabinet'
 import { getAccountSidebarMenuSections } from '../model/account-sidebar-menu'
 import { SidebarMenuItem } from './SidebarMenuItem'
+import { useEffect, useState } from 'react'
 
 type AccountSidebarProps = {
   account: AccountPayload
-  currentSection: 'home' | 'bank' | 'stats'
+  currentSection: 'home' | 'bank' | 'stats' | 'admin'
   activeBankView?: BankView
   onNavigate: (to: string) => void
   onBankViewNavigate: (view: BankView) => void
@@ -21,10 +23,34 @@ export function AccountSidebar({
   onNavigate,
   onBankViewNavigate,
 }: AccountSidebarProps) {
+  const [settings, setSettings] = useState<SiteSettings | null>(null)
+
+  useEffect(() => {
+    let isActive = true
+
+    void fetchSiteSettingsCached()
+      .then((payload) => {
+        if (isActive) {
+          setSettings(payload)
+        }
+      })
+      .catch(() => {
+        if (isActive) {
+          setSettings({ navigation: { showBank: true } })
+        }
+      })
+
+    return () => {
+      isActive = false
+    }
+  }, [])
+
   const sections = getAccountSidebarMenuSections({
     currentSection,
     activeBankView,
     hasBankCards: account.bank.cards.length > 0,
+    isAdmin: account.player.siteRole === 'admin',
+    showBank: settings?.navigation.showBank ?? true,
     onBankViewNavigate,
   })
 
@@ -45,9 +71,11 @@ export function AccountSidebar({
               {account.player.nickname}
             </Text>
             <div className="flex flex-wrap items-center gap-2">
-              <Chip color="accent" variant="soft">
-                Админ
-              </Chip>
+              {account.player.siteRole === 'admin' ? (
+                <Chip color="accent" variant="soft">
+                  Администратор сайта
+                </Chip>
+              ) : null}
             </div>
           </div>
         </div>

@@ -15,8 +15,10 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PersonalDataConsentRouteImport } from './routes/personal-data-consent'
 import { Route as PaymentRouteImport } from './routes/payment'
 import { Route as OfferRouteImport } from './routes/offer'
+import { Route as NewsRouteImport } from './routes/news'
 import { Route as MineRouteImport } from './routes/mine'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as JoinRouteImport } from './routes/join'
 import { Route as CabinetRouteImport } from './routes/cabinet'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
@@ -25,8 +27,10 @@ import { Route as UNicknameRouteImport } from './routes/u.$nickname'
 import { Route as PaymentSuccessRouteImport } from './routes/payment.success'
 import { Route as PaymentPendingRouteImport } from './routes/payment.pending'
 import { Route as PaymentFailedRouteImport } from './routes/payment.failed'
+import { Route as NewsSlugRouteImport } from './routes/news.$slug'
 import { Route as CabinetStatsRouteImport } from './routes/cabinet.stats'
 import { Route as CabinetBankRouteImport } from './routes/cabinet.bank'
+import { Route as CabinetAdminRouteImport } from './routes/cabinet.admin'
 import { Route as CabinetBankTransferRouteImport } from './routes/cabinet.bank.transfer'
 import { Route as CabinetBankHistoryRouteImport } from './routes/cabinet.bank.history'
 import { Route as CabinetBankCardsRouteImport } from './routes/cabinet.bank.cards'
@@ -61,6 +65,11 @@ const OfferRoute = OfferRouteImport.update({
   path: '/offer',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NewsRoute = NewsRouteImport.update({
+  id: '/news',
+  path: '/news',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MineRoute = MineRouteImport.update({
   id: '/mine',
   path: '/mine',
@@ -69,6 +78,11 @@ const MineRoute = MineRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JoinRoute = JoinRouteImport.update({
+  id: '/join',
+  path: '/join',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CabinetRoute = CabinetRouteImport.update({
@@ -111,6 +125,11 @@ const PaymentFailedRoute = PaymentFailedRouteImport.update({
   path: '/failed',
   getParentRoute: () => PaymentRoute,
 } as any)
+const NewsSlugRoute = NewsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => NewsRoute,
+} as any)
 const CabinetStatsRoute = CabinetStatsRouteImport.update({
   id: '/stats',
   path: '/stats',
@@ -119,6 +138,11 @@ const CabinetStatsRoute = CabinetStatsRouteImport.update({
 const CabinetBankRoute = CabinetBankRouteImport.update({
   id: '/bank',
   path: '/bank',
+  getParentRoute: () => CabinetRoute,
+} as any)
+const CabinetAdminRoute = CabinetAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => CabinetRoute,
 } as any)
 const CabinetBankTransferRoute = CabinetBankTransferRouteImport.update({
@@ -142,16 +166,20 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
   '/cabinet': typeof CabinetRouteWithChildren
+  '/join': typeof JoinRoute
   '/login': typeof LoginRoute
   '/mine': typeof MineRoute
+  '/news': typeof NewsRouteWithChildren
   '/offer': typeof OfferRoute
   '/payment': typeof PaymentRouteWithChildren
   '/personal-data-consent': typeof PersonalDataConsentRoute
   '/privacy': typeof PrivacyRoute
   '/rules': typeof RulesRoute
   '/stats': typeof StatsRoute
+  '/cabinet/admin': typeof CabinetAdminRoute
   '/cabinet/bank': typeof CabinetBankRouteWithChildren
   '/cabinet/stats': typeof CabinetStatsRoute
+  '/news/$slug': typeof NewsSlugRoute
   '/payment/failed': typeof PaymentFailedRoute
   '/payment/pending': typeof PaymentPendingRoute
   '/payment/success': typeof PaymentSuccessRoute
@@ -165,16 +193,20 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
   '/cabinet': typeof CabinetRouteWithChildren
+  '/join': typeof JoinRoute
   '/login': typeof LoginRoute
   '/mine': typeof MineRoute
+  '/news': typeof NewsRouteWithChildren
   '/offer': typeof OfferRoute
   '/payment': typeof PaymentRouteWithChildren
   '/personal-data-consent': typeof PersonalDataConsentRoute
   '/privacy': typeof PrivacyRoute
   '/rules': typeof RulesRoute
   '/stats': typeof StatsRoute
+  '/cabinet/admin': typeof CabinetAdminRoute
   '/cabinet/bank': typeof CabinetBankRouteWithChildren
   '/cabinet/stats': typeof CabinetStatsRoute
+  '/news/$slug': typeof NewsSlugRoute
   '/payment/failed': typeof PaymentFailedRoute
   '/payment/pending': typeof PaymentPendingRoute
   '/payment/success': typeof PaymentSuccessRoute
@@ -189,16 +221,20 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
   '/cabinet': typeof CabinetRouteWithChildren
+  '/join': typeof JoinRoute
   '/login': typeof LoginRoute
   '/mine': typeof MineRoute
+  '/news': typeof NewsRouteWithChildren
   '/offer': typeof OfferRoute
   '/payment': typeof PaymentRouteWithChildren
   '/personal-data-consent': typeof PersonalDataConsentRoute
   '/privacy': typeof PrivacyRoute
   '/rules': typeof RulesRoute
   '/stats': typeof StatsRoute
+  '/cabinet/admin': typeof CabinetAdminRoute
   '/cabinet/bank': typeof CabinetBankRouteWithChildren
   '/cabinet/stats': typeof CabinetStatsRoute
+  '/news/$slug': typeof NewsSlugRoute
   '/payment/failed': typeof PaymentFailedRoute
   '/payment/pending': typeof PaymentPendingRoute
   '/payment/success': typeof PaymentSuccessRoute
@@ -214,16 +250,20 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/cabinet'
+    | '/join'
     | '/login'
     | '/mine'
+    | '/news'
     | '/offer'
     | '/payment'
     | '/personal-data-consent'
     | '/privacy'
     | '/rules'
     | '/stats'
+    | '/cabinet/admin'
     | '/cabinet/bank'
     | '/cabinet/stats'
+    | '/news/$slug'
     | '/payment/failed'
     | '/payment/pending'
     | '/payment/success'
@@ -237,16 +277,20 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/cabinet'
+    | '/join'
     | '/login'
     | '/mine'
+    | '/news'
     | '/offer'
     | '/payment'
     | '/personal-data-consent'
     | '/privacy'
     | '/rules'
     | '/stats'
+    | '/cabinet/admin'
     | '/cabinet/bank'
     | '/cabinet/stats'
+    | '/news/$slug'
     | '/payment/failed'
     | '/payment/pending'
     | '/payment/success'
@@ -260,16 +304,20 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/cabinet'
+    | '/join'
     | '/login'
     | '/mine'
+    | '/news'
     | '/offer'
     | '/payment'
     | '/personal-data-consent'
     | '/privacy'
     | '/rules'
     | '/stats'
+    | '/cabinet/admin'
     | '/cabinet/bank'
     | '/cabinet/stats'
+    | '/news/$slug'
     | '/payment/failed'
     | '/payment/pending'
     | '/payment/success'
@@ -284,8 +332,10 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRoute
   CabinetRoute: typeof CabinetRouteWithChildren
+  JoinRoute: typeof JoinRoute
   LoginRoute: typeof LoginRoute
   MineRoute: typeof MineRoute
+  NewsRoute: typeof NewsRouteWithChildren
   OfferRoute: typeof OfferRoute
   PaymentRoute: typeof PaymentRouteWithChildren
   PersonalDataConsentRoute: typeof PersonalDataConsentRoute
@@ -339,6 +389,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OfferRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/news': {
+      id: '/news'
+      path: '/news'
+      fullPath: '/news'
+      preLoaderRoute: typeof NewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/mine': {
       id: '/mine'
       path: '/mine'
@@ -351,6 +408,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/join': {
+      id: '/join'
+      path: '/join'
+      fullPath: '/join'
+      preLoaderRoute: typeof JoinRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cabinet': {
@@ -409,6 +473,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PaymentFailedRouteImport
       parentRoute: typeof PaymentRoute
     }
+    '/news/$slug': {
+      id: '/news/$slug'
+      path: '/$slug'
+      fullPath: '/news/$slug'
+      preLoaderRoute: typeof NewsSlugRouteImport
+      parentRoute: typeof NewsRoute
+    }
     '/cabinet/stats': {
       id: '/cabinet/stats'
       path: '/stats'
@@ -421,6 +492,13 @@ declare module '@tanstack/react-router' {
       path: '/bank'
       fullPath: '/cabinet/bank'
       preLoaderRoute: typeof CabinetBankRouteImport
+      parentRoute: typeof CabinetRoute
+    }
+    '/cabinet/admin': {
+      id: '/cabinet/admin'
+      path: '/admin'
+      fullPath: '/cabinet/admin'
+      preLoaderRoute: typeof CabinetAdminRouteImport
       parentRoute: typeof CabinetRoute
     }
     '/cabinet/bank/transfer': {
@@ -464,17 +542,29 @@ const CabinetBankRouteWithChildren = CabinetBankRoute._addFileChildren(
 )
 
 interface CabinetRouteChildren {
+  CabinetAdminRoute: typeof CabinetAdminRoute
   CabinetBankRoute: typeof CabinetBankRouteWithChildren
   CabinetStatsRoute: typeof CabinetStatsRoute
 }
 
 const CabinetRouteChildren: CabinetRouteChildren = {
+  CabinetAdminRoute: CabinetAdminRoute,
   CabinetBankRoute: CabinetBankRouteWithChildren,
   CabinetStatsRoute: CabinetStatsRoute,
 }
 
 const CabinetRouteWithChildren =
   CabinetRoute._addFileChildren(CabinetRouteChildren)
+
+interface NewsRouteChildren {
+  NewsSlugRoute: typeof NewsSlugRoute
+}
+
+const NewsRouteChildren: NewsRouteChildren = {
+  NewsSlugRoute: NewsSlugRoute,
+}
+
+const NewsRouteWithChildren = NewsRoute._addFileChildren(NewsRouteChildren)
 
 interface PaymentRouteChildren {
   PaymentFailedRoute: typeof PaymentFailedRoute
@@ -496,8 +586,10 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AdminRoute: AdminRoute,
   CabinetRoute: CabinetRouteWithChildren,
+  JoinRoute: JoinRoute,
   LoginRoute: LoginRoute,
   MineRoute: MineRoute,
+  NewsRoute: NewsRouteWithChildren,
   OfferRoute: OfferRoute,
   PaymentRoute: PaymentRouteWithChildren,
   PersonalDataConsentRoute: PersonalDataConsentRoute,

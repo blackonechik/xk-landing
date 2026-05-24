@@ -7,6 +7,7 @@ import {
   logout,
   updateProfileAppearance,
 } from '@/entities/account'
+import { fetchSiteSettingsCached, type SiteSettings } from '@/entities/site'
 import { fetchPlayerProfile, type PublicPlayerProfile } from '@/entities/player'
 import {
   defaultProfileAppearance,
@@ -27,6 +28,7 @@ export function CabinetPage() {
   )
   const [playerProfile, setPlayerProfile] =
     useState<PublicPlayerProfile | null>(null)
+  const [settings, setSettings] = useState<SiteSettings | null>(null)
   const [error, setError] = useState('')
 
   async function loadAccount() {
@@ -45,6 +47,9 @@ export function CabinetPage() {
 
   useEffect(() => {
     void loadAccount()
+    void fetchSiteSettingsCached()
+      .then((payload) => setSettings(payload))
+      .catch(() => setSettings({ navigation: { showBank: true } }))
   }, [])
 
   useEffect(() => {
@@ -156,9 +161,11 @@ export function CabinetPage() {
       description="Личный кабинет активно разрабатывается. Если вы нашли ошибку или хотите предложить улучшение, пожалуйста, сообщите нам в Discord."
       actions={
         <>
-          <HeroLinkButton to="/cabinet/bank" variant="secondary">
-            Открыть банк
-          </HeroLinkButton>
+          {settings?.navigation.showBank !== false ? (
+            <HeroLinkButton to="/cabinet/bank" variant="secondary">
+              Открыть банк
+            </HeroLinkButton>
+          ) : null}
           <Button
             variant="ghost"
             onPress={() => {

@@ -2,10 +2,6 @@ import { useEffect, useState } from 'react'
 import {
   Button,
   Card,
-  ColorArea,
-  ColorField,
-  ColorPicker,
-  ColorSlider,
   ColorSwatchPicker,
   Label,
   ListBox,
@@ -20,12 +16,9 @@ import { SkinViewer } from '@/entities/account'
 import type { PublicPlayerProfile } from '@/entities/player'
 import {
   defaultProfileAppearance,
-  getProfileBackgroundColor,
   getProfileBackgroundLabel,
-  isCustomProfileBackground,
   profileAnimations,
   profilePaletteBackgrounds,
-  profilePanoramaBackgrounds,
 } from '../model/profile-appearance'
 import type { ProfileAppearance } from '../model/profile-appearance'
 import { ProfileRatingPanel } from './ProfileRatingPanel'
@@ -71,35 +64,17 @@ export function ProfileCharacterPanel({
     modalState.close()
   }
 
-  function resolveBackgroundIdByColor(
-    items: typeof profilePaletteBackgrounds | typeof profilePanoramaBackgrounds,
-    colorValue: string,
-  ) {
-    return items.find(
+  function resolveBackgroundIdByColor(colorValue: string) {
+    return profilePaletteBackgrounds.find(
       (item) => parseColor(item.background).toString('hex') === colorValue,
     )?.id
   }
 
-  const palettePickerValue = isCustomProfileBackground(draftAppearance.background)
-    ? draftAppearance.background
-    : profilePaletteBackgrounds.some(
-          (item) => item.id === draftAppearance.background,
-        )
-      ? getProfileBackgroundColor(draftAppearance.background)
-      : undefined
-
-  const panoramaPickerValue = profilePanoramaBackgrounds.some(
+  const gradientPickerValue = profilePaletteBackgrounds.some(
     (item) => item.id === draftAppearance.background,
   )
-    ? getProfileBackgroundColor(draftAppearance.background)
-    : undefined
-
-  const customColorValue = isCustomProfileBackground(draftAppearance.background)
-    ? draftAppearance.background
-    : getProfileBackgroundColor('palette-slate')
-  const isCustomPaletteSelected = isCustomProfileBackground(
-    draftAppearance.background,
-  )
+    ? profilePaletteBackgrounds.find((item) => item.id === draftAppearance.background)?.background
+    : profilePaletteBackgrounds[0]?.background
 
   return (
     <Card className='max-h-max'>
@@ -143,7 +118,7 @@ export function ProfileCharacterPanel({
                 <Modal.Header>
                   <Modal.Heading>Настройка профиля</Modal.Heading>
                   <Text className="mt-2" color="muted" type="body-sm">
-                    Выберите анимацию персонажа и фон профиля. Таким будет видеть ваш профиль другие игроки.
+                    Выберите анимацию персонажа и градиент профиля. Анимация проигрывается не постоянно, а периодически, чтобы не перегружать страницу.
                   </Text>
                 </Modal.Header>
                 <Modal.Body className="grid gap-5 p-6 md:grid-cols-[0.9fr_1.1fr]">
@@ -180,19 +155,16 @@ export function ProfileCharacterPanel({
                     </Select>
 
                     <div className="grid gap-3">
-                      <Label>Палитра профиля</Label>
+                      <Label>Градиент профиля</Label>
                       <div className="flex flex-wrap items-center gap-2">
                         <ColorSwatchPicker
-                          aria-label="Выбор палитры профиля"
+                          aria-label="Выбор градиента профиля"
                           className="contents"
                           layout="grid"
                           size="lg"
-                          value={palettePickerValue ? parseColor(palettePickerValue) : undefined}
+                          value={gradientPickerValue ? parseColor(gradientPickerValue) : undefined}
                           onChange={(color) => {
-                            const nextBackground = resolveBackgroundIdByColor(
-                              profilePaletteBackgrounds,
-                              color.toString('hex'),
-                            )
+                            const nextBackground = resolveBackgroundIdByColor(color.toString('hex'))
 
                             if (nextBackground) {
                               updateDraftAppearance({
@@ -211,96 +183,7 @@ export function ProfileCharacterPanel({
                             </ColorSwatchPicker.Item>
                           ))}
                         </ColorSwatchPicker>
-
-                        <ColorPicker
-                          aria-label="Выбор своего цвета профиля"
-                          value={parseColor(customColorValue)}
-                          onChange={(color) => {
-                            updateDraftAppearance({
-                              background: color.toString('hex') as ProfileAppearance['background'],
-                            })
-                          }}
-                        >
-                          <ColorPicker.Trigger
-                            className={[
-                              'relative grid size-10 shrink-0 place-items-center overflow-hidden rounded-full border transition-transform hover:scale-105',
-                              isCustomPaletteSelected
-                                ? 'border-accent ring-2 ring-(--accent)/35'
-                                : 'border-separator hover:border-(--accent)/70',
-                            ].join(' ')}
-                          >
-                            <span
-                              aria-hidden
-                              className="absolute inset-0"
-                              style={{
-                                backgroundImage:
-                                  'conic-gradient(from 180deg, #ff4d4d, #ff9f1c, #ffe66d, #2ec4b6, #3a86ff, #8338ec, #ff006e, #ff4d4d)',
-                              }}
-                            />
-                            <span
-                              aria-hidden
-                              className="relative z-1 size-5 rounded-full border border-white/70 shadow-sm"
-                              style={{ backgroundColor: customColorValue }}
-                            />
-                          </ColorPicker.Trigger>
-                          <ColorPicker.Popover placement="bottom start">
-                            <div className="grid gap-4 p-4">
-                              <ColorArea
-                                colorSpace="hsb"
-                                xChannel="saturation"
-                                yChannel="brightness"
-                              >
-                                <ColorArea.Thumb />
-                              </ColorArea>
-                              <ColorSlider colorSpace="hsb" channel="hue">
-                                <ColorSlider.Track>
-                                  <ColorSlider.Thumb />
-                                </ColorSlider.Track>
-                              </ColorSlider>
-                              <ColorField aria-label="HEX цвет профиля">
-                                <ColorField.Group>
-                                  <ColorField.Input />
-                                </ColorField.Group>
-                              </ColorField>
-                            </div>
-                          </ColorPicker.Popover>
-                        </ColorPicker>
                       </div>
-                      <Text color="muted" type="body-sm">
-                        {getProfileBackgroundLabel(draftAppearance.background)}
-                      </Text>
-                    </div>
-
-                    <div className="grid gap-3">
-                      <Label>3D-фон</Label>
-                      <ColorSwatchPicker
-                        aria-label="Выбор 3D-фона"
-                        layout="grid"
-                        size="lg"
-                        value={panoramaPickerValue ? parseColor(panoramaPickerValue) : undefined}
-                        onChange={(color) => {
-                          const nextBackground = resolveBackgroundIdByColor(
-                            profilePanoramaBackgrounds,
-                            color.toString('hex'),
-                          )
-
-                          if (nextBackground) {
-                            updateDraftAppearance({
-                              background: nextBackground,
-                            })
-                          }
-                        }}
-                      >
-                        {profilePanoramaBackgrounds.map((item) => (
-                          <ColorSwatchPicker.Item
-                            key={item.id}
-                            color={item.background}
-                          >
-                            <ColorSwatchPicker.Swatch />
-                            <ColorSwatchPicker.Indicator />
-                          </ColorSwatchPicker.Item>
-                        ))}
-                      </ColorSwatchPicker>
                       <Text color="muted" type="body-sm">
                         {getProfileBackgroundLabel(draftAppearance.background)}
                       </Text>

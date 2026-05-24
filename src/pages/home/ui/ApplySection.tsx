@@ -41,7 +41,7 @@ export function ApplySection({ revealInitial, cardHover }: ApplySectionProps) {
         сюда.
         <div className="xk-cta-actions">
           <LandingButton
-            href="#"
+            href="/join"
             tone="primary"
             className="xk-cta-actions__telegram"
             contentClassName="text-40"

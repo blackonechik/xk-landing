@@ -6,7 +6,7 @@ import type { BankView } from '@/widgets/account/bank-cabinet'
 
 type AccountLayoutProps = {
   account: AccountPayload
-  currentSection: 'home' | 'bank' | 'stats'
+  currentSection: 'home' | 'bank' | 'stats' | 'admin'
   activeBankView?: BankView
   onBankViewNavigate: (view: BankView) => void
   onNavigate: (to: string) => void
