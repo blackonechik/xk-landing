@@ -93,14 +93,6 @@ export function HeroSection({ shouldReduceMotion }: HeroSectionProps) {
         </div>
       </div>
 
-      <motion.div
-        className="tycoon-landing-header__frontline"
-        aria-hidden="true"
-        initial={shouldReduceMotion ? false : { opacity: 0, y: 34 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
-      />
-
       <motion.a
         href="#start"
         className="tycoon-landing-header__arrow"
