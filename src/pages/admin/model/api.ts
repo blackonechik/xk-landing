@@ -142,16 +142,9 @@ type CreatePostPayload = {
 
 type UpdatePostPayload = CreatePostPayload
 
-function buildAdminHeaders(adminToken?: string) {
-  return {
-    ...(adminToken?.trim() ? { 'x-admin-token': adminToken.trim() } : {}),
-  }
-}
-
-export async function fetchAdminDashboard(adminToken: string): Promise<AdminDashboard> {
+export async function fetchAdminDashboard(): Promise<AdminDashboard> {
   const response = await fetch(`${apiBaseUrl}/api/admin/dashboard`, {
     credentials: 'include',
-    headers: buildAdminHeaders(adminToken),
   })
 
   const data = (await response.json().catch(() => undefined)) as
@@ -159,12 +152,8 @@ export async function fetchAdminDashboard(adminToken: string): Promise<AdminDash
     | { error?: string }
     | undefined
 
-  if (response.status === 401) {
-    throw new Error('Неверный admin token.')
-  }
-
-  if (response.status === 503) {
-    throw new Error('Админка не настроена на backend (ADMIN_TOKEN пустой).')
+  if (response.status === 401 || response.status === 403) {
+    throw new Error('Доступ к админке есть только у пользователей с ролью администратора.')
   }
 
   if (!response.ok || !data || !('payments' in data) || !('lifeLogs' in data)) {
@@ -174,10 +163,9 @@ export async function fetchAdminDashboard(adminToken: string): Promise<AdminDash
   return data
 }
 
-export async function fetchPromoCodes(adminToken: string): Promise<AdminPromoCodeRow[]> {
+export async function fetchPromoCodes(): Promise<AdminPromoCodeRow[]> {
   const response = await fetch(`${apiBaseUrl}/api/admin/promocodes`, {
     credentials: 'include',
-    headers: buildAdminHeaders(adminToken),
   })
 
   const data = (await response.json().catch(() => undefined)) as
@@ -185,12 +173,8 @@ export async function fetchPromoCodes(adminToken: string): Promise<AdminPromoCod
     | { error?: string }
     | undefined
 
-  if (response.status === 401) {
-    throw new Error('Неверный admin token.')
-  }
-
-  if (response.status === 503) {
-    throw new Error('Админка не настроена на backend (ADMIN_TOKEN пустой).')
+  if (response.status === 401 || response.status === 403) {
+    throw new Error('Доступ к админке есть только у пользователей с ролью администратора.')
   }
 
   if (!response.ok || !data || !('promoCodes' in data)) {
@@ -200,13 +184,12 @@ export async function fetchPromoCodes(adminToken: string): Promise<AdminPromoCod
   return data.promoCodes
 }
 
-export async function createPromoCode(adminToken: string, payload: CreatePromoCodePayload) {
+export async function createPromoCode(payload: CreatePromoCodePayload) {
   const response = await fetch(`${apiBaseUrl}/api/admin/promocodes`, {
     method: 'POST',
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
-      ...buildAdminHeaders(adminToken),
     },
     body: JSON.stringify(payload),
   })
@@ -227,13 +210,12 @@ export async function createPromoCode(adminToken: string, payload: CreatePromoCo
   return data.promoCode
 }
 
-export async function updatePromoCode(adminToken: string, promoId: string, payload: UpdatePromoCodePayload) {
+export async function updatePromoCode(promoId: string, payload: UpdatePromoCodePayload) {
   const response = await fetch(`${apiBaseUrl}/api/admin/promocodes/${promoId}`, {
     method: 'PATCH',
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
-      ...buildAdminHeaders(adminToken),
     },
     body: JSON.stringify(payload),
   })
@@ -254,13 +236,12 @@ export async function updatePromoCode(adminToken: string, promoId: string, paylo
   return data.promoCode
 }
 
-export async function updateAdminApplication(adminToken: string, applicationId: string, payload: UpdateApplicationPayload) {
+export async function updateAdminApplication(applicationId: string, payload: UpdateApplicationPayload) {
   const response = await fetch(`${apiBaseUrl}/api/admin/applications/${applicationId}`, {
     method: 'PATCH',
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
-      ...buildAdminHeaders(adminToken),
     },
     body: JSON.stringify(payload),
   })
@@ -281,13 +262,12 @@ export async function updateAdminApplication(adminToken: string, applicationId: 
   return data.application
 }
 
-export async function createAdminPost(adminToken: string, payload: CreatePostPayload) {
+export async function createAdminPost(payload: CreatePostPayload) {
   const response = await fetch(`${apiBaseUrl}/api/admin/posts`, {
     method: 'POST',
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
-      ...buildAdminHeaders(adminToken),
     },
     body: JSON.stringify(payload),
   })
@@ -308,13 +288,12 @@ export async function createAdminPost(adminToken: string, payload: CreatePostPay
   return data.post
 }
 
-export async function updateAdminPost(adminToken: string, postId: string, payload: UpdatePostPayload) {
+export async function updateAdminPost(postId: string, payload: UpdatePostPayload) {
   const response = await fetch(`${apiBaseUrl}/api/admin/posts/${postId}`, {
     method: 'PATCH',
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
-      ...buildAdminHeaders(adminToken),
     },
     body: JSON.stringify(payload),
   })
@@ -335,13 +314,12 @@ export async function updateAdminPost(adminToken: string, postId: string, payloa
   return data.post
 }
 
-export async function updateAdminNavigation(adminToken: string, showBank: boolean) {
+export async function updateAdminNavigation(showBank: boolean) {
   const response = await fetch(`${apiBaseUrl}/api/admin/settings/navigation`, {
     method: 'PATCH',
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
-      ...buildAdminHeaders(adminToken),
     },
     body: JSON.stringify({ showBank }),
   })
@@ -362,13 +340,12 @@ export async function updateAdminNavigation(adminToken: string, showBank: boolea
   return data
 }
 
-export async function updateAdminPlayerBlocked(adminToken: string, nickname: string, blocked: boolean) {
+export async function updateAdminPlayerBlocked(nickname: string, blocked: boolean) {
   const response = await fetch(`${apiBaseUrl}/api/admin/players/${encodeURIComponent(nickname)}/block`, {
     method: 'PATCH',
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
-      ...buildAdminHeaders(adminToken),
     },
     body: JSON.stringify({ blocked }),
   })
@@ -385,11 +362,10 @@ export async function updateAdminPlayerBlocked(adminToken: string, nickname: str
   return data
 }
 
-export async function deleteAdminWhitelistEntry(adminToken: string, nickname: string) {
+export async function deleteAdminWhitelistEntry(nickname: string) {
   const response = await fetch(`${apiBaseUrl}/api/admin/whitelist/${encodeURIComponent(nickname)}`, {
     method: 'DELETE',
     credentials: 'include',
-    headers: buildAdminHeaders(adminToken),
   })
 
   const data = (await response.json().catch(() => undefined)) as

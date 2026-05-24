@@ -5,7 +5,6 @@ import {
   Button,
   Card,
   Chip,
-  Input,
   Spinner,
   Switch,
   Tabs,
@@ -40,8 +39,6 @@ import {
 import { clearSiteSettingsCache } from '@/entities/site'
 import { AccountLayout } from '@/widgets/account/layout'
 import { HeroLinkButton, HeroPage } from '@/shared/ui/hero-page'
-
-const tokenStorageKey = 'xk-admin-token'
 
 function formatDate(value: string | null) {
   if (!value) {
@@ -83,13 +80,6 @@ function formatPromoDiscount(promo: AdminPromoCodeRow) {
 export function AdminPage() {
   const navigate = useNavigate()
   const [account, setAccount] = useState<AccountPayload | null>(() => getCachedAccount())
-  const [token, setToken] = useState(() => {
-    if (typeof window === 'undefined') {
-      return ''
-    }
-
-    return window.localStorage.getItem(tokenStorageKey) ?? ''
-  })
   const [dashboard, setDashboard] = useState<AdminDashboard | null>(null)
   const [promoCodes, setPromoCodes] = useState<AdminPromoCodeRow[]>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -138,7 +128,7 @@ export function AdminPage() {
   }, [])
 
   useEffect(() => {
-    if (isSessionAdmin || token.trim()) {
+    if (isSessionAdmin) {
       void loadDashboard()
     }
   }, [isSessionAdmin])
@@ -166,8 +156,8 @@ export function AdminPage() {
   }, [dashboard, promoCodes])
 
   async function loadDashboard() {
-    if (!isSessionAdmin && !token.trim()) {
-      setError('Нужен вход под администратором сайта или admin token.')
+    if (!isSessionAdmin) {
+      setError('Нужен вход под пользователем с ролью администратора сайта.')
       return
     }
 
@@ -176,15 +166,12 @@ export function AdminPage() {
 
     try {
       const [dashboardData, promoData] = await Promise.all([
-        fetchAdminDashboard(token.trim()),
-        fetchPromoCodes(token.trim()),
+        fetchAdminDashboard(),
+        fetchPromoCodes(),
       ])
 
       setDashboard(dashboardData)
       setPromoCodes(promoData)
-      if (token.trim()) {
-        window.localStorage.setItem(tokenStorageKey, token.trim())
-      }
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : 'Ошибка загрузки данных.')
       setDashboard(null)
@@ -195,8 +182,8 @@ export function AdminPage() {
   }
 
   async function handleCreatePromo() {
-    if (!isSessionAdmin && !token.trim()) {
-      setError('Нужен вход под администратором сайта или admin token.')
+    if (!isSessionAdmin) {
+      setError('Нужен вход под пользователем с ролью администратора сайта.')
       return
     }
 
@@ -230,7 +217,7 @@ export function AdminPage() {
     setIsSavingPromo(true)
 
     try {
-      const promo = await createPromoCode(token.trim(), {
+      const promo = await createPromoCode({
         code: normalizedCode,
         discountType,
         discountValue: parsedDiscountValue,
@@ -256,15 +243,15 @@ export function AdminPage() {
   }
 
   async function handleTogglePromoActive(promo: AdminPromoCodeRow) {
-    if (!isSessionAdmin && !token.trim()) {
-      setError('Нужен вход под администратором сайта или admin token.')
+    if (!isSessionAdmin) {
+      setError('Нужен вход под пользователем с ролью администратора сайта.')
       return
     }
 
     setError('')
 
     try {
-      const updated = await updatePromoCode(token.trim(), promo.id, {
+      const updated = await updatePromoCode(promo.id, {
         isActive: !promo.isActive,
       })
 
@@ -275,13 +262,13 @@ export function AdminPage() {
   }
 
   async function handleUpdateApplication(application: AdminApplicationRow, status: string) {
-    if (!isSessionAdmin && !token.trim()) {
-      setError('Нужен вход под администратором сайта или admin token.')
+    if (!isSessionAdmin) {
+      setError('Нужен вход под пользователем с ролью администратора сайта.')
       return
     }
 
     try {
-      const updated = await updateAdminApplication(token.trim(), application.id, {
+      const updated = await updateAdminApplication(application.id, {
         status,
         reviewNote: applicationNotes[application.id] ?? application.reviewNote,
         reviewedBy: account?.player.nickname ?? 'admin',
@@ -303,8 +290,8 @@ export function AdminPage() {
   }
 
   async function handleSavePost() {
-    if (!isSessionAdmin && !token.trim()) {
-      setError('Нужен вход под администратором сайта или admin token.')
+    if (!isSessionAdmin) {
+      setError('Нужен вход под пользователем с ролью администратора сайта.')
       return
     }
 
@@ -328,8 +315,8 @@ export function AdminPage() {
       }
 
       const saved = postId
-        ? await updateAdminPost(token.trim(), postId, payload)
-        : await createAdminPost(token.trim(), payload)
+        ? await updateAdminPost(postId, payload)
+        : await createAdminPost(payload)
 
       setDashboard((prev) => {
         if (!prev) {
@@ -378,15 +365,15 @@ export function AdminPage() {
   }
 
   async function handleToggleBankVisibility(nextValue: boolean) {
-    if (!isSessionAdmin && !token.trim()) {
-      setError('Нужен вход под администратором сайта или admin token.')
+    if (!isSessionAdmin) {
+      setError('Нужен вход под пользователем с ролью администратора сайта.')
       return
     }
 
     setIsSavingSettings(true)
 
     try {
-      const settings = await updateAdminNavigation(token.trim(), nextValue)
+      const settings = await updateAdminNavigation(nextValue)
       clearSiteSettingsCache()
       setDashboard((prev) => (prev ? { ...prev, settings } : prev))
     } catch (requestError) {
@@ -397,13 +384,13 @@ export function AdminPage() {
   }
 
   async function handleTogglePlayerBlocked(player: AdminPlayerRow) {
-    if (!isSessionAdmin && !token.trim()) {
-      setError('Нужен вход под администратором сайта или admin token.')
+    if (!isSessionAdmin) {
+      setError('Нужен вход под пользователем с ролью администратора сайта.')
       return
     }
 
     try {
-      await updateAdminPlayerBlocked(token.trim(), player.lowercaseNickname, !player.blocked)
+      await updateAdminPlayerBlocked(player.lowercaseNickname, !player.blocked)
       setDashboard((prev) =>
         prev
           ? {
@@ -422,13 +409,13 @@ export function AdminPage() {
   }
 
   async function handleDeleteWhitelistEntry(entry: AdminWhitelistRow) {
-    if (!isSessionAdmin && !token.trim()) {
-      setError('Нужен вход под администратором сайта или admin token.')
+    if (!isSessionAdmin) {
+      setError('Нужен вход под пользователем с ролью администратора сайта.')
       return
     }
 
     try {
-      await deleteAdminWhitelistEntry(token.trim(), entry.nickname)
+      await deleteAdminWhitelistEntry(entry.nickname)
       setDashboard((prev) =>
         prev
           ? {
@@ -451,19 +438,12 @@ export function AdminPage() {
             <Card.Description>
               {isSessionAdmin
                 ? 'Доступ подтверждён через роль администратора сайта.'
-                : 'Можно войти под администратором сайта или использовать admin token как резервный вариант.'}
+                : 'Войти в админку может только пользователь с ролью администратора сайта.'}
             </Card.Description>
           </div>
           {isSessionAdmin ? <Chip color="success">Роль подтверждена</Chip> : null}
         </Card.Header>
-        <Card.Content className="grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
-          <Input
-            label="Admin token"
-            type="password"
-            value={token}
-            onChange={(event) => setToken(event.target.value)}
-            placeholder="Введите ADMIN_TOKEN только если нужен резервный вход"
-          />
+        <Card.Content className="flex justify-end">
           <Button onPress={() => void loadDashboard()} isDisabled={isLoading}>
             {isLoading ? <Spinner color="current" size="sm" /> : 'Обновить данные'}
           </Button>
@@ -822,7 +802,7 @@ export function AdminPage() {
     <HeroPage
       eyebrow="Администрирование"
       title="Админка XK HARDCORE"
-      description="Резервный режим доступа по admin token, если вы не вошли под ролью администратора сайта."
+      description="Доступ к админке есть только у пользователей с ролью администратора сайта."
       narrow
     >
       {content}
