@@ -1,5 +1,6 @@
 import { motion } from 'motion/react'
 import { heroContent } from '../model/homeContent'
+import { getHeroVideoSource } from '../model/landing-video'
 import { MinecraftHeroScene } from './MinecraftHeroScene'
 import { LandingButton } from '@/shared/ui/landing-button'
 
@@ -11,7 +12,7 @@ export function HeroSection({ shouldReduceMotion }: HeroSectionProps) {
   return (
     <section id="header" className="tycoon-landing-header xk-header-hero">
       <motion.video
-        src="/assets/background-hero.mp4"
+        src={getHeroVideoSource()}
         className="tycoon-landing-header__background"
         autoPlay
         loop

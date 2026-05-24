@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { motion, useInView, useScroll, useTransform } from 'motion/react'
+import { useLifeVideoSource } from '../model/landing-video'
 import { sectionReveal, viewportReveal } from '@/shared/lib/animation/landingReveal'
 import { LandingSection } from '@/shared/ui/landing-section'
 
@@ -11,6 +12,7 @@ type LifeSectionProps = {
 export function LifeSection({ revealInitial, shouldReduceMotion }: LifeSectionProps) {
   const mediaRef = useRef<HTMLElement | null>(null)
   const videoRef = useRef<HTMLVideoElement | null>(null)
+  const videoSource = useLifeVideoSource()
   const isVideoVisible = useInView(mediaRef, {
     amount: 0.2,
   })
@@ -43,6 +45,20 @@ export function LifeSection({ revealInitial, shouldReduceMotion }: LifeSectionPr
       video.pause()
     }
   }, [isVideoVisible])
+
+  useEffect(() => {
+    const video = videoRef.current
+
+    if (!video) {
+      return
+    }
+
+    video.load()
+
+    if (isVideoVisible) {
+      video.play().catch(() => {})
+    }
+  }, [isVideoVisible, videoSource])
 
   return (
     <>
@@ -92,7 +108,7 @@ export function LifeSection({ revealInitial, shouldReduceMotion }: LifeSectionPr
             <video
               ref={videoRef}
               className="parallax-video__media"
-              src="/assets/video/helplife.mp4"
+              src={videoSource}
               muted
               playsInline
               preload="metadata"
