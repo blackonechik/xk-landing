@@ -210,7 +210,7 @@ export function getAccountSidebarMenuSections({
                   currentSection === 'admin' && onAdminViewNavigate
                     ? () => onAdminViewNavigate('overview')
                     : undefined,
-                badge: 'site',
+                badge: '!!!',
                 current: currentSection === 'admin',
                 children: adminChildren,
               },

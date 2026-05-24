@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
+import type { ReactNode } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import {
   Alert,
+  AlertDialog,
   Button,
   Card,
   Chip,
@@ -10,12 +12,15 @@ import {
   Switch,
   Table,
   Text,
+  toast,
 } from '@heroui/react'
 import {
+  CheckCircle2,
   FileText,
+  Info,
   ShieldCheck,
   TicketPercent,
-  Users,
+  TriangleAlert,
   Wallet,
 } from 'lucide-react'
 import {
@@ -47,6 +52,7 @@ import {
 import { clearSiteSettingsCache } from '@/entities/site'
 import { AccountLayout } from '@/widgets/account/layout'
 import { HeroLinkButton, HeroMetricCard, HeroPage } from '@/shared/ui/hero-page'
+import { LexicalRichTextEditor } from '@/shared/ui/rich-text-editor'
 import type { AdminView } from '@/widgets/account/sidebar/model/account-sidebar-menu'
 
 const paymentStatusMeta: Record<
@@ -139,8 +145,8 @@ function AdminTableCard({
 }: {
   title: string
   description?: string
-  action?: React.ReactNode
-  children: React.ReactNode
+  action?: ReactNode
+  children: ReactNode
 }) {
   return (
     <Card>
@@ -154,6 +160,31 @@ function AdminTableCard({
       <Card.Content>{children}</Card.Content>
     </Card>
   )
+}
+
+type ConfirmationState = {
+  title: string
+  description: string
+  confirmLabel: string
+  confirmColor?: 'default' | 'danger' | 'success' | 'warning' | 'accent'
+  onConfirm: () => void | Promise<void>
+} | null
+
+function normalizePostContentHtml(value: string) {
+  const trimmed = value.trim()
+
+  if (!trimmed) {
+    return ''
+  }
+
+  if (/<[a-z][\s\S]*>/i.test(trimmed)) {
+    return trimmed
+  }
+
+  return trimmed
+    .split(/\n{2,}/)
+    .map((paragraph) => `<p>${paragraph.replace(/\n/g, '<br />')}</p>`)
+    .join('')
 }
 
 export function AdminPage() {
@@ -183,8 +214,34 @@ export function AdminPage() {
   const [postCoverTone, setPostCoverTone] = useState('slate')
   const [postPublished, setPostPublished] = useState(true)
   const [applicationNotes, setApplicationNotes] = useState<Record<string, string>>({})
+  const [confirmState, setConfirmState] = useState<ConfirmationState>(null)
 
   const isSessionAdmin = account?.player.siteRole === 'admin'
+
+  function showErrorToast(message: string, description?: string) {
+    toast.danger(message, {
+      description,
+      indicator: <TriangleAlert size={16} />,
+    })
+  }
+
+  function showSuccessToast(message: string, description?: string) {
+    toast.success(message, {
+      description,
+      indicator: <CheckCircle2 size={16} />,
+    })
+  }
+
+  function showInfoToast(message: string, description?: string) {
+    toast.info(message, {
+      description,
+      indicator: <Info size={16} />,
+    })
+  }
+
+  function requestConfirmation(nextState: ConfirmationState) {
+    setConfirmState(nextState)
+  }
 
   useEffect(() => {
     let isActive = true
@@ -237,6 +294,7 @@ export function AdminPage() {
   async function loadDashboard() {
     if (!isSessionAdmin) {
       setError('Нужен вход под пользователем с ролью администратора сайта.')
+      showErrorToast('Доступ запрещен', 'Нужен вход под пользователем с ролью администратора сайта.')
       return
     }
 
@@ -252,7 +310,9 @@ export function AdminPage() {
       setDashboard(dashboardData)
       setPromoCodes(promoData)
     } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : 'Ошибка загрузки данных.')
+      const message = requestError instanceof Error ? requestError.message : 'Ошибка загрузки данных.'
+      setError(message)
+      showErrorToast('Не удалось загрузить админку', message)
       setDashboard(null)
       setPromoCodes([])
     } finally {
@@ -262,37 +322,35 @@ export function AdminPage() {
 
   async function handleCreatePromo() {
     if (!isSessionAdmin) {
-      setError('Нужен вход под пользователем с ролью администратора сайта.')
+      showErrorToast('Доступ запрещен', 'Нужен вход под пользователем с ролью администратора сайта.')
       return
     }
 
     const normalizedCode = promoCode.trim().toUpperCase()
 
     if (!normalizedCode) {
-      setError('Введите код промокода.')
+      showInfoToast('Введите код промокода')
       return
     }
 
     const parsedDiscountValue = parseOptionalPositiveInt(discountValue)
 
     if (!parsedDiscountValue) {
-      setError('discountValue должен быть целым числом больше 0.')
+      showInfoToast('Значение скидки должно быть целым числом больше 0')
       return
     }
 
     const parsedMaxUses = parseOptionalPositiveInt(maxUses)
     if (maxUses.trim() && !parsedMaxUses) {
-      setError('maxUses должен быть целым числом больше 0.')
+      showInfoToast('Лимит использований должен быть целым числом больше 0')
       return
     }
 
     const parsedMaxUsesPerNickname = parseOptionalPositiveInt(maxUsesPerNickname)
     if (maxUsesPerNickname.trim() && !parsedMaxUsesPerNickname) {
-      setError('maxUsesPerNickname должен быть целым числом больше 0.')
+      showInfoToast('Лимит на ник должен быть целым числом больше 0')
       return
     }
-
-    setError('')
     setIsSavingPromo(true)
 
     try {
@@ -314,8 +372,12 @@ export function AdminPage() {
       setMaxUsesPerNickname('1')
       setStartsAt('')
       setEndsAt('')
+      showSuccessToast('Промокод создан', `Код ${promo.code} добавлен в систему.`)
     } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : 'Не удалось создать промокод.')
+      showErrorToast(
+        'Не удалось создать промокод',
+        requestError instanceof Error ? requestError.message : undefined,
+      )
     } finally {
       setIsSavingPromo(false)
     }
@@ -323,11 +385,9 @@ export function AdminPage() {
 
   async function handleTogglePromoActive(promo: AdminPromoCodeRow) {
     if (!isSessionAdmin) {
-      setError('Нужен вход под пользователем с ролью администратора сайта.')
+      showErrorToast('Доступ запрещен', 'Нужен вход под пользователем с ролью администратора сайта.')
       return
     }
-
-    setError('')
 
     try {
       const updated = await updatePromoCode(promo.id, {
@@ -335,14 +395,21 @@ export function AdminPage() {
       })
 
       setPromoCodes((prev) => prev.map((item) => (item.id === updated.id ? updated : item)))
+      showSuccessToast(
+        updated.isActive ? 'Промокод включен' : 'Промокод отключен',
+        `Код ${updated.code} обновлен.`,
+      )
     } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : 'Не удалось обновить промокод.')
+      showErrorToast(
+        'Не удалось обновить промокод',
+        requestError instanceof Error ? requestError.message : undefined,
+      )
     }
   }
 
   async function handleUpdateApplication(application: AdminApplicationRow, status: string) {
     if (!isSessionAdmin) {
-      setError('Нужен вход под пользователем с ролью администратора сайта.')
+      showErrorToast('Доступ запрещен', 'Нужен вход под пользователем с ролью администратора сайта.')
       return
     }
 
@@ -363,23 +430,30 @@ export function AdminPage() {
             }
           : prev,
       )
+      showSuccessToast(
+        'Статус заявки обновлен',
+        `${application.nickname}: ${getApplicationStatusMeta(updated.status).label}.`,
+      )
     } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : 'Не удалось обновить заявку.')
+      showErrorToast(
+        'Не удалось обновить заявку',
+        requestError instanceof Error ? requestError.message : undefined,
+      )
     }
   }
 
   async function handleSavePost() {
     if (!isSessionAdmin) {
-      setError('Нужен вход под пользователем с ролью администратора сайта.')
+      showErrorToast('Доступ запрещен', 'Нужен вход под пользователем с ролью администратора сайта.')
       return
     }
 
-    if (!postTitle.trim() || !postSummary.trim() || !postContent.trim()) {
-      setError('Заполните заголовок, краткое описание и содержимое поста.')
+    const normalizedContent = normalizePostContentHtml(postContent)
+
+    if (!postTitle.trim() || !postSummary.trim() || !normalizedContent.trim()) {
+      showInfoToast('Заполните заголовок, краткое описание и содержимое поста')
       return
     }
-
-    setError('')
     setIsSavingPost(true)
 
     try {
@@ -387,7 +461,7 @@ export function AdminPage() {
         slug: postSlug.trim() || undefined,
         title: postTitle.trim(),
         summary: postSummary.trim(),
-        content: postContent.trim(),
+        content: normalizedContent.trim(),
         coverTone: postCoverTone.trim(),
         isPublished: postPublished,
         authorName: postAuthorName.trim() || account?.player.nickname || null,
@@ -413,8 +487,15 @@ export function AdminPage() {
       })
 
       resetPostForm()
+      showSuccessToast(
+        postId ? 'Пост обновлен' : 'Пост создан',
+        `Публикация "${saved.title}" сохранена.`,
+      )
     } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : 'Не удалось сохранить пост.')
+      showErrorToast(
+        'Не удалось сохранить пост',
+        requestError instanceof Error ? requestError.message : undefined,
+      )
     } finally {
       setIsSavingPost(false)
     }
@@ -433,10 +514,10 @@ export function AdminPage() {
 
   function editPost(post: AdminPostRow) {
     setPostId(post.id)
-      setPostTitle(post.title)
+    setPostTitle(post.title)
     setPostSlug(post.slug)
     setPostSummary(post.summary)
-    setPostContent(post.content)
+    setPostContent(normalizePostContentHtml(post.content))
     setPostAuthorName(post.authorName ?? '')
     setPostCoverTone(post.coverTone)
     setPostPublished(post.isPublished)
@@ -445,7 +526,7 @@ export function AdminPage() {
 
   async function handleToggleBankVisibility(nextValue: boolean) {
     if (!isSessionAdmin) {
-      setError('Нужен вход под пользователем с ролью администратора сайта.')
+      showErrorToast('Доступ запрещен', 'Нужен вход под пользователем с ролью администратора сайта.')
       return
     }
 
@@ -455,8 +536,14 @@ export function AdminPage() {
       const settings = await updateAdminNavigation(nextValue)
       clearSiteSettingsCache()
       setDashboard((prev) => (prev ? { ...prev, settings } : prev))
+      showSuccessToast(
+        nextValue ? 'Банк снова виден игрокам' : 'Банк скрыт из кабинета',
+      )
     } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : 'Не удалось обновить настройки навигации.')
+      showErrorToast(
+        'Не удалось обновить навигацию',
+        requestError instanceof Error ? requestError.message : undefined,
+      )
     } finally {
       setIsSavingSettings(false)
     }
@@ -464,7 +551,7 @@ export function AdminPage() {
 
   async function handleTogglePlayerBlocked(player: AdminPlayerRow) {
     if (!isSessionAdmin) {
-      setError('Нужен вход под пользователем с ролью администратора сайта.')
+      showErrorToast('Доступ запрещен', 'Нужен вход под пользователем с ролью администратора сайта.')
       return
     }
 
@@ -482,14 +569,21 @@ export function AdminPage() {
             }
           : prev,
       )
+      showSuccessToast(
+        player.blocked ? 'Игрок разблокирован' : 'Игрок заблокирован',
+        player.nickname,
+      )
     } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : 'Не удалось изменить статус игрока.')
+      showErrorToast(
+        'Не удалось изменить статус игрока',
+        requestError instanceof Error ? requestError.message : undefined,
+      )
     }
   }
 
   async function handleDeleteWhitelistEntry(entry: AdminWhitelistRow) {
     if (!isSessionAdmin) {
-      setError('Нужен вход под пользователем с ролью администратора сайта.')
+      showErrorToast('Доступ запрещен', 'Нужен вход под пользователем с ролью администратора сайта.')
       return
     }
 
@@ -503,8 +597,12 @@ export function AdminPage() {
             }
           : prev,
       )
+      showSuccessToast('Запись удалена из whitelist', entry.nickname)
     } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : 'Не удалось удалить игрока из whitelist.')
+      showErrorToast(
+        'Не удалось удалить игрока из whitelist',
+        requestError instanceof Error ? requestError.message : undefined,
+      )
     }
   }
 
@@ -614,9 +712,9 @@ export function AdminPage() {
                   <Table.Column>Обновлено</Table.Column>
                   <Table.Column>Действия</Table.Column>
                 </Table.Header>
-                <Table.Body renderEmptyState={renderTableEmptyState('Новых заявок нет.')}>
-                  {(dashboard?.applications ?? []).map((application) => (
-                    <Table.Row key={application.id} id={application.id}>
+                  <Table.Body renderEmptyState={renderTableEmptyState('Новых заявок нет.')}>
+                    {(dashboard?.applications ?? []).map((application) => (
+                      <Table.Row key={application.id} id={application.id}>
                       <Table.Cell>
                         <div className="grid gap-1">
                           <Text type="body-sm">{application.nickname}</Text>
@@ -653,13 +751,48 @@ export function AdminPage() {
                       <Table.Cell>{formatDate(application.updatedAt)}</Table.Cell>
                       <Table.Cell>
                         <div className="flex flex-wrap gap-2">
-                          <Button size="sm" onPress={() => void handleUpdateApplication(application, 'review')}>
+                          <Button
+                            size="sm"
+                            onPress={() =>
+                              requestConfirmation({
+                                title: 'Отправить заявку на рассмотрение?',
+                                description: `Статус заявки ${application.nickname} изменится на "На рассмотрении".`,
+                                confirmLabel: 'Подтвердить',
+                                confirmColor: 'warning',
+                                onConfirm: () => handleUpdateApplication(application, 'review'),
+                              })
+                            }
+                          >
                             На рассмотрении
                           </Button>
-                          <Button size="sm" color="success" onPress={() => void handleUpdateApplication(application, 'accepted')}>
+                          <Button
+                            size="sm"
+                            color="success"
+                            onPress={() =>
+                              requestConfirmation({
+                                title: 'Принять заявку?',
+                                description: `Игрок ${application.nickname} будет отмечен как принятый.`,
+                                confirmLabel: 'Принять',
+                                confirmColor: 'success',
+                                onConfirm: () => handleUpdateApplication(application, 'accepted'),
+                              })
+                            }
+                          >
                             Принять
                           </Button>
-                          <Button size="sm" color="danger" onPress={() => void handleUpdateApplication(application, 'rejected')}>
+                          <Button
+                            size="sm"
+                            color="danger"
+                            onPress={() =>
+                              requestConfirmation({
+                                title: 'Отклонить заявку?',
+                                description: `Заявка игрока ${application.nickname} будет отклонена.`,
+                                confirmLabel: 'Отклонить',
+                                confirmColor: 'danger',
+                                onConfirm: () => handleUpdateApplication(application, 'rejected'),
+                              })
+                            }
+                          >
                             Отклонить
                           </Button>
                         </div>
@@ -685,14 +818,14 @@ export function AdminPage() {
               <Input label="Краткое описание" value={postSummary} onChange={(event) => setPostSummary(event.target.value)} />
               <Input label="Автор" value={postAuthorName} onChange={(event) => setPostAuthorName(event.target.value)} />
               <Input label="Тон обложки" value={postCoverTone} onChange={(event) => setPostCoverTone(event.target.value)} placeholder="slate, amber, emerald..." />
-              <label className="grid gap-2">
-                <Text color="muted" type="body-sm">Текст поста</Text>
-                <textarea
-                  className="min-h-48 rounded-[calc(var(--radius-lg)-2px)] border border-default-200 bg-content1 px-3 py-2 text-sm outline-none transition-colors focus:border-primary"
+              <div className="grid gap-3 xl:col-span-2">
+                <LexicalRichTextEditor
+                  label="Текст поста"
+                  placeholder="Напишите текст поста"
                   value={postContent}
-                  onChange={(event) => setPostContent(event.target.value)}
+                  onChange={setPostContent}
                 />
-              </label>
+              </div>
               <Switch isSelected={postPublished} onValueChange={setPostPublished}>
                 Публиковать сразу
               </Switch>
@@ -740,7 +873,18 @@ export function AdminPage() {
                         <Table.Cell>{formatDate(post.publishedAt)}</Table.Cell>
                         <Table.Cell>{formatDate(post.updatedAt)}</Table.Cell>
                         <Table.Cell>
-                          <Button size="sm" variant="ghost" onPress={() => editPost(post)}>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onPress={() =>
+                              requestConfirmation({
+                                title: 'Открыть пост для редактирования?',
+                                description: `Форма будет заполнена данными поста "${post.title}".`,
+                                confirmLabel: 'Открыть',
+                                onConfirm: () => editPost(post),
+                              })
+                            }
+                          >
                             Редактировать
                           </Button>
                         </Table.Cell>
@@ -782,7 +926,15 @@ export function AdminPage() {
                         isDisabled={isSavingSettings}
                         isSelected={dashboard?.settings.navigation.showBank ?? true}
                         onValueChange={(value) => {
-                          void handleToggleBankVisibility(value)
+                          requestConfirmation({
+                            title: value ? 'Открыть доступ к банку?' : 'Скрыть банк из кабинета?',
+                            description: value
+                              ? 'Раздел банка снова появится у игроков в кабинете.'
+                              : 'Раздел банка перестанет отображаться у игроков.',
+                            confirmLabel: value ? 'Включить' : 'Скрыть',
+                            confirmColor: value ? 'success' : 'danger',
+                            onConfirm: () => handleToggleBankVisibility(value),
+                          })
                         }}
                       >
                         Показывать банк
@@ -828,7 +980,17 @@ export function AdminPage() {
                         <Button
                           size="sm"
                           color={player.blocked ? 'success' : 'danger'}
-                          onPress={() => void handleTogglePlayerBlocked(player)}
+                          onPress={() =>
+                            requestConfirmation({
+                              title: player.blocked ? 'Разблокировать игрока?' : 'Заблокировать игрока?',
+                              description: player.blocked
+                                ? `${player.nickname} снова получит доступ к кабинету и действиям.`
+                                : `${player.nickname} будет ограничен в доступе к кабинету.`,
+                              confirmLabel: player.blocked ? 'Разблокировать' : 'Заблокировать',
+                              confirmColor: player.blocked ? 'success' : 'danger',
+                              onConfirm: () => handleTogglePlayerBlocked(player),
+                            })
+                          }
                         >
                           {player.blocked ? 'Разблокировать' : 'Заблокировать'}
                         </Button>
@@ -915,7 +1077,19 @@ export function AdminPage() {
                       <Table.Cell>{formatDate(entry.createdAt)}</Table.Cell>
                       <Table.Cell>{formatDate(entry.updatedAt)}</Table.Cell>
                       <Table.Cell>
-                        <Button size="sm" color="danger" onPress={() => void handleDeleteWhitelistEntry(entry)}>
+                        <Button
+                          size="sm"
+                          color="danger"
+                          onPress={() =>
+                            requestConfirmation({
+                              title: 'Удалить из whitelist?',
+                              description: `${entry.nickname} будет удален из белого списка.`,
+                              confirmLabel: 'Удалить',
+                              confirmColor: 'danger',
+                              onConfirm: () => handleDeleteWhitelistEntry(entry),
+                            })
+                          }
+                        >
                           Удалить
                         </Button>
                       </Table.Cell>
@@ -985,7 +1159,19 @@ export function AdminPage() {
                           </div>
                         </Table.Cell>
                         <Table.Cell>
-                          <Button size="sm" variant="ghost" onPress={() => void handleTogglePromoActive(row)}>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onPress={() =>
+                              requestConfirmation({
+                                title: row.isActive ? 'Отключить промокод?' : 'Включить промокод?',
+                                description: `Промокод ${row.code} будет ${row.isActive ? 'отключен' : 'включен'}.`,
+                                confirmLabel: row.isActive ? 'Отключить' : 'Включить',
+                                confirmColor: row.isActive ? 'danger' : 'success',
+                                onConfirm: () => handleTogglePromoActive(row),
+                              })
+                            }
+                          >
                             {row.isActive ? 'Отключить' : 'Включить'}
                           </Button>
                         </Table.Cell>
@@ -998,6 +1184,52 @@ export function AdminPage() {
           </AdminTableCard>
         </div>
       ) : null}
+
+      <AlertDialog.Backdrop
+        isOpen={Boolean(confirmState)}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) {
+            setConfirmState(null)
+          }
+        }}
+      >
+        <AlertDialog.Container>
+          <AlertDialog.Dialog className="sm:max-w-[440px]">
+            <AlertDialog.CloseTrigger />
+            <AlertDialog.Header>
+              <AlertDialog.Icon
+                status={confirmState?.confirmColor === 'danger' ? 'danger' : 'accent'}
+              />
+              <AlertDialog.Heading>
+                {confirmState?.title ?? 'Подтверждение действия'}
+              </AlertDialog.Heading>
+            </AlertDialog.Header>
+            <AlertDialog.Body>
+              <p>{confirmState?.description ?? ''}</p>
+            </AlertDialog.Body>
+            <AlertDialog.Footer>
+              <Button slot="close" variant="tertiary">
+                Отмена
+              </Button>
+              <Button
+                color={confirmState?.confirmColor ?? 'default'}
+                slot="close"
+                onPress={async () => {
+                  const nextConfirmState = confirmState
+
+                  if (!nextConfirmState) {
+                    return
+                  }
+
+                  await nextConfirmState.onConfirm()
+                }}
+              >
+                {confirmState?.confirmLabel ?? 'Подтвердить'}
+              </Button>
+            </AlertDialog.Footer>
+          </AlertDialog.Dialog>
+        </AlertDialog.Container>
+      </AlertDialog.Backdrop>
     </div>
   )
 

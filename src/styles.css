@@ -339,6 +339,7 @@ a {
 
 .xk-account-layout__rail {
   padding: 18px 18px 0;
+  min-height: 0;
 }
 
 .xk-account-layout__main {
@@ -409,6 +410,7 @@ a {
   .xk-account-layout__rail {
     height: 100%;
     min-height: 0;
+    overflow: hidden;
     padding: 18px 0 18px 18px;
   }
 

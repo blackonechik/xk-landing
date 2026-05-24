@@ -20,6 +20,10 @@ function formatDate(value: string | null) {
   }).format(new Date(value))
 }
 
+function hasHtmlMarkup(value: string) {
+  return /<\/?[a-z][\s\S]*>/i.test(value)
+}
+
 export function NewsPostPage({
   slug,
   backTo = '/news',
@@ -92,11 +96,18 @@ export function NewsPostPage({
             {post.authorName ? <Text color="muted" type="body-sm">Автор: {post.authorName}</Text> : null}
           </Card.Header>
           <Card.Content className="grid gap-4">
-            {post.content.split(/\n{2,}/).map((paragraph, index) => (
-              <Text key={`${post.id}-${index}`} type="body">
-                {paragraph}
-              </Text>
-            ))}
+            {hasHtmlMarkup(post.content) ? (
+              <div
+                className="prose prose-neutral max-w-none dark:prose-invert"
+                dangerouslySetInnerHTML={{ __html: post.content }}
+              />
+            ) : (
+              post.content.split(/\n{2,}/).map((paragraph, index) => (
+                <Text key={`${post.id}-${index}`} type="body">
+                  {paragraph}
+                </Text>
+              ))
+            )}
           </Card.Content>
         </Card>
       ) : null}

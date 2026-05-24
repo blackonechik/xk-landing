@@ -1,4 +1,4 @@
-import { Button, Card, Chip, Text } from '@heroui/react'
+import { Card, Chip, ScrollShadow, Text } from '@heroui/react'
 import ThemeToggle from '@/components/ThemeToggle'
 import {
   getPrimaryRoleLabel,
@@ -96,8 +96,13 @@ export function AccountSidebar({
 
       <div className="h-px bg-[var(--separator)]/70" />
 
-      <Card.Content className="flex min-h-0 flex-1 flex-col gap-4 p-0">
-        <div className="grid gap-2">
+      <Card.Content className="flex min-h-0 flex-1 flex-col gap-4 overflow-hidden p-0">
+        <ScrollShadow
+          className="min-h-0 flex-1 pr-1"
+          hideScrollBar
+          orientation="vertical"
+        >
+          <div className="grid gap-2">
           <Text
             className="text-[12px] uppercase tracking-[0.08em]"
             color="muted"
@@ -117,7 +122,8 @@ export function AccountSidebar({
               )
             }),
           )}
-        </div>
+          </div>
+        </ScrollShadow>
       </Card.Content>
 
       <div className="h-px bg-[var(--separator)]/70" />

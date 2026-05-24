@@ -4,6 +4,7 @@ import {
   Scripts,
   createRootRoute,
 } from '@tanstack/react-router'
+import { Toast } from '@heroui/react'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
 import PageTransition, {
@@ -101,6 +102,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <PageTransitionProvider>
+          <Toast.Provider />
           <Header />
           {children}
           <Footer />
