@@ -116,11 +116,13 @@ export function HeroMetricCard({
   description,
 }: HeroMetricCardProps) {
   return (
-    <Card>
+    <Card className="flex-row items-center">
       {icon ? <div className="text-muted">{icon}</div> : null}
       <Card.Header>
         <Card.Description>{label}</Card.Description>
-        <Card.Title>{value}</Card.Title>
+        <Text className="mt-1" type="h4">
+          {value}
+        </Text>
       </Card.Header>
       {description ? (
         <Card.Content>

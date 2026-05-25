@@ -956,28 +956,24 @@ export function AdminPage() {
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <HeroMetricCard
-          icon={<Wallet size={18} />}
-          label="Платежи"
-          value={stats.totalPayments}
-          description={`${stats.paidCount} оплачено, ${stats.pendingCount} ожидают`}
+          icon={<Wallet size={40} />}
+          label="Успешних платежей :"
+          value={stats.paidCount}
         />
         <HeroMetricCard
-          icon={<ShieldCheck size={18} />}
-          label="Заявки"
+          icon={<ShieldCheck size={40} />}
+          label="Заявки:"
           value={stats.totalApplications}
-          description={`${stats.pendingApplications} новых`}
         />
         <HeroMetricCard
-          icon={<FileText size={18} />}
-          label="Посты"
-          value={stats.totalPosts}
-          description={`${stats.publishedPosts} опубликовано`}
+          icon={<FileText size={40} />}
+          label="Посты:"
+          value={stats.publishedPosts}
         />
         <HeroMetricCard
-          icon={<TicketPercent size={18} />}
-          label="Whitelist"
+          icon={<TicketPercent size={40} />}
+          label="В whitelist:"
           value={stats.totalWhitelist}
-          description={`${stats.blockedPlayers} игроков заблокировано`}
         />
       </div>
 

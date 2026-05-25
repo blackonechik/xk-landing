@@ -86,27 +86,27 @@ export function ProfileStatusPanel({
         {actions ? <div className="flex flex-wrap gap-2">{actions}</div> : null}
       </Card.Header>
       <Card.Content className="grid gap-5">
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+        <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(180px,1fr))]">
           <HeroMetricCard
-            label="Жизни"
+            label="Жизни:"
             value={player.lives ?? 'нет данных'}
-            icon={<HeartPulse size={18} />}
+            icon={<HeartPulse size={40} />}
           />
           <HeroMetricCard
-            label="Последний вход"
+            label="Последний вход:"
             value={formatLastSeen(player.lastLoginAt)}
-            icon={<ScrollText size={18} />}
+            icon={<ScrollText size={40} />}
           />
           <HeroMetricCard
             label="Наиграно"
             value={formatPlayedHours(player.playedHours)}
-            icon={<Radio size={18} />}
+            icon={<Radio size={40} />}
           />
           {typeof totalDiamonds === 'number' ? (
             <HeroMetricCard
-              label="Алмазы"
+              label="Алмазы:"
               value={totalDiamonds}
-              icon={<Gem size={18} />}
+              icon={<Gem size={40} />}
             />
           ) : null}
         </div>
