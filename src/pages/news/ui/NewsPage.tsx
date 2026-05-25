@@ -3,14 +3,15 @@ import {
   Alert,
   Card,
   Chip,
-  Input,
+  FieldError,
   Label,
   ListBox,
+  SearchField,
   Select,
   Spinner,
   Text,
 } from '@heroui/react'
-import { Search } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import AnimatedLink from '@/components/AnimatedLink'
 import { fetchSitePosts, type SitePost } from '@/entities/site'
 import { HeroLinkButton, HeroPage } from '@/shared/ui/hero-page'
@@ -115,7 +116,7 @@ export function NewsPage({
   )
 
   const content = (
-    <div className="grid gap-8">
+    <div className="grid gap-4">
       {isLoading ? (
         <Alert status="accent">
           <Alert.Indicator>
@@ -141,33 +142,19 @@ export function NewsPage({
       {!isLoading && !error ? (
         <>
           <Card className="border border-[var(--separator)] bg-[var(--surface)]">
-            <Card.Header className="grid gap-2">
-              <div className="flex flex-wrap items-center gap-3">
-                <Card.Title>Все посты</Card.Title>
-                <Chip color="accent" variant="soft">
-                  {filteredPosts.length}
-                </Chip>
-              </div>
-              <Card.Description>
-                Ищите публикации по названию и фильтруйте ленту по времени
-                выхода.
-              </Card.Description>
-            </Card.Header>
             <Card.Content className="grid gap-4 md:grid-cols-[minmax(0,1fr)_260px]">
-              <Input
-                startContent={
-                  <Search
-                    aria-hidden="true"
-                    className="text-[var(--muted)]"
-                    size={16}
-                  />
-                }
-                placeholder="Найти пост по названию"
+              <SearchField
+                className="grid gap-2"
                 value={searchQuery}
-                onChange={(event) => setSearchQuery(event.target.value)}
+                onChange={setSearchQuery}
               >
-                <Label>Поиск по названию</Label>
-              </Input>
+                <SearchField.Group>
+                  <SearchField.SearchIcon />
+                  <SearchField.Input placeholder="Найти пост по названию" />
+                  <SearchField.ClearButton />
+                </SearchField.Group>
+                <FieldError />
+              </SearchField>
 
               <Select
                 selectedKey={timeFilter}
@@ -199,7 +186,7 @@ export function NewsPage({
               </Select>
             </Card.Content>
           </Card>
-
+                    
           {filteredPosts.length > 0 ? (
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {filteredPosts.map((post) => (
@@ -277,17 +264,24 @@ export function NewsPage({
   return (
     <HeroPage
       eyebrow="Новости"
-      title="Посты и объявления"
-      description="Закрепленные публикации, свежие новости сервера и полный архив материалов в одном месте."
+      title="Посты"
+      description="Лента сервера, объявления команды и последние публикации XK HARDCORE."
       actions={
-        <>
-          <HeroLinkButton to="/join" variant="secondary">
-            Подать заявку
+        basePath === '/cabinet/news' ? (
+          <HeroLinkButton to="/cabinet/admin/posts" variant="secondary">
+            <Plus size={18} />
+            Написать пост
           </HeroLinkButton>
-          <HeroLinkButton to="/rules" variant="ghost">
-            Правила
-          </HeroLinkButton>
-        </>
+        ) : (
+          <>
+            <HeroLinkButton to="/join" variant="secondary">
+              Подать заявку
+            </HeroLinkButton>
+            <HeroLinkButton to="/rules" variant="ghost">
+              Правила
+            </HeroLinkButton>
+          </>
+        )
       }
     >
       {content}

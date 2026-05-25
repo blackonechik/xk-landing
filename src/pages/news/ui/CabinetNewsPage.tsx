@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Alert, Spinner } from '@heroui/react'
+import { Alert, Button, Spinner } from '@heroui/react'
 import { useNavigate } from '@tanstack/react-router'
+import { Plus } from 'lucide-react'
 import {
   fetchAccountCached,
   getCachedAccount,
@@ -71,6 +72,17 @@ export function CabinetNewsPage() {
       }}
       title="Посты"
       description="Лента сервера, объявления команды и последние публикации XK HARDCORE."
+      actions={
+        <Button
+          variant="secondary"
+          onPress={() => {
+            void navigate({ to: '/cabinet/admin/posts' })
+          }}
+        >
+          <Plus size={18} />
+          Написать пост
+        </Button>
+      }
     >
       <NewsPage basePath="/cabinet/news" embedded />
     </AccountLayout>

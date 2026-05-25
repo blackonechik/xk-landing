@@ -11,7 +11,7 @@ type NewsHeroSliderProps = {
 
 function formatDate(value: string | null) {
   if (!value) {
-    return 'Скоро появится'
+    return ''
   }
 
   return new Intl.DateTimeFormat('ru-RU', {
@@ -69,6 +69,7 @@ export function NewsHeroSlider({ basePath, posts }: NewsHeroSliderProps) {
   const slides = posts.length > 0 ? posts : placeholderSlides
   const [currentIndex, setCurrentIndex] = useState(0)
   const currentSlide = slides[currentIndex] ?? slides[0]
+  const hasPinnedPosts = posts.some((post) => post.isPinned)
 
   function showPrev() {
     setCurrentIndex((prev) => (prev === 0 ? slides.length - 1 : prev - 1))
@@ -79,63 +80,45 @@ export function NewsHeroSlider({ basePath, posts }: NewsHeroSliderProps) {
   }
 
   return (
-    <Card className="overflow-hidden border border-[var(--separator)] bg-[var(--surface)]">
-      <Card.Header className="flex items-start justify-between gap-4 p-6">
-        <div className="grid gap-2">
-          <div className="flex flex-wrap items-center gap-3">
-            <Chip color="accent" variant="soft">
-              {posts.length > 0 ? 'Слайдер постов' : 'Первые новости впереди'}
-            </Chip>
-            <Text color="muted" type="body-sm">
-              {posts.length > 0
-                ? `${currentIndex + 1} из ${slides.length}`
-                : 'Плейсхолдер ленты'}
-            </Text>
+    <Card className="overflow-hidden p-0 border border-[var(--separator)] bg-[var(--surface)]">
+      <Card.Content className="grid gap-5">
+        <div
+          className="relative min-h-[320px] overflow-hidden rounded-3xl border border-white/10"
+          style={getCoverBackground(currentSlide)}
+        >
+          <div className="absolute left-4 right-4 top-4 z-10 flex items-start justify-between gap-3 md:left-6 md:right-6 md:top-6">
+            <div className="flex flex-wrap items-center gap-3">
+              {posts.length > 0 ? (
+                <Text className="text-white/80" type="body-sm">
+                  {currentIndex + 1} из {slides.length}
+                </Text>
+              ) : null}
+            </div>
           </div>
-          <Card.Title>
-            {posts.some((post) => post.isPinned)
-              ? 'Закрепленные публикации'
-              : 'Свежие публикации'}
-          </Card.Title>
-          <Card.Description>
-            {posts.length > 0
-              ? 'Перелистывайте важные посты сервера и открывайте публикацию в один клик.'
-              : 'Как только команда опубликует первые материалы, они появятся здесь.'}
-          </Card.Description>
-        </div>
-
-        <div className="flex items-center gap-2">
           <Button
             aria-label="Предыдущий пост"
+            className="absolute left-0 top-1/2 z-10 -translate-y-1/2 bg-inherit"
             isDisabled={slides.length < 2}
             isIconOnly
-            variant="secondary"
+            variant="danger"
             onPress={showPrev}
           >
             <ChevronLeft size={18} />
           </Button>
           <Button
             aria-label="Следующий пост"
+            className="absolute right-0 top-1/2 z-10 -translate-y-1/2 bg-inherit"
             isDisabled={slides.length < 2}
             isIconOnly
-            variant="secondary"
+            variant="danger"
             onPress={showNext}
           >
             <ChevronRight size={18} />
           </Button>
-        </div>
-      </Card.Header>
-
-      <Card.Content className="grid gap-5 p-6 pt-0">
-        <div
-          className="relative min-h-[320px] overflow-hidden rounded-3xl border border-white/10"
-          style={getCoverBackground(currentSlide)}
-        >
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.3),transparent_30%),linear-gradient(180deg,rgba(15,23,42,0.05),rgba(15,23,42,0.78))]" />
-          <div className="relative flex min-h-[320px] flex-col justify-end gap-4 p-6 text-white md:p-8">
+          <div className="relative flex min-h-[450px] flex-col justify-between gap-4 p-6 text-white md:p-8">
             <div className="flex flex-wrap items-center gap-3">
               <Chip color={currentSlide.isPinned ? 'warning' : 'accent'} variant="soft">
-                {currentSlide.isPinned ? 'Закрепленный пост' : 'Публикация'}
+                {currentSlide.isPinned ? 'Закрепленный пост' : 'Новости'}
               </Chip>
               <Text className="text-white/80" type="body-sm">
                 {formatDate(currentSlide.publishedAt)}

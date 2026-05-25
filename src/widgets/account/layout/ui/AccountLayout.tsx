@@ -52,33 +52,40 @@ export function AccountLayout({
         <section className="xk-account-layout__main">
           <div className="xk-account-layout__scroll">
             <header className="xk-account-layout__hero">
-              <div className="xk-account-layout__hero-copy">
-                {eyebrow ? (
-                  <Chip
-                    className="xk-account-layout__eyebrow"
-                    color="accent"
-                    variant="soft"
-                  >
-                    {eyebrow}
-                  </Chip>
-                ) : null}
-                <div className="xk-account-layout__hero-text">
-                  <Text
-                    className="xk-account-layout__title"
-                    type="h1"
-                  >
-                    {title}
-                  </Text>
-                  {description ? (
-                    <Text
-                      className="xk-account-layout__description"
-                      color="muted"
-                      type="body"
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                <div className="xk-account-layout__hero-copy">
+                  {eyebrow ? (
+                    <Chip
+                      className="xk-account-layout__eyebrow"
+                      color="accent"
+                      variant="soft"
                     >
-                      {description}
-                    </Text>
+                      {eyebrow}
+                    </Chip>
                   ) : null}
+                  <div className="xk-account-layout__hero-text">
+                    <Text
+                      className="xk-account-layout__title"
+                      type="h1"
+                    >
+                      {title}
+                    </Text>
+                    {description ? (
+                      <Text
+                        className="xk-account-layout__description"
+                        color="muted"
+                        type="body"
+                      >
+                        {description}
+                      </Text>
+                    ) : null}
+                  </div>
                 </div>
+                {actions ? (
+                  <div className="flex flex-wrap items-center gap-3">
+                    {actions}
+                  </div>
+                ) : null}
               </div>
             </header>
 
