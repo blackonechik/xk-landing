@@ -44,6 +44,10 @@ export type SitePost = {
   content: string
   coverTone: string
   coverImageUrl: string | null
+  submittedByNickname: string | null
+  moderationStatus: string
+  reviewedBy: string | null
+  reviewNote: string | null
   isPinned: boolean
   pinnedOrder: number | null
   isPublished: boolean

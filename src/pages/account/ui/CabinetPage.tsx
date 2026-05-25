@@ -159,23 +159,6 @@ export function CabinetPage() {
       eyebrow="Аккаунт"
       title="Личный кабинет"
       description="Личный кабинет активно разрабатывается. Если вы нашли ошибку или хотите предложить улучшение, пожалуйста, сообщите нам в Discord."
-      actions={
-        <>
-          {settings?.navigation.showBank !== false ? (
-            <HeroLinkButton to="/cabinet/bank" variant="secondary">
-              Открыть банк
-            </HeroLinkButton>
-          ) : null}
-          <Button
-            variant="ghost"
-            onPress={() => {
-              void logout().then(() => navigate({ to: '/' }))
-            }}
-          >
-            Выйти
-          </Button>
-        </>
-      }
     >
       {playerProfile ? (
         <PlayerProfileView

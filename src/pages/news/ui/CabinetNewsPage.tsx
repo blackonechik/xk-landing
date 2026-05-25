@@ -9,12 +9,14 @@ import {
 } from '@/entities/account'
 import { AccountLayout } from '@/widgets/account/layout'
 import { NewsPage } from './NewsPage'
+import { CreatePostSubmissionModal } from './CreatePostSubmissionModal'
 
 export function CabinetNewsPage() {
   const navigate = useNavigate()
   const [account, setAccount] = useState<AccountPayload | null>(() =>
     getCachedAccount(),
   )
+  const [isCreatePostOpen, setIsCreatePostOpen] = useState(false)
 
   useEffect(() => {
     let isActive = true
@@ -76,7 +78,7 @@ export function CabinetNewsPage() {
         <Button
           variant="secondary"
           onPress={() => {
-            void navigate({ to: '/cabinet/admin/posts' })
+            setIsCreatePostOpen(true)
           }}
         >
           <Plus size={18} />
@@ -85,6 +87,10 @@ export function CabinetNewsPage() {
       }
     >
       <NewsPage basePath="/cabinet/news" embedded />
+      <CreatePostSubmissionModal
+        isOpen={isCreatePostOpen}
+        onOpenChange={setIsCreatePostOpen}
+      />
     </AccountLayout>
   )
 }

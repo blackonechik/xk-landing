@@ -5,6 +5,7 @@ export {
   fetchSitePosts,
   fetchSiteSettings,
   fetchSiteSettingsCached,
+  submitSitePost,
 } from './api/site-api'
 export type {
   JoinApplication,

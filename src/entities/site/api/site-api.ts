@@ -62,6 +62,43 @@ export async function fetchSitePost(slug: string) {
   return payload.post
 }
 
+export async function submitSitePost(payload: {
+  slug?: string
+  title: string
+  summary: string
+  content: string
+  coverTone?: string
+  coverImageUrl?: string | null
+}) {
+  const response = await fetch(`${apiBaseUrl}/api/posts/submissions`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  })
+
+  const data = (await response.json().catch(() => undefined)) as
+    | { post: SitePost; message?: string }
+    | { message?: string }
+    | undefined
+
+  if (!response.ok) {
+    const message =
+      data && 'message' in data && typeof data.message === 'string'
+        ? data.message
+        : 'Не удалось отправить пост на модерацию.'
+    throw new Error(message)
+  }
+
+  if (!data || !('post' in data)) {
+    throw new Error('Неожиданный ответ сервера при отправке поста.')
+  }
+
+  return data.post
+}
+
 export async function createJoinApplication(payload: {
   nickname: string
   contact: string

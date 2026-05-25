@@ -11,6 +11,9 @@ import {
   Chip,
   Input,
   Modal,
+  ListBox,
+  Label,
+  Select,
   Spinner,
   Switch,
   Table,
@@ -87,6 +90,15 @@ const applicationStatusMeta: Record<
   rejected: { label: 'Отклонена', color: 'danger' },
 }
 
+const postModerationStatusMeta: Record<
+  string,
+  { label: string; color: 'success' | 'warning' | 'danger' | 'default' | 'accent' }
+> = {
+  pending: { label: 'На модерации', color: 'warning' },
+  approved: { label: 'Одобрен', color: 'success' },
+  rejected: { label: 'Отклонен', color: 'danger' },
+}
+
 const promoStatusMeta = {
   active: { label: 'Активен', color: 'success' as const },
   disabled: { label: 'Выключен', color: 'default' as const },
@@ -98,6 +110,10 @@ function getPaymentStatusMeta(status: string) {
 
 function getApplicationStatusMeta(status: string) {
   return applicationStatusMeta[status] ?? { label: status, color: 'default' as const }
+}
+
+function getPostModerationStatusMeta(status: string) {
+  return postModerationStatusMeta[status] ?? { label: status, color: 'default' as const }
 }
 
 function getPromoStatusMeta(isActive: boolean) {
@@ -251,6 +267,9 @@ export function AdminPage() {
   const [postAuthorName, setPostAuthorName] = useState('')
   const [postCoverTone, setPostCoverTone] = useState('slate')
   const [postCoverImageUrl, setPostCoverImageUrl] = useState('')
+  const [postSubmittedByNickname, setPostSubmittedByNickname] = useState('')
+  const [postModerationStatus, setPostModerationStatus] = useState('approved')
+  const [postReviewNote, setPostReviewNote] = useState('')
   const [postPinned, setPostPinned] = useState(false)
   const [postPinnedOrder, setPostPinnedOrder] = useState('')
   const [postPublished, setPostPublished] = useState(true)
@@ -528,6 +547,13 @@ export function AdminPage() {
         content: normalizedContent.trim(),
         coverTone: postCoverTone.trim(),
         coverImageUrl: postCoverImageUrl.trim() || null,
+        submittedByNickname: postSubmittedByNickname.trim() || null,
+        moderationStatus: postModerationStatus,
+        reviewedBy:
+          postModerationStatus === 'pending'
+            ? null
+            : account?.player.nickname ?? null,
+        reviewNote: postReviewNote.trim() || null,
         isPinned: postPinned,
         pinnedOrder:
           postPinned && postPinnedOrder.trim()
@@ -580,6 +606,9 @@ export function AdminPage() {
     setPostAuthorName('')
     setPostCoverTone('slate')
     setPostCoverImageUrl('')
+    setPostSubmittedByNickname('')
+    setPostModerationStatus('approved')
+    setPostReviewNote('')
     setPostPinned(false)
     setPostPinnedOrder('')
     setPostPublished(true)
@@ -594,12 +623,71 @@ export function AdminPage() {
     setPostAuthorName(post.authorName ?? '')
     setPostCoverTone(post.coverTone)
     setPostCoverImageUrl(post.coverImageUrl ?? '')
+    setPostSubmittedByNickname(post.submittedByNickname ?? '')
+    setPostModerationStatus(post.moderationStatus)
+    setPostReviewNote(post.reviewNote ?? '')
     setPostPinned(post.isPinned)
     setPostPinnedOrder(
       typeof post.pinnedOrder === 'number' ? String(post.pinnedOrder) : '',
     )
     setPostPublished(post.isPublished)
     void navigate({ to: getAdminViewPath('posts') })
+  }
+
+  async function handleModeratePost(
+    post: AdminPostRow,
+    moderationStatus: 'approved' | 'rejected',
+  ) {
+    if (!isSessionAdmin) {
+      showErrorToast('Доступ запрещен', 'Нужен вход под пользователем с ролью администратора сайта.')
+      return
+    }
+
+    setIsSavingPost(true)
+
+    try {
+      const updated = await updateAdminPost(post.id, {
+        slug: post.slug,
+        title: post.title,
+        summary: post.summary,
+        content: normalizePostContentHtml(post.content),
+        coverTone: post.coverTone,
+        coverImageUrl: post.coverImageUrl,
+        submittedByNickname: post.submittedByNickname,
+        moderationStatus,
+        reviewedBy: account?.player.nickname ?? null,
+        reviewNote: post.reviewNote,
+        isPinned: moderationStatus === 'approved' ? post.isPinned : false,
+        pinnedOrder: moderationStatus === 'approved' ? post.pinnedOrder : null,
+        isPublished: moderationStatus === 'approved',
+        authorName: post.authorName,
+      })
+
+      setDashboard((prev) =>
+        prev
+          ? {
+              ...prev,
+              posts: prev.posts.map((item) =>
+                item.id === updated.id ? updated : item,
+              ),
+            }
+          : prev,
+      )
+
+      showSuccessToast(
+        moderationStatus === 'approved'
+          ? 'Пост одобрен'
+          : 'Пост отклонен',
+        updated.title,
+      )
+    } catch (requestError) {
+      showErrorToast(
+        'Не удалось обновить статус поста',
+        requestError instanceof Error ? requestError.message : undefined,
+      )
+    } finally {
+      setIsSavingPost(false)
+    }
   }
 
   async function handleSaveNavigation(items: SiteNavigationItem[], successMessage: string, description?: string) {
@@ -1006,16 +1094,52 @@ export function AdminPage() {
         <div className="grid gap-6">
           <Card>
             <Card.Header>
-              <Card.Title>{postId ? 'Редактирование поста' : 'Новый пост'}</Card.Title>
+              <Card.Title>{postId ? 'Модерация и редактирование поста' : 'Новый пост'}</Card.Title>
             </Card.Header>
             <Card.Content className="grid gap-4 xl:grid-cols-2">
               <Input label="Заголовок" value={postTitle} onChange={(event) => setPostTitle(event.target.value)} />
               <Input label="Slug" value={postSlug} onChange={(event) => setPostSlug(event.target.value)} placeholder="оставьте пустым для автогенерации" />
               <Input label="Краткое описание" value={postSummary} onChange={(event) => setPostSummary(event.target.value)} />
               <Input label="Автор" value={postAuthorName} onChange={(event) => setPostAuthorName(event.target.value)} />
+              <Input label="Отправил на модерацию" value={postSubmittedByNickname} onChange={(event) => setPostSubmittedByNickname(event.target.value)} placeholder="ник игрока" />
               <Input label="Тон обложки" value={postCoverTone} onChange={(event) => setPostCoverTone(event.target.value)} placeholder="slate, amber, emerald..." />
               <Input label="Картинка обложки" value={postCoverImageUrl} onChange={(event) => setPostCoverImageUrl(event.target.value)} placeholder="https://... или /assets/..." />
               <Input label="Порядок закрепа" value={postPinnedOrder} onChange={(event) => setPostPinnedOrder(event.target.value)} placeholder="1, 2, 3..." />
+              <Select
+                selectedKey={postModerationStatus}
+                onSelectionChange={(key) => {
+                  if (typeof key === 'string') {
+                    setPostModerationStatus(key)
+                    if (key !== 'approved') {
+                      setPostPublished(false)
+                      setPostPinned(false)
+                    }
+                  }
+                }}
+              >
+                <Label>Статус модерации</Label>
+                <Select.Trigger>
+                  <Select.Value />
+                  <Select.Indicator />
+                </Select.Trigger>
+                <Select.Popover>
+                  <ListBox>
+                    <ListBox.Item id="pending" textValue="На модерации">
+                      На модерации
+                      <ListBox.ItemIndicator />
+                    </ListBox.Item>
+                    <ListBox.Item id="approved" textValue="Одобрен">
+                      Одобрен
+                      <ListBox.ItemIndicator />
+                    </ListBox.Item>
+                    <ListBox.Item id="rejected" textValue="Отклонен">
+                      Отклонен
+                      <ListBox.ItemIndicator />
+                    </ListBox.Item>
+                  </ListBox>
+                </Select.Popover>
+              </Select>
+              <Input label="Комментарий модератора" value={postReviewNote} onChange={(event) => setPostReviewNote(event.target.value)} placeholder="опционально" />
               <div className="grid gap-3 xl:col-span-2">
                 <LexicalRichTextEditor
                   label="Текст поста"
@@ -1024,10 +1148,10 @@ export function AdminPage() {
                   onChange={setPostContent}
                 />
               </div>
-              <Switch isSelected={postPublished} onChange={setPostPublished}>
+              <Switch isSelected={postPublished} isDisabled={postModerationStatus !== 'approved'} onChange={setPostPublished}>
                 Публиковать сразу
               </Switch>
-              <Switch isSelected={postPinned} onChange={setPostPinned}>
+              <Switch isSelected={postPinned} isDisabled={postModerationStatus !== 'approved'} onChange={setPostPinned}>
                 Закрепить в слайдере
               </Switch>
               <div className="flex flex-wrap gap-2">
@@ -1041,17 +1165,18 @@ export function AdminPage() {
 
           <AdminTableCard
             title="Список постов"
-            description="Публикации сайта, статусы выхода и быстрый переход к редактированию."
+            description="Публикации сайта, очередь модерации и быстрый переход к редактированию."
           >
             <Table variant="secondary">
               <Table.ScrollContainer>
-                <Table.Content aria-label="Список постов" className="min-w-[980px]">
+                <Table.Content aria-label="Список постов" className="min-w-[1120px]">
                   <Table.Header>
                     <Table.Column isRowHeader>Пост</Table.Column>
                     <Table.Column>Slug</Table.Column>
                     <Table.Column>Автор</Table.Column>
+                    <Table.Column>Отправитель</Table.Column>
+                    <Table.Column>Модерация</Table.Column>
                     <Table.Column>Закреп</Table.Column>
-                    <Table.Column>Статус</Table.Column>
                     <Table.Column>Опубликован</Table.Column>
                     <Table.Column>Обновлен</Table.Column>
                     <Table.Column>Действия</Table.Column>
@@ -1067,6 +1192,12 @@ export function AdminPage() {
                         </Table.Cell>
                         <Table.Cell>/{post.slug}</Table.Cell>
                         <Table.Cell>{post.authorName ?? 'Команда XK HARDCORE'}</Table.Cell>
+                        <Table.Cell>{post.submittedByNickname ?? '—'}</Table.Cell>
+                        <Table.Cell>
+                          <Chip color={getPostModerationStatusMeta(post.moderationStatus).color} variant="soft">
+                            {getPostModerationStatusMeta(post.moderationStatus).label}
+                          </Chip>
+                        </Table.Cell>
                         <Table.Cell>
                           {post.isPinned ? (
                             <Chip color="warning" variant="soft">
@@ -1082,26 +1213,62 @@ export function AdminPage() {
                         </Table.Cell>
                         <Table.Cell>
                           <Chip color={post.isPublished ? 'success' : 'default'} variant="soft">
-                            {post.isPublished ? 'Опубликован' : 'Черновик'}
+                            {post.isPublished ? 'Опубликован' : 'Не опубликован'}
                           </Chip>
                         </Table.Cell>
                         <Table.Cell>{formatDate(post.publishedAt)}</Table.Cell>
                         <Table.Cell>{formatDate(post.updatedAt)}</Table.Cell>
                         <Table.Cell>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onPress={() =>
-                              requestConfirmation({
-                                title: 'Открыть пост для редактирования?',
-                                description: `Форма будет заполнена данными поста "${post.title}".`,
-                                confirmLabel: 'Открыть',
-                                onConfirm: () => editPost(post),
-                              })
-                            }
-                          >
-                            Редактировать
-                          </Button>
+                          <div className="flex flex-wrap gap-2">
+                            {post.moderationStatus !== 'approved' ? (
+                              <Button
+                                size="sm"
+                                color="success"
+                                onPress={() =>
+                                  requestConfirmation({
+                                    title: 'Одобрить пост?',
+                                    description: `Пост "${post.title}" будет опубликован в ленте.`,
+                                    confirmLabel: 'Одобрить',
+                                    confirmColor: 'success',
+                                    onConfirm: () => handleModeratePost(post, 'approved'),
+                                  })
+                                }
+                              >
+                                Одобрить
+                              </Button>
+                            ) : null}
+                            {post.moderationStatus !== 'rejected' ? (
+                              <Button
+                                size="sm"
+                                color="danger"
+                                onPress={() =>
+                                  requestConfirmation({
+                                    title: 'Отклонить пост?',
+                                    description: `Пост "${post.title}" будет снят с публикации и помечен как отклоненный.`,
+                                    confirmLabel: 'Отклонить',
+                                    confirmColor: 'danger',
+                                    onConfirm: () => handleModeratePost(post, 'rejected'),
+                                  })
+                                }
+                              >
+                                Отклонить
+                              </Button>
+                            ) : null}
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onPress={() =>
+                                requestConfirmation({
+                                  title: 'Открыть пост для редактирования?',
+                                  description: `Форма будет заполнена данными поста "${post.title}".`,
+                                  confirmLabel: 'Открыть',
+                                  onConfirm: () => editPost(post),
+                                })
+                              }
+                            >
+                              Редактировать
+                            </Button>
+                          </div>
                         </Table.Cell>
                       </Table.Row>
                     ))}

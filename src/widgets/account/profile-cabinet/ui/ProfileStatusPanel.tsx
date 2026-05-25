@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Button, Card, Chip, Modal, Text } from '@heroui/react'
-import { Circle, Gem, HeartPulse, Radio, ScrollText } from 'lucide-react'
+import { Circle, Gem, HeartPulse, Radio, Rocket, ScrollText } from 'lucide-react'
 import { getPrimaryRoleLabel, isAdminRole } from '@/entities/account'
 import { formatPlayedHours } from '@/entities/player'
 import { fetchSiteSettingsCached } from '@/entities/site'
@@ -151,10 +151,13 @@ export function ProfileStatusPanel({
             <Modal.Dialog className="sm:max-w-[420px]">
               <Modal.CloseTrigger />
               <Modal.Header>
+                <Modal.Icon className="bg-default text-foreground">
+                  <Rocket className="size-5" />
+                </Modal.Icon>
                 <Modal.Heading>{comingSoonSection}</Modal.Heading>
               </Modal.Header>
               <Modal.Body>
-                <Text color="muted">Этот раздел в разработке.</Text>
+                <p>Этот раздел в разработке.</p>
               </Modal.Body>
               <Modal.Footer>
                 <Button onPress={() => setComingSoonSection(null)}>

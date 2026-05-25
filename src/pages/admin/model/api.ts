@@ -66,6 +66,10 @@ export type AdminPostRow = {
   content: string
   coverTone: string
   coverImageUrl: string | null
+  submittedByNickname: string | null
+  moderationStatus: string
+  reviewedBy: string | null
+  reviewNote: string | null
   isPinned: boolean
   pinnedOrder: number | null
   isPublished: boolean
@@ -143,6 +147,10 @@ type CreatePostPayload = {
   content: string
   coverTone?: string
   coverImageUrl?: string | null
+  submittedByNickname?: string | null
+  moderationStatus?: string
+  reviewedBy?: string | null
+  reviewNote?: string | null
   isPinned?: boolean
   pinnedOrder?: number | null
   isPublished?: boolean

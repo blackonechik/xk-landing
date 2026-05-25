@@ -11,7 +11,6 @@ import {
   Spinner,
   Text,
 } from '@heroui/react'
-import { Plus } from 'lucide-react'
 import AnimatedLink from '@/components/AnimatedLink'
 import { fetchSitePosts, type SitePost } from '@/entities/site'
 import { HeroLinkButton, HeroPage } from '@/shared/ui/hero-page'
@@ -267,21 +266,14 @@ export function NewsPage({
       title="Посты"
       description="Лента сервера, объявления команды и последние публикации XK HARDCORE."
       actions={
-        basePath === '/cabinet/news' ? (
-          <HeroLinkButton to="/cabinet/admin/posts" variant="secondary">
-            <Plus size={18} />
-            Написать пост
+        <>
+          <HeroLinkButton to="/join" variant="secondary">
+            Подать заявку
           </HeroLinkButton>
-        ) : (
-          <>
-            <HeroLinkButton to="/join" variant="secondary">
-              Подать заявку
-            </HeroLinkButton>
-            <HeroLinkButton to="/rules" variant="ghost">
-              Правила
-            </HeroLinkButton>
-          </>
-        )
+          <HeroLinkButton to="/rules" variant="ghost">
+            Правила
+          </HeroLinkButton>
+        </>
       }
     >
       {content}
