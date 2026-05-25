@@ -1,12 +1,19 @@
 import { useEffect, useState } from 'react'
 import { Button, Card, Chip, Modal, Text } from '@heroui/react'
-import { Circle, Gem, HeartPulse, Radio, Rocket, ScrollText } from 'lucide-react'
+import {
+  Circle,
+  Gem,
+  HeartPulse,
+  Radio,
+  Rocket,
+  ScrollText,
+} from 'lucide-react'
 import { getPrimaryRoleLabel, isAdminRole } from '@/entities/account'
 import { formatPlayedHours } from '@/entities/player'
 import { fetchSiteSettingsCached } from '@/entities/site'
 import type { SiteSettings } from '@/entities/site'
 import { formatLastSeen } from '@/shared/lib/date/format-date'
-import { HeroMetricCard } from '@/shared/ui/hero-page'
+import { HeroSectionCard } from '@/shared/ui/hero-page'
 import { PROFILE_QUICK_SECTIONS } from '../model/quick-sections'
 import type { ProfileStatusPanelProps } from '../model/profile-status.types'
 import { QuickSectionCard } from './QuickSectionCard'
@@ -87,23 +94,27 @@ export function ProfileStatusPanel({
       </Card.Header>
       <Card.Content className="grid gap-5">
         <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(180px,1fr))]">
-          <HeroMetricCard
+          <HeroSectionCard
+            gradient="rose"
             label="Жизни:"
             value={player.lives ?? 'нет данных'}
             icon={<HeartPulse size={40} />}
           />
-          <HeroMetricCard
+          <HeroSectionCard
+            gradient="sky"
             label="Последний вход:"
             value={formatLastSeen(player.lastLoginAt)}
             icon={<ScrollText size={40} />}
           />
-          <HeroMetricCard
+          <HeroSectionCard
+            gradient="aqua"
             label="Наиграно"
             value={formatPlayedHours(player.playedHours)}
             icon={<Radio size={40} />}
           />
           {typeof totalDiamonds === 'number' ? (
-            <HeroMetricCard
+            <HeroSectionCard
+              gradient="lime"
               label="Алмазы:"
               value={totalDiamonds}
               icon={<Gem size={40} />}

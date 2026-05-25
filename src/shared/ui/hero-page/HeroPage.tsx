@@ -26,13 +26,6 @@ type HeroLinkButtonProps = {
   className?: string
 }
 
-type HeroMetricCardProps = {
-  icon?: ReactNode
-  label: ReactNode
-  value: ReactNode
-  description?: ReactNode
-}
-
 export function HeroPage({
   eyebrow,
   title,
@@ -79,59 +72,6 @@ export function HeroPage({
         {children}
       </section>
     </main>
-  )
-}
-
-export function HeroSectionCard({
-  title,
-  description,
-  icon,
-  children,
-}: {
-  title: ReactNode
-  description?: ReactNode
-  icon?: ReactNode
-  children?: ReactNode
-}) {
-  return (
-    <Card>
-      <Card.Header className="flex items-start justify-between gap-4">
-        <div>
-          <Card.Title>{title}</Card.Title>
-          {description ? (
-            <Card.Description>{description}</Card.Description>
-          ) : null}
-        </div>
-        {icon ? <div className="text-muted">{icon}</div> : null}
-      </Card.Header>
-      {children ? <Card.Content>{children}</Card.Content> : null}
-    </Card>
-  )
-}
-
-export function HeroMetricCard({
-  icon,
-  label,
-  value,
-  description,
-}: HeroMetricCardProps) {
-  return (
-    <Card className="flex-row items-center">
-      {icon ? <div className="text-muted">{icon}</div> : null}
-      <Card.Header>
-        <Card.Description>{label}</Card.Description>
-        <Text className="mt-1" type="h4">
-          {value}
-        </Text>
-      </Card.Header>
-      {description ? (
-        <Card.Content>
-          <Text color="muted" type="body-sm">
-            {description}
-          </Text>
-        </Card.Content>
-      ) : null}
-    </Card>
   )
 }
 

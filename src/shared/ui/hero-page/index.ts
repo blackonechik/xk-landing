@@ -1,7 +1,9 @@
 export {
   HeroInlineLink,
   HeroLinkButton,
-  HeroMetricCard,
   HeroPage,
-  HeroSectionCard,
 } from './HeroPage'
+export {
+  HeroSectionCard,
+  type HeroSectionCardGradient,
+} from './HeroSectionCard'

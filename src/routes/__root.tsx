@@ -10,11 +10,7 @@ import Header from '../components/Header'
 import PageTransition, {
   PageTransitionProvider,
 } from '../components/PageTransition'
-import {
-  HeroLinkButton,
-  HeroPage,
-  HeroSectionCard,
-} from '@/shared/ui/hero-page'
+import { HeroLinkButton, HeroPage } from '@/shared/ui/hero-page'
 
 import appCss from '../styles.css?url'
 
@@ -71,9 +67,9 @@ function NotFoundPage() {
       title="Страница не найдена"
       description="Такого раздела на XK HARDCORE нет. Проверь адрес или вернись на главную страницу."
       actions={<HeroLinkButton to="/">На главную</HeroLinkButton>}
+      children={null}
       narrow
-    >
-    </HeroPage>
+    />
   )
 }
 function RootDocument({ children }: { children: React.ReactNode }) {
