@@ -77,6 +77,7 @@ export type AdminPlayerRow = {
   lowercaseNickname: string
   discordId: string
   blocked: boolean
+  roles: string[]
   lastLoginAt: string | null
   registeredAt: string | null
 }
@@ -155,7 +156,9 @@ export async function fetchAdminDashboard(): Promise<AdminDashboard> {
     | undefined
 
   if (response.status === 401 || response.status === 403) {
-    throw new Error('Доступ к админке есть только у пользователей с ролью администратора.')
+    throw new Error(
+      'Доступ к админке есть только у пользователей с ролью администратора.',
+    )
   }
 
   if (!response.ok || !data || !('payments' in data) || !('lifeLogs' in data)) {
@@ -176,7 +179,9 @@ export async function fetchPromoCodes(): Promise<AdminPromoCodeRow[]> {
     | undefined
 
   if (response.status === 401 || response.status === 403) {
-    throw new Error('Доступ к админке есть только у пользователей с ролью администратора.')
+    throw new Error(
+      'Доступ к админке есть только у пользователей с ролью администратора.',
+    )
   }
 
   if (!response.ok || !data || !('promoCodes' in data)) {
@@ -212,15 +217,21 @@ export async function createPromoCode(payload: CreatePromoCodePayload) {
   return data.promoCode
 }
 
-export async function updatePromoCode(promoId: string, payload: UpdatePromoCodePayload) {
-  const response = await fetch(`${apiBaseUrl}/api/admin/promocodes/${promoId}`, {
-    method: 'PATCH',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
+export async function updatePromoCode(
+  promoId: string,
+  payload: UpdatePromoCodePayload,
+) {
+  const response = await fetch(
+    `${apiBaseUrl}/api/admin/promocodes/${promoId}`,
+    {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
     },
-    body: JSON.stringify(payload),
-  })
+  )
 
   const data = (await response.json().catch(() => undefined)) as
     | { promoCode: AdminPromoCodeRow }
@@ -232,21 +243,29 @@ export async function updatePromoCode(promoId: string, payload: UpdatePromoCodeP
   }
 
   if (!data || !('promoCode' in data)) {
-    throw new Error('Backend вернул неожиданный ответ при обновлении промокода.')
+    throw new Error(
+      'Backend вернул неожиданный ответ при обновлении промокода.',
+    )
   }
 
   return data.promoCode
 }
 
-export async function updateAdminApplication(applicationId: string, payload: UpdateApplicationPayload) {
-  const response = await fetch(`${apiBaseUrl}/api/admin/applications/${applicationId}`, {
-    method: 'PATCH',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
+export async function updateAdminApplication(
+  applicationId: string,
+  payload: UpdateApplicationPayload,
+) {
+  const response = await fetch(
+    `${apiBaseUrl}/api/admin/applications/${applicationId}`,
+    {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
     },
-    body: JSON.stringify(payload),
-  })
+  )
 
   const data = (await response.json().catch(() => undefined)) as
     | { application: AdminApplicationRow }
@@ -290,7 +309,10 @@ export async function createAdminPost(payload: CreatePostPayload) {
   return data.post
 }
 
-export async function updateAdminPost(postId: string, payload: UpdatePostPayload) {
+export async function updateAdminPost(
+  postId: string,
+  payload: UpdatePostPayload,
+) {
   const response = await fetch(`${apiBaseUrl}/api/admin/posts/${postId}`, {
     method: 'PATCH',
     credentials: 'include',
@@ -336,21 +358,29 @@ export async function updateAdminNavigation(items: SiteNavigationItem[]) {
   }
 
   if (!data || !('navigation' in data)) {
-    throw new Error('Backend вернул неожиданный ответ при обновлении навигации.')
+    throw new Error(
+      'Backend вернул неожиданный ответ при обновлении навигации.',
+    )
   }
 
   return data
 }
 
-export async function updateAdminPlayerBlocked(nickname: string, blocked: boolean) {
-  const response = await fetch(`${apiBaseUrl}/api/admin/players/${encodeURIComponent(nickname)}/block`, {
-    method: 'PATCH',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
+export async function updateAdminPlayerBlocked(
+  nickname: string,
+  blocked: boolean,
+) {
+  const response = await fetch(
+    `${apiBaseUrl}/api/admin/players/${encodeURIComponent(nickname)}/block`,
+    {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ blocked }),
     },
-    body: JSON.stringify({ blocked }),
-  })
+  )
 
   const data = (await response.json().catch(() => undefined)) as
     | { ok: true }
@@ -358,17 +388,86 @@ export async function updateAdminPlayerBlocked(nickname: string, blocked: boolea
     | undefined
 
   if (!response.ok) {
-    throw new Error(readErrorMessage(data) ?? 'Не удалось изменить блокировку игрока.')
+    throw new Error(
+      readErrorMessage(data) ?? 'Не удалось изменить блокировку игрока.',
+    )
   }
 
   return data
 }
 
-export async function deleteAdminWhitelistEntry(nickname: string) {
-  const response = await fetch(`${apiBaseUrl}/api/admin/whitelist/${encodeURIComponent(nickname)}`, {
-    method: 'DELETE',
+export async function updateAdminPlayerRoles(
+  nickname: string,
+  roles: string[],
+) {
+  const response = await fetch(
+    `${apiBaseUrl}/api/admin/players/${encodeURIComponent(nickname)}/roles`,
+    {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ roles }),
+    },
+  )
+
+  const data = (await response.json().catch(() => undefined)) as
+    | { roles: string[] }
+    | { message?: string }
+    | undefined
+
+  if (!response.ok) {
+    throw new Error(
+      readErrorMessage(data) ?? 'Не удалось изменить роли игрока.',
+    )
+  }
+
+  if (!data || !('roles' in data)) {
+    throw new Error('Backend вернул неожиданный ответ при обновлении ролей.')
+  }
+
+  return data.roles
+}
+
+export async function createAdminWhitelistEntry(nickname: string) {
+  const response = await fetch(`${apiBaseUrl}/api/admin/whitelist`, {
+    method: 'POST',
     credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ nickname }),
   })
+
+  const data = (await response.json().catch(() => undefined)) as
+    | { entry: AdminWhitelistRow }
+    | { message?: string }
+    | undefined
+
+  if (!response.ok) {
+    throw new Error(
+      readErrorMessage(data) ?? 'Не удалось добавить игрока в whitelist.',
+    )
+  }
+
+  if (!data || !('entry' in data)) {
+    throw new Error(
+      'Backend вернул неожиданный ответ при добавлении в whitelist.',
+    )
+  }
+
+  return data.entry
+}
+
+export async function deleteAdminWhitelistEntry(nickname: string) {
+  const response = await fetch(
+    `${apiBaseUrl}/api/admin/whitelist/${encodeURIComponent(nickname)}`,
+    {
+      method: 'DELETE',
+      credentials: 'include',
+    },
+  )
 
   const data = (await response.json().catch(() => undefined)) as
     | { ok: true }
@@ -377,7 +476,9 @@ export async function deleteAdminWhitelistEntry(nickname: string) {
     | undefined
 
   if (!response.ok) {
-    throw new Error(readErrorMessage(data) ?? 'Не удалось удалить игрока из whitelist.')
+    throw new Error(
+      readErrorMessage(data) ?? 'Не удалось удалить игрока из whitelist.',
+    )
   }
 
   return data

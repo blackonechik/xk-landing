@@ -12,6 +12,7 @@ import {
   Input,
   Modal,
   Spinner,
+  Switch,
   Table,
   Text,
   toast,
@@ -26,6 +27,7 @@ import {
   Wallet,
 } from 'lucide-react'
 import {
+  createAdminWhitelistEntry,
   createPromoCode,
   createAdminPost,
   deleteAdminWhitelistEntry,
@@ -34,6 +36,7 @@ import {
   updateAdminApplication,
   updateAdminNavigation,
   updateAdminPlayerBlocked,
+  updateAdminPlayerRoles,
   updateAdminPost,
   updatePromoCode,
 } from '../model/api'
@@ -186,10 +189,21 @@ type NavigationEditorState = {
   audiences: SiteNavigationRole[]
 } | null
 
+type PlayerRolesEditorState = {
+  player: AdminPlayerRow
+  roles: string[]
+} | null
+
 const navigationRoleOptions: { value: SiteNavigationRole; label: string }[] = [
   { value: 'player', label: 'Игроки' },
   { value: 'moderator', label: 'Модераторы' },
   { value: 'admin', label: 'Админы' },
+]
+
+const playerRoleOptions = [
+  { value: 'player', label: 'Игрок' },
+  { value: 'moderator', label: 'Модератор' },
+  { value: 'admin', label: 'Админ' },
 ]
 
 function normalizePostContentHtml(value: string) {
@@ -240,6 +254,12 @@ export function AdminPage() {
   const [applicationNotes, setApplicationNotes] = useState<Record<string, string>>({})
   const [confirmState, setConfirmState] = useState<ConfirmationState>(null)
   const [navigationEditor, setNavigationEditor] = useState<NavigationEditorState>(null)
+  const [playerRolesEditor, setPlayerRolesEditor] =
+    useState<PlayerRolesEditorState>(null)
+  const [isSavingPlayerRoles, setIsSavingPlayerRoles] = useState(false)
+  const [isWhitelistEditorOpen, setIsWhitelistEditorOpen] = useState(false)
+  const [whitelistNickname, setWhitelistNickname] = useState('')
+  const [isSavingWhitelist, setIsSavingWhitelist] = useState(false)
 
   const isSessionAdmin = account?.player.siteRole === 'admin'
   const selectedTab = getAdminViewFromPathname(pathname)
@@ -660,6 +680,86 @@ export function AdminPage() {
     }
   }
 
+  async function handleSavePlayerRoles() {
+    if (!isSessionAdmin || !playerRolesEditor) {
+      return
+    }
+
+    setIsSavingPlayerRoles(true)
+
+    try {
+      const roles = await updateAdminPlayerRoles(
+        playerRolesEditor.player.lowercaseNickname,
+        playerRolesEditor.roles,
+      )
+
+      setDashboard((prev) =>
+        prev
+          ? {
+              ...prev,
+              players: prev.players.map((item) =>
+                item.lowercaseNickname ===
+                playerRolesEditor.player.lowercaseNickname
+                  ? { ...item, roles }
+                  : item,
+              ),
+            }
+          : prev,
+      )
+      showSuccessToast('Роли пользователя обновлены', playerRolesEditor.player.nickname)
+      setPlayerRolesEditor(null)
+    } catch (requestError) {
+      showErrorToast(
+        'Не удалось обновить роли',
+        requestError instanceof Error ? requestError.message : undefined,
+      )
+    } finally {
+      setIsSavingPlayerRoles(false)
+    }
+  }
+
+  async function handleCreateWhitelistEntry() {
+    if (!isSessionAdmin) {
+      showErrorToast('Доступ запрещен', 'Нужен вход под пользователем с ролью администратора сайта.')
+      return
+    }
+
+    if (!whitelistNickname.trim()) {
+      showInfoToast('Введите никнейм игрока')
+      return
+    }
+
+    setIsSavingWhitelist(true)
+
+    try {
+      const entry = await createAdminWhitelistEntry(whitelistNickname.trim())
+
+      setDashboard((prev) =>
+        prev
+          ? {
+              ...prev,
+              whitelist: [
+                entry,
+                ...prev.whitelist.filter(
+                  (item) => item.nickname.toLowerCase() !== entry.nickname.toLowerCase(),
+                ),
+              ],
+            }
+          : prev,
+      )
+      setWhitelistNickname('')
+      setIsWhitelistEditorOpen(false)
+      showSuccessToast('Игрок добавлен в whitelist', entry.nickname)
+    } catch (requestError) {
+      showErrorToast(
+        'Не удалось добавить игрока в whitelist',
+        requestError instanceof Error ? requestError.message : undefined,
+      )
+    } finally {
+      setIsSavingWhitelist(false)
+    }
+  }
+
   async function handleDeleteWhitelistEntry(entry: AdminWhitelistRow) {
     if (!isSessionAdmin) {
       showErrorToast('Доступ запрещен', 'Нужен вход под пользователем с ролью администратора сайта.')
@@ -905,7 +1005,7 @@ export function AdminPage() {
                   onChange={setPostContent}
                 />
               </div>
-              <Switch isSelected={postPublished} onValueChange={setPostPublished}>
+              <Switch isSelected={postPublished} onChange={setPostPublished}>
                 Публиковать сразу
               </Switch>
               <div className="flex flex-wrap gap-2">
@@ -1109,6 +1209,7 @@ export function AdminPage() {
                 <Table.Header>
                   <Table.Column isRowHeader>Игрок</Table.Column>
                   <Table.Column>Discord ID</Table.Column>
+                  <Table.Column>Роли</Table.Column>
                   <Table.Column>Последний вход</Table.Column>
                   <Table.Column>Регистрация</Table.Column>
                   <Table.Column>Статус</Table.Column>
@@ -1119,6 +1220,16 @@ export function AdminPage() {
                     <Table.Row key={player.lowercaseNickname} id={player.lowercaseNickname}>
                       <Table.Cell>{player.nickname}</Table.Cell>
                       <Table.Cell>{player.discordId}</Table.Cell>
+                      <Table.Cell>
+                        <div className="flex flex-wrap gap-2">
+                          {player.roles.map((role) => (
+                            <Chip key={`${player.lowercaseNickname}-${role}`} variant="soft">
+                              {playerRoleOptions.find((option) => option.value === role)?.label ??
+                                role}
+                            </Chip>
+                          ))}
+                        </div>
+                      </Table.Cell>
                       <Table.Cell>{formatDate(player.lastLoginAt)}</Table.Cell>
                       <Table.Cell>{formatDate(player.registeredAt)}</Table.Cell>
                       <Table.Cell>
@@ -1127,23 +1238,37 @@ export function AdminPage() {
                         </Chip>
                       </Table.Cell>
                       <Table.Cell>
-                        <Button
-                          size="sm"
-                          color={player.blocked ? 'success' : 'danger'}
-                          onPress={() =>
-                            requestConfirmation({
-                              title: player.blocked ? 'Разблокировать игрока?' : 'Заблокировать игрока?',
-                              description: player.blocked
-                                ? `${player.nickname} снова получит доступ к кабинету и действиям.`
-                                : `${player.nickname} будет ограничен в доступе к кабинету.`,
-                              confirmLabel: player.blocked ? 'Разблокировать' : 'Заблокировать',
-                              confirmColor: player.blocked ? 'success' : 'danger',
-                              onConfirm: () => handleTogglePlayerBlocked(player),
-                            })
-                          }
-                        >
-                          {player.blocked ? 'Разблокировать' : 'Заблокировать'}
-                        </Button>
+                        <div className="flex flex-wrap gap-2">
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            onPress={() =>
+                              setPlayerRolesEditor({
+                                player,
+                                roles: [...player.roles],
+                              })
+                            }
+                          >
+                            Роли
+                          </Button>
+                          <Button
+                            size="sm"
+                            color={player.blocked ? 'success' : 'danger'}
+                            onPress={() =>
+                              requestConfirmation({
+                                title: player.blocked ? 'Разблокировать игрока?' : 'Заблокировать игрока?',
+                                description: player.blocked
+                                  ? `${player.nickname} снова получит доступ к кабинету и действиям.`
+                                  : `${player.nickname} будет ограничен в доступе к кабинету.`,
+                                confirmLabel: player.blocked ? 'Разблокировать' : 'Заблокировать',
+                                confirmColor: player.blocked ? 'success' : 'danger',
+                                onConfirm: () => handleTogglePlayerBlocked(player),
+                              })
+                            }
+                          >
+                            {player.blocked ? 'Разблокировать' : 'Заблокировать'}
+                          </Button>
+                        </div>
                       </Table.Cell>
                     </Table.Row>
                   ))}
@@ -1200,6 +1325,11 @@ export function AdminPage() {
         <AdminTableCard
           title="Whitelist"
           description="Белый список, источник попадания и ручное удаление записей."
+          action={
+            <Button onPress={() => setIsWhitelistEditorOpen(true)}>
+              Добавить игрока
+            </Button>
+          }
         >
           <Table variant="secondary">
             <Table.ScrollContainer>
@@ -1334,6 +1464,114 @@ export function AdminPage() {
           </AdminTableCard>
         </div>
       ) : null}
+
+      <Modal.Backdrop
+        isOpen={isWhitelistEditorOpen}
+        onOpenChange={(isOpen) => {
+          setIsWhitelistEditorOpen(isOpen)
+
+          if (!isOpen) {
+            setWhitelistNickname('')
+          }
+        }}
+      >
+        <Modal.Container placement="auto">
+          <Modal.Dialog className="sm:max-w-[460px]">
+            <Modal.CloseTrigger />
+            <Modal.Header>
+              <Modal.Heading>Добавить игрока в whitelist</Modal.Heading>
+            </Modal.Header>
+            <Modal.Body className="grid gap-4">
+              <Text color="muted" type="body-sm">
+                Укажите игровой ник. Запись будет добавлена вручную и сразу
+                активирована.
+              </Text>
+              <Input
+                label="Никнейм"
+                placeholder="Steve_2026"
+                value={whitelistNickname}
+                onChange={(event) => setWhitelistNickname(event.target.value)}
+              />
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onPress={() => setIsWhitelistEditorOpen(false)}>
+                Отмена
+              </Button>
+              <Button
+                isDisabled={isSavingWhitelist}
+                onPress={() => void handleCreateWhitelistEntry()}
+              >
+                {isSavingWhitelist ? <Spinner color="current" size="sm" /> : 'Добавить'}
+              </Button>
+            </Modal.Footer>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+
+      <Modal.Backdrop
+        isOpen={Boolean(playerRolesEditor)}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) {
+            setPlayerRolesEditor(null)
+          }
+        }}
+      >
+        <Modal.Container placement="auto">
+          <Modal.Dialog className="sm:max-w-[480px]">
+            <Modal.CloseTrigger />
+            <Modal.Header>
+              <Modal.Heading>
+                Роли пользователя {playerRolesEditor?.player.nickname ?? ''}
+              </Modal.Heading>
+            </Modal.Header>
+            <Modal.Body className="grid gap-4">
+              <Text color="muted" type="body-sm">
+                Роль игрока сохраняется всегда. Дополнительно можно назначить
+                права модератора или администратора.
+              </Text>
+              <CheckboxGroup
+                value={playerRolesEditor?.roles ?? ['player']}
+                onChange={(value) =>
+                  setPlayerRolesEditor((prev) =>
+                    prev
+                      ? {
+                          ...prev,
+                          roles: value,
+                        }
+                      : prev,
+                  )
+                }
+              >
+                <div className="grid gap-2">
+                  {playerRoleOptions.map((option) => (
+                    <Checkbox
+                      key={option.value}
+                      isDisabled={option.value === 'player'}
+                      value={option.value}
+                    >
+                      <Checkbox.Control>
+                        <Checkbox.Indicator />
+                      </Checkbox.Control>
+                      <Checkbox.Content>{option.label}</Checkbox.Content>
+                    </Checkbox>
+                  ))}
+                </div>
+              </CheckboxGroup>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onPress={() => setPlayerRolesEditor(null)}>
+                Отмена
+              </Button>
+              <Button
+                isDisabled={isSavingPlayerRoles}
+                onPress={() => void handleSavePlayerRoles()}
+              >
+                {isSavingPlayerRoles ? <Spinner color="current" size="sm" /> : 'Сохранить'}
+              </Button>
+            </Modal.Footer>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
 
       <Modal.Backdrop
         isOpen={Boolean(navigationEditor)}

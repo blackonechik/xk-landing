@@ -347,7 +347,8 @@ a {
 }
 
 .xk-account-layout__scroll {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 24px;
   min-height: 0;
 }
