@@ -82,7 +82,8 @@ export type AdminPostRow = {
 export type AdminPlayerRow = {
   nickname: string
   lowercaseNickname: string
-  discordId: string
+  discordId: string | null
+  discordLinked: boolean
   blocked: boolean
   roles: string[]
   lastLoginAt: string | null

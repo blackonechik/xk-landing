@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import type { ReactNode } from 'react'
+import type { ComponentProps, ReactNode } from 'react'
 import { useNavigate, useRouterState } from '@tanstack/react-router'
 import {
   Alert,
@@ -9,15 +9,17 @@ import {
   Checkbox,
   CheckboxGroup,
   Chip,
+  Description,
   Input,
-  Modal,
-  ListBox,
   Label,
+  ListBox,
+  Modal,
   Select,
   Spinner,
   Switch,
   Table,
   Text,
+  TextField,
   toast,
 } from '@heroui/react'
 import {
@@ -51,13 +53,14 @@ import type {
   AdminPromoCodeRow,
   AdminWhitelistRow,
 } from '../model/api'
-import {
-  fetchAccountCached,
-  getCachedAccount,
-  logout,
-  type AccountPayload,
-} from '@/entities/account'
-import { clearSiteSettingsCache, type SiteNavigationIconKey, type SiteNavigationItem, type SiteNavigationRole } from '@/entities/site'
+import { fetchAccountCached, getCachedAccount, logout } from '@/entities/account'
+import type { AccountPayload } from '@/entities/account'
+import { clearSiteSettingsCache } from '@/entities/site'
+import type {
+  SiteNavigationIconKey,
+  SiteNavigationItem,
+  SiteNavigationRole,
+} from '@/entities/site'
 import { AccountLayout } from '@/widgets/account/layout'
 import { HeroLinkButton, HeroMetricCard, HeroPage } from '@/shared/ui/hero-page'
 import { LexicalRichTextEditor } from '@/shared/ui/rich-text-editor'
@@ -67,8 +70,8 @@ import {
   getAdminViewPath,
   getNavigationIcon,
   navigationIconOptions,
-  type AdminView,
 } from '@/widgets/account/sidebar/model/account-sidebar-menu'
+import type { AdminView } from '@/widgets/account/sidebar/model/account-sidebar-menu'
 
 const paymentStatusMeta: Record<
   string,
@@ -190,6 +193,42 @@ function AdminTableCard({
   )
 }
 
+function getButtonToneClass(
+  tone: 'default' | 'danger' | 'success' | 'warning' | 'accent' = 'default',
+) {
+  switch (tone) {
+    case 'danger':
+      return 'bg-danger text-danger-foreground hover:bg-danger/90'
+    case 'success':
+      return 'bg-success text-success-foreground hover:bg-success/90'
+    case 'warning':
+      return 'bg-warning text-warning-foreground hover:bg-warning/90'
+    case 'accent':
+      return 'bg-accent text-accent-foreground hover:bg-accent/90'
+    default:
+      return ''
+  }
+}
+
+function LabeledInput({
+  label,
+  description,
+  name,
+  ...inputProps
+}: {
+  label: string
+  description?: string
+  name?: string
+} & ComponentProps<typeof Input>) {
+  return (
+    <TextField className="grid gap-2" name={name}>
+      <Label>{label}</Label>
+      <Input {...inputProps} aria-label={inputProps['aria-label'] ?? label} />
+      {description ? <Description>{description}</Description> : null}
+    </TextField>
+  )
+}
+
 type ConfirmationState = {
   title: string
   description: string
@@ -284,7 +323,7 @@ export function AdminPage() {
   const [isSavingWhitelist, setIsSavingWhitelist] = useState(false)
 
   const isSessionAdmin = account?.player.siteRole === 'admin'
-  const selectedTab = getAdminViewFromPathname(pathname)
+  const selectedTab: AdminView = getAdminViewFromPathname(pathname)
 
   function showErrorToast(message: string, description?: string) {
     toast.danger(message, {
@@ -367,7 +406,7 @@ export function AdminPage() {
 
   const navigationItems = useMemo(
     () =>
-      (dashboard?.settings.navigation.items?.length
+      (dashboard?.settings.navigation.items.length
         ? [...dashboard.settings.navigation.items]
         : [...defaultSiteNavigationItems]
       ).sort((left, right) => left.order - right.order),
@@ -499,8 +538,11 @@ export function AdminPage() {
     try {
       const updated = await updateAdminApplication(application.id, {
         status,
-        reviewNote: applicationNotes[application.id] ?? application.reviewNote,
-        reviewedBy: account?.player.nickname ?? 'admin',
+        reviewNote:
+          applicationNotes[application.id] !== undefined
+            ? applicationNotes[application.id]
+            : application.reviewNote,
+        reviewedBy: account.player.nickname,
       })
 
       setDashboard((prev) =>
@@ -552,7 +594,7 @@ export function AdminPage() {
         reviewedBy:
           postModerationStatus === 'pending'
             ? null
-            : account?.player.nickname ?? null,
+            : account.player.nickname,
         reviewNote: postReviewNote.trim() || null,
         isPinned: postPinned,
         pinnedOrder:
@@ -560,7 +602,7 @@ export function AdminPage() {
             ? Number(postPinnedOrder.trim()) || null
             : null,
         isPublished: postPublished,
-        authorName: postAuthorName.trim() || account?.player.nickname || null,
+        authorName: postAuthorName.trim() || account.player.nickname || null,
       }
 
       const saved = postId
@@ -655,7 +697,7 @@ export function AdminPage() {
         coverImageUrl: post.coverImageUrl,
         submittedByNickname: post.submittedByNickname,
         moderationStatus,
-        reviewedBy: account?.player.nickname ?? null,
+        reviewedBy: account.player.nickname,
         reviewNote: post.reviewNote,
         isPinned: moderationStatus === 'approved' ? post.isPinned : false,
         pinnedOrder: moderationStatus === 'approved' ? post.pinnedOrder : null,
@@ -892,6 +934,17 @@ export function AdminPage() {
 
   const content = (
     <div className="grid gap-6">
+      {isLoading ? (
+        <Alert status="accent">
+          <Alert.Indicator>
+            <Spinner size="sm" />
+          </Alert.Indicator>
+          <Alert.Content>
+            <Alert.Title>Загружаем данные админки</Alert.Title>
+          </Alert.Content>
+        </Alert>
+      ) : null}
+
       {error ? (
         <Alert status="danger">
           <Alert.Indicator />
@@ -1050,8 +1103,8 @@ export function AdminPage() {
                             На рассмотрении
                           </Button>
                           <Button
+                            className={getButtonToneClass('success')}
                             size="sm"
-                            color="success"
                             onPress={() =>
                               requestConfirmation({
                                 title: 'Принять заявку?',
@@ -1065,8 +1118,8 @@ export function AdminPage() {
                             Принять
                           </Button>
                           <Button
+                            className={getButtonToneClass('danger')}
                             size="sm"
-                            color="danger"
                             onPress={() =>
                               requestConfirmation({
                                 title: 'Отклонить заявку?',
@@ -1097,14 +1150,14 @@ export function AdminPage() {
               <Card.Title>{postId ? 'Модерация и редактирование поста' : 'Новый пост'}</Card.Title>
             </Card.Header>
             <Card.Content className="grid gap-4 xl:grid-cols-2">
-              <Input label="Заголовок" value={postTitle} onChange={(event) => setPostTitle(event.target.value)} />
-              <Input label="Slug" value={postSlug} onChange={(event) => setPostSlug(event.target.value)} placeholder="оставьте пустым для автогенерации" />
-              <Input label="Краткое описание" value={postSummary} onChange={(event) => setPostSummary(event.target.value)} />
-              <Input label="Автор" value={postAuthorName} onChange={(event) => setPostAuthorName(event.target.value)} />
-              <Input label="Отправил на модерацию" value={postSubmittedByNickname} onChange={(event) => setPostSubmittedByNickname(event.target.value)} placeholder="ник игрока" />
-              <Input label="Тон обложки" value={postCoverTone} onChange={(event) => setPostCoverTone(event.target.value)} placeholder="slate, amber, emerald..." />
-              <Input label="Картинка обложки" value={postCoverImageUrl} onChange={(event) => setPostCoverImageUrl(event.target.value)} placeholder="https://... или /assets/..." />
-              <Input label="Порядок закрепа" value={postPinnedOrder} onChange={(event) => setPostPinnedOrder(event.target.value)} placeholder="1, 2, 3..." />
+              <LabeledInput label="Заголовок" value={postTitle} onChange={(event) => setPostTitle(event.target.value)} />
+              <LabeledInput label="Slug" value={postSlug} onChange={(event) => setPostSlug(event.target.value)} placeholder="оставьте пустым для автогенерации" />
+              <LabeledInput label="Краткое описание" value={postSummary} onChange={(event) => setPostSummary(event.target.value)} />
+              <LabeledInput label="Автор" value={postAuthorName} onChange={(event) => setPostAuthorName(event.target.value)} />
+              <LabeledInput label="Отправил на модерацию" value={postSubmittedByNickname} onChange={(event) => setPostSubmittedByNickname(event.target.value)} placeholder="ник игрока" />
+              <LabeledInput label="Тон обложки" value={postCoverTone} onChange={(event) => setPostCoverTone(event.target.value)} placeholder="slate, amber, emerald..." />
+              <LabeledInput label="Картинка обложки" value={postCoverImageUrl} onChange={(event) => setPostCoverImageUrl(event.target.value)} placeholder="https://... или /assets/..." />
+              <LabeledInput label="Порядок закрепа" value={postPinnedOrder} onChange={(event) => setPostPinnedOrder(event.target.value)} placeholder="1, 2, 3..." />
               <Select
                 selectedKey={postModerationStatus}
                 onSelectionChange={(key) => {
@@ -1139,7 +1192,7 @@ export function AdminPage() {
                   </ListBox>
                 </Select.Popover>
               </Select>
-              <Input label="Комментарий модератора" value={postReviewNote} onChange={(event) => setPostReviewNote(event.target.value)} placeholder="опционально" />
+              <LabeledInput label="Комментарий модератора" value={postReviewNote} onChange={(event) => setPostReviewNote(event.target.value)} placeholder="опционально" />
               <div className="grid gap-3 xl:col-span-2">
                 <LexicalRichTextEditor
                   label="Текст поста"
@@ -1222,8 +1275,8 @@ export function AdminPage() {
                           <div className="flex flex-wrap gap-2">
                             {post.moderationStatus !== 'approved' ? (
                               <Button
+                                className={getButtonToneClass('success')}
                                 size="sm"
-                                color="success"
                                 onPress={() =>
                                   requestConfirmation({
                                     title: 'Одобрить пост?',
@@ -1239,8 +1292,8 @@ export function AdminPage() {
                             ) : null}
                             {post.moderationStatus !== 'rejected' ? (
                               <Button
+                                className={getButtonToneClass('danger')}
                                 size="sm"
-                                color="danger"
                                 onPress={() =>
                                   requestConfirmation({
                                     title: 'Отклонить пост?',
@@ -1310,7 +1363,7 @@ export function AdminPage() {
                       <Table.Cell>{item.section === 'primary' ? 'Основное меню' : 'Дополнительно'}</Table.Cell>
                       <Table.Cell>
                         <div className="flex flex-wrap gap-2">
-                          {item.audiences.map((role) => (
+                          {item.audiences.map((role: SiteNavigationRole) => (
                             <Chip key={`${item.key}-${role}`} variant="soft">
                               {navigationRoleOptions.find((option) => option.value === role)?.label ?? role}
                             </Chip>
@@ -1363,7 +1416,7 @@ export function AdminPage() {
                             {item.visible ? 'Скрыть' : 'Показать'}
                           </Button>
                           <Button
-                            color={item.deleted ? 'success' : 'danger'}
+                            className={getButtonToneClass(item.deleted ? 'success' : 'danger')}
                             isDisabled={isSavingSettings}
                             size="sm"
                             variant={item.deleted ? 'secondary' : 'ghost'}
@@ -1404,14 +1457,14 @@ export function AdminPage() {
       {selectedTab === 'users' ? (
         <AdminTableCard
           title="Пользователи"
-          description="Список игроков, привязанные Discord-аккаунты и блокировки."
+          description="Пользователи из AUTH + LuckPerms, статус привязки Discord и блокировки."
         >
           <Table variant="secondary">
             <Table.ScrollContainer>
               <Table.Content aria-label="Пользователи" className="min-w-[900px]">
                 <Table.Header>
                   <Table.Column isRowHeader>Игрок</Table.Column>
-                  <Table.Column>Discord ID</Table.Column>
+                  <Table.Column>Discord</Table.Column>
                   <Table.Column>Роли</Table.Column>
                   <Table.Column>Последний вход</Table.Column>
                   <Table.Column>Регистрация</Table.Column>
@@ -1422,7 +1475,16 @@ export function AdminPage() {
                   {(dashboard?.players ?? []).map((player) => (
                     <Table.Row key={player.lowercaseNickname} id={player.lowercaseNickname}>
                       <Table.Cell>{player.nickname}</Table.Cell>
-                      <Table.Cell>{player.discordId}</Table.Cell>
+                      <Table.Cell>
+                        <div className="grid gap-1">
+                          <Chip color={player.discordLinked ? 'success' : 'default'} variant="soft">
+                            {player.discordLinked ? 'Привязан' : 'Не привязан'}
+                          </Chip>
+                          <Text color="muted" type="body-sm">
+                            {player.discordLinked && player.discordId ? player.discordId : '—'}
+                          </Text>
+                        </div>
+                      </Table.Cell>
                       <Table.Cell>
                         <div className="flex flex-wrap gap-2">
                           {player.roles.map((role) => (
@@ -1455,8 +1517,8 @@ export function AdminPage() {
                             Роли
                           </Button>
                           <Button
+                            className={getButtonToneClass(player.blocked ? 'success' : 'danger')}
                             size="sm"
-                            color={player.blocked ? 'success' : 'danger'}
                             onPress={() =>
                               requestConfirmation({
                                 title: player.blocked ? 'Разблокировать игрока?' : 'Заблокировать игрока?',
@@ -1561,8 +1623,8 @@ export function AdminPage() {
                       <Table.Cell>{formatDate(entry.updatedAt)}</Table.Cell>
                       <Table.Cell>
                         <Button
+                          className={getButtonToneClass('danger')}
                           size="sm"
-                          color="danger"
                           onPress={() =>
                             requestConfirmation({
                               title: 'Удалить из whitelist?',
@@ -1592,13 +1654,13 @@ export function AdminPage() {
               <Card.Title>Создать промокод</Card.Title>
             </Card.Header>
             <Card.Content className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              <Input label="Код" value={promoCode} onChange={(event) => setPromoCode(event.target.value.toUpperCase())} placeholder="WELCOME10" />
-              <Input label="Тип скидки" value={discountType} onChange={(event) => setDiscountType(event.target.value as 'percent' | 'fixed')} placeholder="percent или fixed" />
-              <Input label="Значение скидки" value={discountValue} onChange={(event) => setDiscountValue(event.target.value)} />
-              <Input label="Лимит использований" value={maxUses} onChange={(event) => setMaxUses(event.target.value)} />
-              <Input label="Лимит на ник" value={maxUsesPerNickname} onChange={(event) => setMaxUsesPerNickname(event.target.value)} />
-              <Input label="Активен с" type="datetime-local" value={startsAt} onChange={(event) => setStartsAt(event.target.value)} />
-              <Input label="Активен до" type="datetime-local" value={endsAt} onChange={(event) => setEndsAt(event.target.value)} />
+              <LabeledInput label="Код" value={promoCode} onChange={(event) => setPromoCode(event.target.value.toUpperCase())} placeholder="WELCOME10" />
+              <LabeledInput label="Тип скидки" value={discountType} onChange={(event) => setDiscountType(event.target.value as 'percent' | 'fixed')} placeholder="percent или fixed" />
+              <LabeledInput label="Значение скидки" value={discountValue} onChange={(event) => setDiscountValue(event.target.value)} />
+              <LabeledInput label="Лимит использований" value={maxUses} onChange={(event) => setMaxUses(event.target.value)} />
+              <LabeledInput label="Лимит на ник" value={maxUsesPerNickname} onChange={(event) => setMaxUsesPerNickname(event.target.value)} />
+              <LabeledInput label="Активен с" type="datetime-local" value={startsAt} onChange={(event) => setStartsAt(event.target.value)} />
+              <LabeledInput label="Активен до" type="datetime-local" value={endsAt} onChange={(event) => setEndsAt(event.target.value)} />
               <Button onPress={() => void handleCreatePromo()} isDisabled={isSavingPromo}>
                 {isSavingPromo ? <Spinner color="current" size="sm" /> : 'Создать промокод'}
               </Button>
@@ -1689,7 +1751,7 @@ export function AdminPage() {
                 Укажите игровой ник. Запись будет добавлена вручную и сразу
                 активирована.
               </Text>
-              <Input
+              <LabeledInput
                 label="Никнейм"
                 placeholder="Steve_2026"
                 value={whitelistNickname}
@@ -1791,7 +1853,7 @@ export function AdminPage() {
               <Modal.Heading>Редактирование пункта навигации</Modal.Heading>
             </Modal.Header>
             <Modal.Body className="grid gap-5">
-              <Input
+              <LabeledInput
                 label="Название раздела"
                 value={navigationEditor?.label ?? ''}
                 onChange={(event) =>
@@ -1816,7 +1878,6 @@ export function AdminPage() {
                       <Button
                         key={option.key}
                         className="justify-start"
-                        color={selected ? 'accent' : 'default'}
                         variant={selected ? 'secondary' : 'ghost'}
                         onPress={() =>
                           setNavigationEditor((prev) =>
@@ -1904,7 +1965,7 @@ export function AdminPage() {
                 Отмена
               </Button>
               <Button
-                color={confirmState?.confirmColor ?? 'default'}
+                className={getButtonToneClass(confirmState?.confirmColor ?? 'default')}
                 slot="close"
                 onPress={async () => {
                   const nextConfirmState = confirmState
