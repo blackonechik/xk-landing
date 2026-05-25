@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { Card, Chip, Link, Text, buttonVariants } from '@heroui/react'
+import { Chip, Link, Text, buttonVariants } from '@heroui/react'
 import AnimatedLink from '@/components/AnimatedLink'
 
 type HeroPageProps = {
