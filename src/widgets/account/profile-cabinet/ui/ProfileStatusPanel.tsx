@@ -38,9 +38,9 @@ function QuickSectionArrowIcon() {
     <svg
       aria-hidden
       fill="none"
-      height="35"
+      height="20"
       viewBox="0 0 35 35"
-      width="35"
+      width="20"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
@@ -131,7 +131,7 @@ function QuickSectionCard({
   const content = (
     <div
       className={[
-        'relative h-[310px] w-full overflow-hidden rounded-2xl',
+        'relative max-h-[310px] w-full overflow-visible rounded-2xl flex justify-end',
         href ? 'cursor-pointer' : '',
         cardClassName,
       ]
@@ -143,7 +143,7 @@ function QuickSectionCard({
         alt=""
         aria-hidden
         className={[
-          'pointer-events-none absolute bottom-0 right-0 z-0 h-full w-auto object-contain object-bottom-right',
+          'pointer-events-none absolute bottom-0 left-0 z-0 h-full w-auto object-contain object-bottom-right',
           imageClassName,
         ]
           .filter(Boolean)
@@ -151,7 +151,7 @@ function QuickSectionCard({
         src={imageSrc}
       />
 
-      <div className="relative z-10 flex h-full flex-col p-6">
+      <div className="relative z-10 flex h-full flex-col p-4">
         <div
           className="text-[#fdfcfc]"
           style={{ filter: 'drop-shadow(-2px 1px 0px #2d3935)' }}
@@ -160,15 +160,15 @@ function QuickSectionCard({
         </div>
 
         <div
-          className={['mt-[22px] grid gap-2', textClassName]
+          className={['mt-[12px] grid gap-2', textClassName]
             .filter(Boolean)
             .join(' ')}
           style={{ filter: 'drop-shadow(-2px 1px 0px #2d3935)' }}
         >
-          <p className="text-5xl font-bold leading-none text-left text-[#fdfcfc]">
+          <p className="text-3xl font-bold leading-none text-left text-[#fdfcfc]">
             {title}
           </p>
-          <p className="text-base font-semibold leading-5 text-left text-[#757575]">
+          <p className="text-xs font-semibold leading-5 text-left text-[#a7a7a7]">
             {description}
           </p>
         </div>
@@ -221,44 +221,41 @@ export function ProfileStatusPanel({
 
   const sections: QuickSection[] = [
     {
-      cardClassName: 'xl:col-start-1 xl:row-start-1 xl:w-[613px]',
       description:
         'Объединяйтесь в страны, города, королевства и развивайте их.',
       gradient:
-        'linear-gradient(180deg, rgb(152 200 255 / 0.26) 0%, rgb(101 161 194 / 0.26) 100%)',
+        'linear-gradient(180deg, #3e4957 0%, #34424a 100%)',
       icon: <QuickSectionFlagIcon />,
-      imageSrc: '/assets/img/profile/players/maxim.png',
-      imageClassName: 'max-w-[43%]',
-      textClassName: 'max-w-[353px]',
+      imageSrc: '/assets/img/profile/players/maxim.webp',
+      imageClassName: 'max-w-[45%] left-[-18px]',
+      textClassName: 'max-w-[270px]',
       title: 'Королевства',
     },
     ...(settings?.navigation.showBank === false
       ? []
       : [
           {
-            cardClassName: 'xl:col-start-2 xl:row-start-1 xl:w-[613px]',
             description:
               'Переводы, карты и управление игровой валютой в одном месте.',
             gradient:
-              'linear-gradient(180deg, rgb(255 186 152 / 0.26) 0%, rgb(237 46 24 / 0.26) 100%)',
+              'linear-gradient(180deg, #55453b 0%, #502721 100%)',
             href: '/cabinet/bank',
             icon: <QuickSectionBankIcon />,
-            imageSrc: '/assets/img/profile/players/forid.png',
-            imageClassName: 'max-w-[43%]',
-            textClassName: 'max-w-[353px]',
+            imageSrc: '/assets/img/profile/players/forid.webp',
+            imageClassName: 'max-w-[40%] left-[-20px]',
+            textClassName: 'max-w-[270px]',
             title: 'Банк',
           },
         ]),
     {
-      cardClassName: 'xl:col-start-1 xl:row-start-2 xl:w-[500px]',
       description: 'Открой актуальные правила, ограничения и уточнения.',
       gradient:
-        'linear-gradient(180deg, rgb(187 221 181 / 0.26) 0%, rgb(109 131 108 / 0.26) 100%)',
+        'linear-gradient(180deg, #474e44 0%, #323933 100%)',
       href: '/rules',
       icon: <QuickSectionRulesIcon />,
-      imageSrc: '/assets/img/profile/players/xlebkins.png',
-      imageClassName: 'max-w-[46%]',
-      textClassName: 'max-w-[253px]',
+      imageSrc: '/assets/img/profile/players/xlebkins.webp',
+      imageClassName: 'max-w-[60%] left-[-14px] bottom-[-10px]',
+      textClassName: 'max-w-[270px]',
       title: 'Правила',
     },
   ] as QuickSection[]
@@ -330,7 +327,7 @@ export function ProfileStatusPanel({
           <>
             <Card.Title>Быстрые разделы:</Card.Title>
 
-            <div className="grid gap-4 xl:grid-cols-[613px_613px] xl:grid-rows-[310px_310px] xl:gap-6">
+            <div className="grid gap-4 xl:gap-6 grid-cols-2 max-[1820px]:grid-cols-1">
               {sections.map((section) => (
                 <QuickSectionCard
                   key={section.title}
