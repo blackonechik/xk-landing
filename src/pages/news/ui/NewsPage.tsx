@@ -1,8 +1,20 @@
-import { useEffect, useState } from 'react'
-import { Alert, Card, Chip, Spinner, Text } from '@heroui/react'
+import { useDeferredValue, useEffect, useMemo, useState } from 'react'
+import {
+  Alert,
+  Card,
+  Chip,
+  Input,
+  Label,
+  ListBox,
+  Select,
+  Spinner,
+  Text,
+} from '@heroui/react'
+import { Search } from 'lucide-react'
 import AnimatedLink from '@/components/AnimatedLink'
 import { fetchSitePosts, type SitePost } from '@/entities/site'
 import { HeroLinkButton, HeroPage } from '@/shared/ui/hero-page'
+import { NewsHeroSlider } from './NewsHeroSlider'
 
 function formatDate(value: string | null) {
   if (!value) {
@@ -13,6 +25,30 @@ function formatDate(value: string | null) {
     dateStyle: 'long',
     timeStyle: 'short',
   }).format(new Date(value))
+}
+
+type TimeFilterKey = 'all' | '7d' | '30d' | '365d'
+
+const timeFilterOptions: Array<{
+  key: TimeFilterKey
+  label: string
+  days: number | null
+}> = [
+  { key: 'all', label: 'За все время', days: null },
+  { key: '7d', label: 'За 7 дней', days: 7 },
+  { key: '30d', label: 'За 30 дней', days: 30 },
+  { key: '365d', label: 'За год', days: 365 },
+]
+
+function matchesTimeFilter(post: SitePost, filterKey: TimeFilterKey) {
+  const selectedFilter = timeFilterOptions.find((option) => option.key === filterKey)
+
+  if (!selectedFilter || selectedFilter.days === null || !post.publishedAt) {
+    return true
+  }
+
+  const threshold = Date.now() - selectedFilter.days * 24 * 60 * 60 * 1000
+  return new Date(post.publishedAt).getTime() >= threshold
 }
 
 type NewsPageProps = {
@@ -27,6 +63,9 @@ export function NewsPage({
   const [posts, setPosts] = useState<SitePost[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [timeFilter, setTimeFilter] = useState<TimeFilterKey>('all')
+  const deferredSearchQuery = useDeferredValue(searchQuery)
 
   useEffect(() => {
     let isActive = true
@@ -56,12 +95,27 @@ export function NewsPage({
     }
   }, [])
 
-  const latestPost = posts[0] ?? null
-  const recentPosts = posts.slice(1, 4)
-  const archivePosts = posts.slice(4)
+  const pinnedPosts = useMemo(
+    () => posts.filter((post) => post.isPinned).slice(0, 6),
+    [posts],
+  )
+  const sliderPosts = pinnedPosts.length > 0 ? pinnedPosts : posts.slice(0, 6)
+  const normalizedQuery = deferredSearchQuery.trim().toLowerCase()
+
+  const filteredPosts = useMemo(
+    () =>
+      posts.filter((post) => {
+        const matchesQuery =
+          normalizedQuery.length === 0 ||
+          post.title.toLowerCase().includes(normalizedQuery)
+
+        return matchesQuery && matchesTimeFilter(post, timeFilter)
+      }),
+    [normalizedQuery, posts, timeFilter],
+  )
 
   const content = (
-    <>
+    <div className="grid gap-8">
       {isLoading ? (
         <Alert status="accent">
           <Alert.Indicator>
@@ -82,166 +136,138 @@ export function NewsPage({
         </Alert>
       ) : null}
 
+      <NewsHeroSlider basePath={basePath} posts={sliderPosts} />
+
       {!isLoading && !error ? (
-        <div className="grid gap-8">
-          <div className="grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)]">
-            {latestPost ? (
-              <Card className="overflow-hidden border border-[var(--separator)] bg-[var(--surface)]">
-                <Card.Header className="grid gap-4 p-6">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <Chip color="accent" variant="soft">
-                      Свежий пост
-                    </Chip>
-                    <Text color="muted" type="body-sm">
-                      {formatDate(latestPost.publishedAt)}
-                    </Text>
-                  </div>
-                  <div className="grid gap-3">
-                    <Card.Title>{latestPost.title}</Card.Title>
-                    <Card.Description>{latestPost.summary}</Card.Description>
-                  </div>
-                </Card.Header>
-                <Card.Content className="grid gap-5 p-6 pt-0">
-                  <Text color="muted" type="body-sm">
-                    {latestPost.authorName
-                      ? `Автор: ${latestPost.authorName}`
-                      : 'Официальный пост XK HARDCORE'}
-                  </Text>
-                  <div className="flex flex-wrap gap-3">
-                      <HeroLinkButton
-                      to={`${basePath}/${latestPost.slug}`}
-                      variant="secondary"
-                    >
-                      Читать полностью
-                    </HeroLinkButton>
-                  </div>
-                </Card.Content>
-              </Card>
-            ) : null}
-
-            <div className="grid gap-6">
-              <Card className="border border-[var(--separator)] bg-[var(--surface)]">
-                <Card.Header className="grid gap-2">
-                  <Card.Title>Последние посты</Card.Title>
-                  <Card.Description>
-                    Короткий обзор свежих публикаций и обновлений сервера.
-                  </Card.Description>
-                </Card.Header>
-                <Card.Content className="grid gap-3">
-                  {recentPosts.length > 0 ? (
-                    recentPosts.map((post) => (
-                      <AnimatedLink
-                        key={post.id}
-                        className="grid gap-1 rounded-lg border border-[var(--separator)] px-4 py-3 transition-colors hover:bg-[var(--surface-secondary)]"
-                        to={`${basePath}/${post.slug}`}
-                      >
-                        <Text type="body-sm">{post.title}</Text>
-                        <Text color="muted" type="body-sm">
-                          {formatDate(post.publishedAt)}
-                        </Text>
-                      </AnimatedLink>
-                    ))
-                  ) : (
-                    <Text color="muted" type="body-sm">
-                      Пока опубликован только один пост.
-                    </Text>
-                  )}
-                </Card.Content>
-              </Card>
-
-              <Card className="border border-[var(--separator)] bg-[var(--surface)]">
-                <Card.Header className="grid gap-2">
-                  <Card.Title>Реклама</Card.Title>
-                  <Card.Description>
-                    Сервер открыт для новых игроков, союзов и совместных историй.
-                  </Card.Description>
-                </Card.Header>
-                <Card.Content className="grid gap-4">
-                  <Text color="muted" type="body-sm">
-                    Если давно искал хардкорный сервер с упором на доверие,
-                    жизни и совместное выживание, сейчас как раз хороший момент
-                    присоединиться.
-                  </Text>
-                  <div className="flex flex-wrap gap-3">
-                    <HeroLinkButton to="/join" variant="secondary">
-                      Оставить заявку
-                    </HeroLinkButton>
-                    <HeroLinkButton to="/offer" variant="ghost">
-                      Что предлагает сервер
-                    </HeroLinkButton>
-                  </div>
-                </Card.Content>
-              </Card>
-            </div>
-          </div>
-
+        <>
           <Card className="border border-[var(--separator)] bg-[var(--surface)]">
             <Card.Header className="grid gap-2">
-              <Card.Title>Архив публикаций</Card.Title>
+              <div className="flex flex-wrap items-center gap-3">
+                <Card.Title>Все посты</Card.Title>
+                <Chip color="accent" variant="soft">
+                  {filteredPosts.length}
+                </Chip>
+              </div>
               <Card.Description>
-                Все вышедшие посты, объявления и заметки команды XK HARDCORE.
+                Ищите публикации по названию и фильтруйте ленту по времени
+                выхода.
               </Card.Description>
             </Card.Header>
-            <Card.Content className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {posts.map((post) => (
-                <div
-                  key={post.id}
-                  className="grid gap-3 rounded-xl border border-[var(--separator)] p-4"
-                >
-                  <div className="grid gap-2">
-                    <Text color="muted" type="body-sm">
-                      {formatDate(post.publishedAt)}
-                    </Text>
-                    <Text type="body">{post.title}</Text>
-                    <Text color="muted" type="body-sm">
-                      {post.summary}
-                    </Text>
-                  </div>
-                  <div className="flex items-center justify-between gap-3">
-                    <Text color="muted" type="body-sm">
-                      {post.authorName ?? 'Команда XK HARDCORE'}
-                    </Text>
-                    <AnimatedLink
-                      className="text-primary underline-offset-4 hover:underline"
-                      to={`${basePath}/${post.slug}`}
-                    >
-                      Открыть
-                    </AnimatedLink>
-                  </div>
-                </div>
-              ))}
+            <Card.Content className="grid gap-4 md:grid-cols-[minmax(0,1fr)_260px]">
+              <Input
+                startContent={
+                  <Search
+                    aria-hidden="true"
+                    className="text-[var(--muted)]"
+                    size={16}
+                  />
+                }
+                placeholder="Найти пост по названию"
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+              >
+                <Label>Поиск по названию</Label>
+              </Input>
+
+              <Select
+                selectedKey={timeFilter}
+                onSelectionChange={(key) => {
+                  if (typeof key === 'string') {
+                    setTimeFilter(key as TimeFilterKey)
+                  }
+                }}
+              >
+                <Label>Период</Label>
+                <Select.Trigger>
+                  <Select.Value />
+                  <Select.Indicator />
+                </Select.Trigger>
+                <Select.Popover>
+                  <ListBox>
+                    {timeFilterOptions.map((option) => (
+                      <ListBox.Item
+                        key={option.key}
+                        id={option.key}
+                        textValue={option.label}
+                      >
+                        {option.label}
+                        <ListBox.ItemIndicator />
+                      </ListBox.Item>
+                    ))}
+                  </ListBox>
+                </Select.Popover>
+              </Select>
             </Card.Content>
           </Card>
 
-          {archivePosts.length > 0 ? (
-            <Card className="border border-[var(--separator)] bg-[var(--surface)]">
-              <Card.Header>
-                <Card.Title>Ранее опубликовано</Card.Title>
-              </Card.Header>
-              <Card.Content className="grid gap-3">
-                {archivePosts.map((post) => (
-                  <AnimatedLink
-                    key={`archive-${post.id}`}
-                    className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-[var(--separator)] px-4 py-3 transition-colors hover:bg-[var(--surface-secondary)]"
-                    to={`${basePath}/${post.slug}`}
-                  >
-                    <div className="grid gap-1">
-                      <Text type="body-sm">{post.title}</Text>
-                      <Text color="muted" type="body-sm">
-                        {post.summary}
-                      </Text>
+          {filteredPosts.length > 0 ? (
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {filteredPosts.map((post) => (
+                <Card
+                  key={post.id}
+                  className="border border-[var(--separator)] bg-[var(--surface)]"
+                >
+                  <Card.Content className="grid h-full gap-4 p-5">
+                    <div
+                      className="h-44 rounded-2xl border border-white/10 bg-[linear-gradient(135deg,#64748b_0%,#1e293b_100%)] bg-cover bg-center"
+                      style={
+                        post.coverImageUrl
+                          ? {
+                              backgroundImage: `linear-gradient(135deg, rgba(15, 23, 42, 0.15), rgba(15, 23, 42, 0.65)), url(${post.coverImageUrl})`,
+                            }
+                          : undefined
+                      }
+                    />
+
+                    <div className="grid gap-3">
+                      <div className="flex flex-wrap items-center gap-2">
+                        {post.isPinned ? (
+                          <Chip color="warning" variant="soft">
+                            Закреплен
+                          </Chip>
+                        ) : null}
+                        <Text color="muted" type="body-sm">
+                          {formatDate(post.publishedAt)}
+                        </Text>
+                      </div>
+
+                      <div className="grid gap-2">
+                        <Text type="body">{post.title}</Text>
+                        <Text color="muted" type="body-sm">
+                          {post.summary}
+                        </Text>
+                      </div>
                     </div>
-                    <Text color="muted" type="body-sm">
-                      {formatDate(post.publishedAt)}
-                    </Text>
-                  </AnimatedLink>
-                ))}
+
+                    <div className="mt-auto flex items-center justify-between gap-3">
+                      <Text color="muted" type="body-sm">
+                        {post.authorName ?? 'Команда XK HARDCORE'}
+                      </Text>
+                      <AnimatedLink
+                        className="text-primary underline-offset-4 hover:underline"
+                        to={`${basePath}/${post.slug}`}
+                      >
+                        Открыть
+                      </AnimatedLink>
+                    </div>
+                  </Card.Content>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <Card className="border border-[var(--separator)] bg-[var(--surface)]">
+              <Card.Content className="grid gap-2 p-6">
+                <Text type="body">Посты не найдены</Text>
+                <Text color="muted" type="body-sm">
+                  Попробуйте изменить название в поиске или выбрать другой
+                  период публикации.
+                </Text>
               </Card.Content>
             </Card>
-          ) : null}
-        </div>
+          )}
+        </>
       ) : null}
-    </>
+    </div>
   )
 
   if (embedded) {
@@ -251,8 +277,8 @@ export function NewsPage({
   return (
     <HeroPage
       eyebrow="Новости"
-      title="Лента сервера"
-      description="Обновления проекта, объявления, изменения правил и важные посты для игроков."
+      title="Посты и объявления"
+      description="Закрепленные публикации, свежие новости сервера и полный архив материалов в одном месте."
       actions={
         <>
           <HeroLinkButton to="/join" variant="secondary">

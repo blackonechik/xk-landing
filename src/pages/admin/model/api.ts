@@ -65,6 +65,9 @@ export type AdminPostRow = {
   summary: string
   content: string
   coverTone: string
+  coverImageUrl: string | null
+  isPinned: boolean
+  pinnedOrder: number | null
   isPublished: boolean
   authorName: string | null
   publishedAt: string | null
@@ -139,6 +142,9 @@ type CreatePostPayload = {
   summary: string
   content: string
   coverTone?: string
+  coverImageUrl?: string | null
+  isPinned?: boolean
+  pinnedOrder?: number | null
   isPublished?: boolean
   authorName?: string | null
 }

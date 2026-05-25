@@ -250,6 +250,9 @@ export function AdminPage() {
   const [postContent, setPostContent] = useState('')
   const [postAuthorName, setPostAuthorName] = useState('')
   const [postCoverTone, setPostCoverTone] = useState('slate')
+  const [postCoverImageUrl, setPostCoverImageUrl] = useState('')
+  const [postPinned, setPostPinned] = useState(false)
+  const [postPinnedOrder, setPostPinnedOrder] = useState('')
   const [postPublished, setPostPublished] = useState(true)
   const [applicationNotes, setApplicationNotes] = useState<Record<string, string>>({})
   const [confirmState, setConfirmState] = useState<ConfirmationState>(null)
@@ -524,6 +527,12 @@ export function AdminPage() {
         summary: postSummary.trim(),
         content: normalizedContent.trim(),
         coverTone: postCoverTone.trim(),
+        coverImageUrl: postCoverImageUrl.trim() || null,
+        isPinned: postPinned,
+        pinnedOrder:
+          postPinned && postPinnedOrder.trim()
+            ? Number(postPinnedOrder.trim()) || null
+            : null,
         isPublished: postPublished,
         authorName: postAuthorName.trim() || account?.player.nickname || null,
       }
@@ -570,6 +579,9 @@ export function AdminPage() {
     setPostContent('')
     setPostAuthorName('')
     setPostCoverTone('slate')
+    setPostCoverImageUrl('')
+    setPostPinned(false)
+    setPostPinnedOrder('')
     setPostPublished(true)
   }
 
@@ -581,6 +593,11 @@ export function AdminPage() {
     setPostContent(normalizePostContentHtml(post.content))
     setPostAuthorName(post.authorName ?? '')
     setPostCoverTone(post.coverTone)
+    setPostCoverImageUrl(post.coverImageUrl ?? '')
+    setPostPinned(post.isPinned)
+    setPostPinnedOrder(
+      typeof post.pinnedOrder === 'number' ? String(post.pinnedOrder) : '',
+    )
     setPostPublished(post.isPublished)
     void navigate({ to: getAdminViewPath('posts') })
   }
@@ -997,6 +1014,8 @@ export function AdminPage() {
               <Input label="Краткое описание" value={postSummary} onChange={(event) => setPostSummary(event.target.value)} />
               <Input label="Автор" value={postAuthorName} onChange={(event) => setPostAuthorName(event.target.value)} />
               <Input label="Тон обложки" value={postCoverTone} onChange={(event) => setPostCoverTone(event.target.value)} placeholder="slate, amber, emerald..." />
+              <Input label="Картинка обложки" value={postCoverImageUrl} onChange={(event) => setPostCoverImageUrl(event.target.value)} placeholder="https://... или /assets/..." />
+              <Input label="Порядок закрепа" value={postPinnedOrder} onChange={(event) => setPostPinnedOrder(event.target.value)} placeholder="1, 2, 3..." />
               <div className="grid gap-3 xl:col-span-2">
                 <LexicalRichTextEditor
                   label="Текст поста"
@@ -1007,6 +1026,9 @@ export function AdminPage() {
               </div>
               <Switch isSelected={postPublished} onChange={setPostPublished}>
                 Публиковать сразу
+              </Switch>
+              <Switch isSelected={postPinned} onChange={setPostPinned}>
+                Закрепить в слайдере
               </Switch>
               <div className="flex flex-wrap gap-2">
                 <Button onPress={() => void handleSavePost()} isDisabled={isSavingPost}>
@@ -1028,6 +1050,7 @@ export function AdminPage() {
                     <Table.Column isRowHeader>Пост</Table.Column>
                     <Table.Column>Slug</Table.Column>
                     <Table.Column>Автор</Table.Column>
+                    <Table.Column>Закреп</Table.Column>
                     <Table.Column>Статус</Table.Column>
                     <Table.Column>Опубликован</Table.Column>
                     <Table.Column>Обновлен</Table.Column>
@@ -1044,6 +1067,19 @@ export function AdminPage() {
                         </Table.Cell>
                         <Table.Cell>/{post.slug}</Table.Cell>
                         <Table.Cell>{post.authorName ?? 'Команда XK HARDCORE'}</Table.Cell>
+                        <Table.Cell>
+                          {post.isPinned ? (
+                            <Chip color="warning" variant="soft">
+                              {typeof post.pinnedOrder === 'number'
+                                ? `Да, #${post.pinnedOrder}`
+                                : 'Да'}
+                            </Chip>
+                          ) : (
+                            <Chip color="default" variant="soft">
+                              Нет
+                            </Chip>
+                          )}
+                        </Table.Cell>
                         <Table.Cell>
                           <Chip color={post.isPublished ? 'success' : 'default'} variant="soft">
                             {post.isPublished ? 'Опубликован' : 'Черновик'}

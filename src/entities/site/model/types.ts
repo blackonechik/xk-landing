@@ -43,6 +43,9 @@ export type SitePost = {
   summary: string
   content: string
   coverTone: string
+  coverImageUrl: string | null
+  isPinned: boolean
+  pinnedOrder: number | null
   isPublished: boolean
   authorName: string | null
   publishedAt: string | null
