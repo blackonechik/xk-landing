@@ -151,7 +151,7 @@ function QuickSectionCard({
         src={imageSrc}
       />
 
-      <div className="relative z-10 flex h-full flex-col p-4">
+      <div className="relative z-10 flex h-full flex-col p-4 max-[1820px]:w-3/4">
         <div
           className="text-[#fdfcfc]"
           style={{ filter: 'drop-shadow(-2px 1px 0px #2d3935)' }}
@@ -228,7 +228,7 @@ export function ProfileStatusPanel({
       icon: <QuickSectionFlagIcon />,
       imageSrc: '/assets/img/profile/players/maxim.webp',
       imageClassName: 'max-w-[45%] left-[-18px]',
-      textClassName: 'max-w-[270px]',
+      textClassName: 'min-[1821px]:max-w-[270px]',
       title: 'Королевства',
     },
     ...(settings?.navigation.showBank === false
@@ -243,7 +243,7 @@ export function ProfileStatusPanel({
             icon: <QuickSectionBankIcon />,
             imageSrc: '/assets/img/profile/players/forid.webp',
             imageClassName: 'max-w-[40%] left-[-20px]',
-            textClassName: 'max-w-[270px]',
+            textClassName: 'min-[1821px]:max-w-[270px]',
             title: 'Банк',
           },
         ]),
@@ -255,7 +255,7 @@ export function ProfileStatusPanel({
       icon: <QuickSectionRulesIcon />,
       imageSrc: '/assets/img/profile/players/xlebkins.webp',
       imageClassName: 'max-w-[60%] left-[-14px] bottom-[-10px]',
-      textClassName: 'max-w-[270px]',
+      textClassName: 'min-[1821px]:max-w-[340px]',
       title: 'Правила',
     },
   ] as QuickSection[]
