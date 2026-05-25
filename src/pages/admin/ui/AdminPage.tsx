@@ -1053,26 +1053,25 @@ export function AdminPage() {
         <HeroSectionCard
           gradient="emerald"
           icon={<Wallet size={40} />}
-          title="Успешних платежей :"
+          label="Успешних платежей :"
           value={stats.paidCount}
         />
         <HeroSectionCard
           gradient="violet"
           icon={<ShieldCheck size={40} />}
-          title="Заявки:"
+          label="Заявки:"
           value={stats.totalApplications || "0"}
         />
         <HeroSectionCard
           gradient="amber"
           icon={<FileText size={40} />}
-          title="Посты:"
-          
+          label="Посты:"
           value={stats.publishedPosts || "0"}
         />
         <HeroSectionCard
           gradient="sky"
           icon={<TicketPercent size={40} />}
-          title="В whitelist:"
+          label="В whitelist:"
           value={stats.totalWhitelist || "0"}
         />
       </div>
