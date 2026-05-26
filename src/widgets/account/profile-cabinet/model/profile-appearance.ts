@@ -1,5 +1,6 @@
 export type ProfileAnimation =
   | 'idle'
+  | 'nod'
   | 'inspect'
   | 'wave'
   | 'walk'
@@ -34,6 +35,7 @@ export const defaultProfileAppearance: ProfileAppearance = {
 }
 
 export const profileAnimations = [
+  { id: 'nod', label: 'Кивок' },
   { id: 'inspect', label: 'Осмотр рук' },
   { id: 'wave', label: 'Приветствие' },
   { id: 'walk', label: 'Прогулка' },

@@ -34,6 +34,19 @@ function createAnimation(animation: ProfileAnimation) {
   switch (animation) {
     case 'idle':
       return new IdleAnimation()
+    case 'nod':
+      return new FunctionAnimation((player, progress) => {
+        const duration = 1
+        const t = progress % duration
+        const halfDuration = duration / 2
+
+        const headRotationX =
+          t <= halfDuration
+            ? (-42.5 * (t / halfDuration) * Math.PI) / 180
+            : (-42.5 * ((duration - t) / halfDuration) * Math.PI) / 180
+
+        player.skin.head.rotation.x = headRotationX
+      })
     case 'wave':
       return new WaveAnimation('right')
     case 'walk':

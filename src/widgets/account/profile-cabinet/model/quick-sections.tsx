@@ -31,7 +31,7 @@ export const PROFILE_QUICK_SECTIONS: readonly QuickSection[] = [
     href: '/rules',
     icon: <QuickSectionRulesIcon />,
     imageSrc: '/assets/img/profile/players/xlebkins.webp',
-    imageClassName: 'max-w-[60%] left-[-14px] bottom-[-10px]',
+    imageClassName: 'max-w-[60%] left-[-7px] bottom-[-15px] scale-[1.16]',
     textClassName: 'min-[1821px]:max-w-[340px]',
     title: 'Правила',
   },
