@@ -1,6 +1,8 @@
 import { useDeferredValue, useEffect, useMemo, useState } from 'react'
+import { useNavigate } from '@tanstack/react-router'
 import {
   Alert,
+  Button,
   Card,
   Chip,
   FieldError,
@@ -11,10 +13,9 @@ import {
   Spinner,
   Text,
 } from '@heroui/react'
-import AnimatedLink from '@/components/AnimatedLink'
 import type { SitePost } from '@/entities/site'
 import { fetchSitePosts } from '@/entities/site'
-import { HeroLinkButton, HeroPage } from '@/shared/ui/hero-page'
+import { HeroPage } from '@/shared/ui/hero-page'
 import { NewsHeroSlider } from './NewsHeroSlider'
 
 function formatDate(value: string | null) {
@@ -52,6 +53,29 @@ function matchesTimeFilter(post: SitePost, filterKey: TimeFilterKey) {
   return new Date(post.publishedAt).getTime() >= threshold
 }
 
+function getPostCardBackground(post: SitePost) {
+  if (post.coverImageUrl) {
+    return post.coverImageUrl
+  }
+
+  const svg = encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+      <defs>
+        <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#64748b" />
+          <stop offset="55%" stop-color="#1e293b" />
+          <stop offset="100%" stop-color="#0f172a" />
+        </linearGradient>
+      </defs>
+      <rect width="800" height="600" fill="url(#bg)" />
+      <circle cx="640" cy="120" r="140" fill="rgba(255,255,255,0.12)" />
+      <circle cx="160" cy="480" r="170" fill="rgba(255,255,255,0.08)" />
+    </svg>
+  `)
+
+  return `data:image/svg+xml;charset=utf-8,${svg}`
+}
+
 type NewsPageProps = {
   basePath?: '/news' | '/cabinet/news'
   embedded?: boolean
@@ -65,6 +89,7 @@ export function NewsPage({
   basePath = '/news',
   embedded = false,
 }: NewsPageProps) {
+  const navigate = useNavigate()
   const [posts, setPosts] = useState<SitePost[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
@@ -202,53 +227,63 @@ export function NewsPage({
               {filteredPosts.map((post) => (
                 <Card
                   key={post.id}
-                  className="border border-[var(--separator)] bg-[var(--surface)]"
+                  className="relative min-h-[340px] overflow-hidden rounded-3xl border border-[var(--separator)] bg-[var(--surface)]"
                 >
-                  <Card.Content className="grid h-full gap-4 p-5">
-                    <div
-                      className="h-44 rounded-2xl border border-white/10 bg-[linear-gradient(135deg,#64748b_0%,#1e293b_100%)] bg-cover bg-center"
-                      style={
-                        post.coverImageUrl
-                          ? {
-                              backgroundImage: `linear-gradient(135deg, rgba(15, 23, 42, 0.15), rgba(15, 23, 42, 0.65)), url(${post.coverImageUrl})`,
-                            }
-                          : undefined
-                      }
-                    />
+                  <img
+                    alt=""
+                    aria-hidden="true"
+                    className="absolute inset-0 h-full w-full object-cover"
+                    src={getPostCardBackground(post)}
+                  />
+                  <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,10,20,0.06)_0%,rgba(8,10,20,0.24)_28%,rgba(8,10,20,0.8)_74%,rgba(4,6,12,0.96)_100%)]" />
 
-                    <div className="grid gap-3">
-                      <div className="flex flex-wrap items-center gap-2">
-                        {post.isPinned ? (
-                          <Chip color="warning" variant="soft">
-                            Закреплен
-                          </Chip>
-                        ) : null}
-                        <Text color="muted" type="body-sm">
-                          {formatDate(post.publishedAt)}
-                        </Text>
-                      </div>
-
-                      <div className="grid gap-2">
-                        <Text type="body">{post.title}</Text>
-                        <Text color="muted" type="body-sm">
-                          {post.summary}
-                        </Text>
-                      </div>
-                    </div>
-
-                    <div className="mt-auto flex items-center justify-between gap-3">
-                      <Text color="muted" type="body-sm">
-                        {post.authorName ?? 'Команда XK HARDCORE'}
+                  <Card.Header className="relative z-10 grid gap-2 p-5 text-white">
+                    <div className="flex flex-wrap items-center gap-2">
+                      {post.isPinned ? (
+                        <Chip color="warning" variant="soft">
+                          Закреплен
+                        </Chip>
+                      ) : (
+                        <Chip color="accent" variant="soft">
+                          Новости
+                        </Chip>
+                      )}
+                      <Text className="text-white/72" type="body-sm">
+                        {formatDate(post.publishedAt)}
                       </Text>
-                      <AnimatedLink
-                        className="text-primary underline-offset-4 hover:underline"
-                        params={{ slug: post.slug }}
-                        to={postRoute}
-                      >
-                        Открыть
-                      </AnimatedLink>
                     </div>
-                  </Card.Content>
+
+                    <div className="grid gap-1">
+                      <Card.Title className="text-lg leading-tight text-white">
+                        {post.title}
+                      </Card.Title>
+                      <Card.Description className="line-clamp-3 text-sm leading-6 text-white/72">
+                        {post.summary}
+                      </Card.Description>
+                    </div>
+                  </Card.Header>
+
+                  <Card.Footer className="relative z-10 mt-auto flex items-end justify-between gap-3 p-5 text-white">
+                    <div className="min-w-0">
+                      <div className="truncate text-sm font-medium text-white">
+                        {post.authorName ?? 'Команда XK HARDCORE'}
+                      </div>
+                      <div className="text-xs text-white/60">Открыть публикацию</div>
+                    </div>
+                    <Button
+                      className="shrink-0 bg-white text-black"
+                      size="sm"
+                      variant="solid"
+                      onPress={() => {
+                        void navigate({
+                          params: { slug: post.slug },
+                          to: postRoute,
+                        })
+                      }}
+                    >
+                      Открыть
+                    </Button>
+                  </Card.Footer>
                 </Card>
               ))}
             </div>

@@ -1,8 +1,8 @@
 import { useState } from 'react'
+import { useNavigate } from '@tanstack/react-router'
 import { Button, Card, Chip, Text } from '@heroui/react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import type { SitePost } from '@/entities/site'
-import { HeroLinkButton } from '@/shared/ui/hero-page'
 
 type NewsHeroSliderProps = {
   basePath: '/news' | '/cabinet/news'
@@ -70,6 +70,7 @@ function getPostRoute(basePath: '/news' | '/cabinet/news') {
 }
 
 export function NewsHeroSlider({ basePath, posts }: NewsHeroSliderProps) {
+  const navigate = useNavigate()
   const slides = posts.length > 0 ? posts : placeholderSlides
   const [currentIndex, setCurrentIndex] = useState(0)
   const currentSlide = slides[currentIndex] ?? slides[0]
@@ -91,15 +92,6 @@ export function NewsHeroSlider({ basePath, posts }: NewsHeroSliderProps) {
           className="relative min-h-[320px] overflow-hidden rounded-3xl border border-white/10"
           style={getCoverBackground(currentSlide)}
         >
-          <div className="absolute left-4 right-4 top-4 z-10 flex items-start justify-between gap-3 md:left-6 md:right-6 md:top-6">
-            <div className="flex flex-wrap items-center gap-3">
-              {posts.length > 0 ? (
-                <Text className="text-white/80" type="body-sm">
-                  {currentIndex + 1} из {slides.length}
-                </Text>
-              ) : null}
-            </div>
-          </div>
           <Button
             aria-label="Предыдущий пост"
             className="absolute left-0 top-1/2 z-10 -translate-y-1/2 bg-inherit"
@@ -139,13 +131,17 @@ export function NewsHeroSlider({ basePath, posts }: NewsHeroSliderProps) {
             </div>
             {currentSlide.slug ? (
               <div className="flex flex-wrap gap-3">
-                <HeroLinkButton
-                  params={{ slug: currentSlide.slug }}
-                  to={postRoute}
+                <Button
                   variant="secondary"
+                  onPress={() => {
+                    void navigate({
+                      params: { slug: currentSlide.slug },
+                      to: postRoute,
+                    })
+                  }}
                 >
                   Открыть пост
-                </HeroLinkButton>
+                </Button>
               </div>
             ) : null}
           </div>

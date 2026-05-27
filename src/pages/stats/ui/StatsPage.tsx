@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
-import { Alert, Card, Chip, Spinner, Text } from '@heroui/react'
+import { Alert, Button, ButtonGroup, Card, Chip, Spinner, Text } from '@heroui/react'
 import { Clock3, Crown, Server } from 'lucide-react'
 import {
   PlayerAvatar,
@@ -9,137 +9,27 @@ import {
 } from '@/entities/account'
 import type { AccountPayload } from '@/entities/account'
 import { fetchPlayers, formatPlayedHours } from '@/entities/player'
-import type {
-  PlayerDailyActivity,
-  PublicPlayerProfile,
-} from '@/entities/player'
+import type { PublicPlayerProfile } from '@/entities/player'
 import { AccountLayout } from '@/widgets/account/layout'
 
-const monthFormatter = new Intl.DateTimeFormat('ru-RU', {
-  month: 'long',
-})
+type StatsPeriod = 'all' | 'month' | 'week'
 
-const weekdayLabels = [
-  'Воскресенье',
-  'Понедельник',
-  'Вторник',
-  'Среда',
-  'Четверг',
-  'Пятница',
-  'Суббота',
-] as const
-
-type ActivityBreakdownItem = {
-  label: string
-  shortLabel: string
-  hours: number
+const periodLabels: Record<StatsPeriod, string> = {
+  all: 'За всё время',
+  month: 'За месяц',
+  week: 'За неделю',
 }
 
-function parseActivityDate(value: string) {
-  return new Date(`${value}T12:00:00`)
-}
-
-function buildMonthStats(players: PublicPlayerProfile[]) {
-  const hoursByMonth = new Map<number, number>()
-
-  for (const player of players) {
-    for (const item of player.activity) {
-      const month = parseActivityDate(item.date).getMonth()
-      hoursByMonth.set(month, (hoursByMonth.get(month) ?? 0) + item.playedHours)
-    }
+function getHoursByPeriod(player: PublicPlayerProfile, period: StatsPeriod) {
+  if (period === 'month') {
+    return player.stats.monthHours
   }
 
-  return Array.from({ length: 12 }, (_, monthIndex) => ({
-    label: capitalize(monthFormatter.format(new Date(2026, monthIndex, 1))),
-    shortLabel: capitalize(
-      monthFormatter.format(new Date(2026, monthIndex, 1)).slice(0, 3),
-    ),
-    hours: hoursByMonth.get(monthIndex) ?? 0,
-  }))
-}
-
-function buildWeekdayStats(players: PublicPlayerProfile[]) {
-  const hoursByWeekday = new Map<number, number>()
-
-  for (const player of players) {
-    for (const item of player.activity) {
-      const weekday = parseActivityDate(item.date).getDay()
-      hoursByWeekday.set(
-        weekday,
-        (hoursByWeekday.get(weekday) ?? 0) + item.playedHours,
-      )
-    }
+  if (period === 'week') {
+    return player.stats.weekHours
   }
 
-  return weekdayLabels.map((label, weekday) => ({
-    label,
-    shortLabel: label.slice(0, 2),
-    hours: hoursByWeekday.get(weekday) ?? 0,
-  }))
-}
-
-function capitalize(value: string) {
-  return value.charAt(0).toUpperCase() + value.slice(1)
-}
-
-function getTopActivityDay(activity: PlayerDailyActivity[]) {
-  return activity.reduce<PlayerDailyActivity | null>((top, item) => {
-    if (!top || item.playedHours > top.playedHours) {
-      return item
-    }
-
-    return top
-  }, null)
-}
-
-function ActivityBreakdownCard({
-  description,
-  items,
-  title,
-}: {
-  description: string
-  items: ActivityBreakdownItem[]
-  title: string
-}) {
-  const maxHours = items.reduce(
-    (currentMax, item) => Math.max(currentMax, item.hours),
-    0,
-  )
-
-  return (
-    <Card className="border border-[var(--separator)] bg-[var(--surface)]">
-      <Card.Header className="flex items-start justify-between gap-4">
-        <div>
-          <Card.Title>{title}</Card.Title>
-          <Card.Description>{description}</Card.Description>
-        </div>
-      </Card.Header>
-      <Card.Content className="grid gap-3 p-5 pt-0">
-        {items.map((item) => {
-          const width = maxHours > 0 ? `${(item.hours / maxHours) * 100}%` : '0%'
-
-          return (
-            <div key={item.label} className="grid gap-1.5">
-              <div className="flex items-center justify-between gap-3">
-                <Text type="body-sm" weight="medium">
-                  {item.label}
-                </Text>
-                <Text className="whitespace-nowrap" color="muted" type="body-sm">
-                  {formatPlayedHours(item.hours)}
-                </Text>
-              </div>
-              <div className="h-2 overflow-hidden rounded-full bg-[var(--surface-secondary)]">
-                <div
-                  className="h-full rounded-full bg-[var(--accent)]/80 transition-[width] duration-300"
-                  style={{ width }}
-                />
-              </div>
-            </div>
-          )
-        })}
-      </Card.Content>
-    </Card>
-  )
+  return player.stats.totalHours
 }
 
 export function StatsPage() {
@@ -150,6 +40,7 @@ export function StatsPage() {
   const [players, setPlayers] = useState<PublicPlayerProfile[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
+  const [period, setPeriod] = useState<StatsPeriod>('all')
 
   useEffect(() => {
     let isActive = true
@@ -194,48 +85,37 @@ export function StatsPage() {
   }, [navigate])
 
   const stats = useMemo(() => {
-    const totalHours = players.reduce((sum, player) => sum + player.playedHours, 0)
-    const monthHours = players.reduce(
-      (sum, player) => sum + player.stats.monthHours,
-      0,
-    )
-    const weekHours = players.reduce(
-      (sum, player) => sum + player.stats.weekHours,
-      0,
-    )
-    const todayHours = players.reduce(
-      (sum, player) => sum + player.stats.todayHours,
-      0,
-    )
+    const totalHours = players.reduce((sum, player) => sum + player.stats.totalHours, 0)
+    const monthHours = players.reduce((sum, player) => sum + player.stats.monthHours, 0)
+    const weekHours = players.reduce((sum, player) => sum + player.stats.weekHours, 0)
     const onlineCount = players.filter((player) => player.isOnline).length
-    const leader = players.at(0) ?? null
-    const mostActiveToday = players.reduce<PublicPlayerProfile | null>(
-      (top, player) => {
-        if (!top || player.stats.todayHours > top.stats.todayHours) {
-          return player
-        }
-
-        return top
-      },
-      null,
-    )
 
     return {
-      leader,
       monthHours,
-      mostActiveToday:
-        mostActiveToday && mostActiveToday.stats.todayHours > 0
-          ? mostActiveToday
-          : null,
       onlineCount,
-      todayHours,
       totalHours,
       weekHours,
     }
   }, [players])
 
-  const monthStats = useMemo(() => buildMonthStats(players), [players])
-  const weekdayStats = useMemo(() => buildWeekdayStats(players), [players])
+  const rankedPlayers = useMemo(
+    () =>
+      [...players]
+        .sort(
+          (left, right) =>
+            getHoursByPeriod(right, period) - getHoursByPeriod(left, period),
+        )
+        .filter((player) => getHoursByPeriod(player, period) > 0 || period === 'all'),
+    [period, players],
+  )
+
+  const leader = rankedPlayers.at(0) ?? null
+  const totalForCurrentPeriod =
+    period === 'month'
+      ? stats.monthHours
+      : period === 'week'
+        ? stats.weekHours
+        : stats.totalHours
 
   if (!account) {
     return (
@@ -265,7 +145,7 @@ export function StatsPage() {
         void navigate({ to: `/cabinet/bank/${view}` })
       }}
       title="Статистика"
-      description="Игроки, онлайн и наигранное время"
+      description="Игроки, онлайн и рейтинг по игровому времени"
     >
       {isLoading ? (
         <Alert status="accent">
@@ -305,7 +185,7 @@ export function StatsPage() {
                 </div>
               </Card.Header>
               <Card.Content className="border-t border-[var(--separator)] p-0">
-                <div className="grid grid-cols-1 divide-y divide-[var(--separator)] sm:grid-cols-2 sm:divide-x sm:divide-y-0 xl:grid-cols-4">
+                <div className="grid grid-cols-1 divide-y divide-[var(--separator)] sm:grid-cols-3 sm:divide-x sm:divide-y-0">
                   <div className="p-5">
                     <Text color="muted" type="body-sm">
                       Всего игроков
@@ -324,18 +204,10 @@ export function StatsPage() {
                   </div>
                   <div className="p-5">
                     <Text color="muted" type="body-sm">
-                      За месяц
+                      {periodLabels[period]}
                     </Text>
                     <Text className="mt-1 text-3xl font-semibold">
-                      {formatPlayedHours(stats.monthHours)}
-                    </Text>
-                  </div>
-                  <div className="p-5">
-                    <Text color="muted" type="body-sm">
-                      Всего наиграно
-                    </Text>
-                    <Text className="mt-1 text-3xl font-semibold">
-                      {formatPlayedHours(stats.totalHours)}
+                      {formatPlayedHours(totalForCurrentPeriod)}
                     </Text>
                   </div>
                 </div>
@@ -343,81 +215,54 @@ export function StatsPage() {
             </Card>
 
             <Card className="border border-[var(--separator)] bg-[var(--surface)]">
-              <Card.Content className="grid gap-4">
-                <div>
-                  <Text className="text-muted">Лидер по игровому времени:</Text>
-                  {stats.leader ? (
-                    <div className="mt-3 flex items-center justify-between gap-5">
-                      <div className="min-w-0">
-                        <Card.Title>{stats.leader.nickname}</Card.Title>
-                        <Text className="mt-1" color="muted" type="body-sm">
-                          Пик активности:{' '}
-                          {formatTopDay(stats.leader.activity)}
-                        </Text>
-                      </div>
-                      <PlayerAvatar
-                        size="lg"
-                        nickname={stats.leader.nickname}
-                      />
-                    </div>
-                  ) : (
-                    <Text className="mt-3" color="muted" type="body-sm">
-                      Пока нет данных по игрокам.
-                    </Text>
-                  )}
-                </div>
-
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-lg border border-[var(--separator)] p-4">
-                    <Text color="muted" type="body-sm">
-                      За неделю
-                    </Text>
-                    <Text className="mt-1 text-2xl font-semibold">
-                      {formatPlayedHours(stats.weekHours)}
-                    </Text>
-                  </div>
-                  <div className="rounded-lg border border-[var(--separator)] p-4">
-                    <Text color="muted" type="body-sm">
-                      Сегодня
-                    </Text>
-                    <Text className="mt-1 text-2xl font-semibold">
-                      {formatPlayedHours(stats.todayHours)}
-                    </Text>
-                    {stats.mostActiveToday ? (
+              <Card.Content>
+                <Text className="text-muted">Лидер периода:</Text>
+                {leader ? (
+                  <div className="mt-3 flex items-center justify-between gap-5">
+                    <div className="min-w-0">
+                      <Card.Title>{leader.nickname}</Card.Title>
                       <Text className="mt-1" color="muted" type="body-sm">
-                        Активнее всех: {stats.mostActiveToday.nickname}
+                        {periodLabels[period]}: {formatPlayedHours(getHoursByPeriod(leader, period))}
                       </Text>
-                    ) : null}
+                    </div>
+                    <PlayerAvatar
+                      size="lg"
+                      nickname={leader.nickname}
+                    />
                   </div>
-                </div>
+                ) : (
+                  <Text className="mt-3" color="muted" type="body-sm">
+                    Для этого периода пока нет данных.
+                  </Text>
+                )}
               </Card.Content>
             </Card>
           </div>
 
-          <div className="grid gap-4 xl:grid-cols-2">
-            <ActivityBreakdownCard
-              title="По месяцам"
-              description="Суммарная наигранность по календарным месяцам."
-              items={monthStats}
-            />
-            <ActivityBreakdownCard
-              title="По дням недели"
-              description="Когда игроки чаще всего заходят на сервер."
-              items={weekdayStats}
-            />
-          </div>
-
           <Card className="border border-[var(--separator)] bg-[var(--surface)]">
-            <Card.Header className="flex items-start justify-between">
+            <Card.Header className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <div>
                 <Card.Title>Игроки</Card.Title>
                 <Card.Description>
                   Рейтинг по игровому времени
                 </Card.Description>
               </div>
+              <ButtonGroup variant="tertiary">
+                {(['all', 'month', 'week'] as const).map((option) => (
+                  <Button
+                    key={option}
+                    variant={period === option ? 'secondary' : 'tertiary'}
+                    onPress={() => {
+                      setPeriod(option)
+                    }}
+                  >
+                    {periodLabels[option]}
+                  </Button>
+                ))}
+              </ButtonGroup>
             </Card.Header>
             <Card.Content className="grid gap-3 p-5 pt-0 sm:grid-cols-2 xl:grid-cols-4">
-              {players.map((player, index) => (
+              {rankedPlayers.map((player, index) => (
                 <Link
                   key={player.nickname}
                   className="group flex items-center gap-4 rounded-lg border border-[var(--separator)] bg-[var(--surface)] p-3 transition duration-200 hover:-translate-y-0.5 hover:border-[var(--accent)] hover:bg-[var(--surface-elevated)]"
@@ -456,7 +301,8 @@ export function StatsPage() {
                       type="body-sm"
                     >
                       <Clock3 size={14} />
-                      Наиграл: <span>{formatPlayedHours(player.playedHours)}</span>
+                      Наиграл:{' '}
+                      <span>{formatPlayedHours(getHoursByPeriod(player, period))}</span>
                     </Text>
                   </div>
                 </Link>
@@ -467,14 +313,4 @@ export function StatsPage() {
       )}
     </AccountLayout>
   )
-}
-
-function formatTopDay(activity: PlayerDailyActivity[]) {
-  const topDay = getTopActivityDay(activity)
-
-  if (!topDay) {
-    return 'нет данных'
-  }
-
-  return `${topDay.date} · ${formatPlayedHours(topDay.playedHours)}`
 }

@@ -198,19 +198,17 @@ export function ProfileActivityPanel({ player }: ProfileActivityPanelProps) {
                     placement="top"
                     showArrow
                   >
-                    <button
+                    <span
                       aria-label={`${formattedDate}: ${formattedHours}`}
                       className={[
                         'block size-3 rounded-[3px] border border-separator/60',
-                        'cursor-pointer transition-transform duration-150 hover:scale-[1.12]',
-                        'focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/45',
                         getCellClassName(hours),
                       ].join(' ')}
                       style={{
                         gridColumn: columnIndex + 2,
                         gridRow: rowIndex + 2,
                       }}
-                      type="button"
+                      tabIndex={0}
                     />
                   </Tooltip>
                 )

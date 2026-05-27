@@ -53,58 +53,45 @@ export function ProfileRatingPanel({
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      <ButtonGroup
-        aria-label={
-          error
-            ? error
-            : `Оценки игрока: ${formatRatingCount(player.rating.score)}`
+    <ButtonGroup
+      aria-label={
+        error
+          ? error
+          : `Оценки игрока: ${formatRatingCount(player.rating.score)}`
+      }
+      variant="tertiary"
+    >
+      <Button
+        isDisabled={isOwnProfile || isPending}
+        onPress={() => {
+          void handleRate(1)
+        }}
+        title="Нравится"
+        variant={
+          player.rating.currentUserRating === 1 ? 'secondary' : 'tertiary'
         }
-        variant="tertiary"
       >
-        <Button
-          isDisabled={isOwnProfile || isPending}
-          onPress={() => {
-            void handleRate(1)
-          }}
-          title="Нравится"
-          variant={
-            player.rating.currentUserRating === 1 ? 'secondary' : 'tertiary'
-          }
-        >
-          <ThumbsUp size={16} />
-          <span className="text-xs font-semibold">
-            {formatRatingCount(player.rating.likes)}
-          </span>
-        </Button>
-        <Button
-          isDisabled={isOwnProfile || isPending}
-          onPress={() => {
-            void handleRate(-1)
-          }}
-          title="Не нравится"
-          variant={
-            player.rating.currentUserRating === -1 ? 'secondary' : 'tertiary'
-          }
-        >
-          <ButtonGroup.Separator />
-          <ThumbsDown size={16} />
-          <span className="text-xs font-semibold">
-            {formatRatingCount(player.rating.dislikes)}
-          </span>
-        </Button>
-      </ButtonGroup>
-      <span className="text-xs font-semibold text-muted-foreground">
-        Рейтинг:{' '}
-        <span
-          className={
-            player.rating.score < 0 ? 'text-danger' : 'text-foreground'
-          }
-        >
-          {player.rating.score > 0 ? '+' : ''}
-          {formatRatingCount(player.rating.score)}
+        <ThumbsUp size={16} />
+        <span className="text-xs font-semibold">
+          {formatRatingCount(player.rating.likes)}
         </span>
-      </span>
-    </div>
+      </Button>
+      <Button
+        isDisabled={isOwnProfile || isPending}
+        onPress={() => {
+          void handleRate(-1)
+        }}
+        title="Не нравится"
+        variant={
+          player.rating.currentUserRating === -1 ? 'secondary' : 'tertiary'
+        }
+      >
+        <ButtonGroup.Separator />
+        <ThumbsDown size={16} />
+        <span className="text-xs font-semibold">
+          {formatRatingCount(player.rating.dislikes)}
+        </span>
+      </Button>
+    </ButtonGroup>
   )
 }
