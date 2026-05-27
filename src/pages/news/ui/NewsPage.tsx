@@ -12,7 +12,8 @@ import {
   Text,
 } from '@heroui/react'
 import AnimatedLink from '@/components/AnimatedLink'
-import { fetchSitePosts, type SitePost } from '@/entities/site'
+import type { SitePost } from '@/entities/site'
+import { fetchSitePosts } from '@/entities/site'
 import { HeroLinkButton, HeroPage } from '@/shared/ui/hero-page'
 import { NewsHeroSlider } from './NewsHeroSlider'
 
@@ -54,6 +55,10 @@ function matchesTimeFilter(post: SitePost, filterKey: TimeFilterKey) {
 type NewsPageProps = {
   basePath?: '/news' | '/cabinet/news'
   embedded?: boolean
+}
+
+function getPostRoute(basePath: '/news' | '/cabinet/news') {
+  return basePath === '/cabinet/news' ? '/cabinet/news/$slug' : '/news/$slug'
 }
 
 export function NewsPage({
@@ -113,6 +118,7 @@ export function NewsPage({
       }),
     [normalizedQuery, posts, timeFilter],
   )
+  const postRoute = getPostRoute(basePath)
 
   const content = (
     <div className="grid gap-4">
@@ -142,18 +148,23 @@ export function NewsPage({
         <>
           <Card className="border border-[var(--separator)] bg-[var(--surface)]">
             <Card.Content className="grid gap-4 md:grid-cols-[minmax(0,1fr)_260px]">
-              <SearchField
-                className="grid gap-2"
-                value={searchQuery}
-                onChange={setSearchQuery}
-              >
-                <SearchField.Group>
-                  <SearchField.SearchIcon />
-                  <SearchField.Input placeholder="Найти пост по названию" />
-                  <SearchField.ClearButton />
-                </SearchField.Group>
-                <FieldError />
-              </SearchField>
+              <div className="grid gap-2">
+                <SearchField
+                  className="grid gap-2"
+                  value={searchQuery}
+                  onChange={setSearchQuery}
+                >
+                  <SearchField.Group>
+                    <SearchField.SearchIcon />
+                    <SearchField.Input placeholder="Найти пост по названию" />
+                    <SearchField.ClearButton />
+                  </SearchField.Group>
+                  <FieldError />
+                </SearchField>
+                <Text color="muted" type="body-sm">
+                  Показано {filteredPosts.length} из {posts.length} постов
+                </Text>
+              </div>
 
               <Select
                 selectedKey={timeFilter}
@@ -231,7 +242,8 @@ export function NewsPage({
                       </Text>
                       <AnimatedLink
                         className="text-primary underline-offset-4 hover:underline"
-                        to={`${basePath}/${post.slug}`}
+                        params={{ slug: post.slug }}
+                        to={postRoute}
                       >
                         Открыть
                       </AnimatedLink>

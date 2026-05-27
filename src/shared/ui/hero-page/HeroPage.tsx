@@ -14,6 +14,7 @@ type HeroPageProps = {
 type HeroLinkButtonProps = {
   children: ReactNode
   to?: string
+  params?: Record<string, string>
   href?: string
   variant?:
     | 'primary'
@@ -78,6 +79,7 @@ export function HeroPage({
 export function HeroLinkButton({
   children,
   to,
+  params,
   href,
   variant = 'primary',
   size = 'md',
@@ -87,7 +89,7 @@ export function HeroLinkButton({
 
   if (to) {
     return (
-      <AnimatedLink className={buttonClassName} to={to}>
+      <AnimatedLink className={buttonClassName} params={params} to={to}>
         {children}
       </AnimatedLink>
     )

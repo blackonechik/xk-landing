@@ -65,11 +65,16 @@ function getCoverBackground(post: SitePost) {
   }
 }
 
+function getPostRoute(basePath: '/news' | '/cabinet/news') {
+  return basePath === '/cabinet/news' ? '/cabinet/news/$slug' : '/news/$slug'
+}
+
 export function NewsHeroSlider({ basePath, posts }: NewsHeroSliderProps) {
   const slides = posts.length > 0 ? posts : placeholderSlides
   const [currentIndex, setCurrentIndex] = useState(0)
   const currentSlide = slides[currentIndex] ?? slides[0]
   const hasPinnedPosts = posts.some((post) => post.isPinned)
+  const postRoute = getPostRoute(basePath)
 
   function showPrev() {
     setCurrentIndex((prev) => (prev === 0 ? slides.length - 1 : prev - 1))
@@ -135,7 +140,8 @@ export function NewsHeroSlider({ basePath, posts }: NewsHeroSliderProps) {
             {currentSlide.slug ? (
               <div className="flex flex-wrap gap-3">
                 <HeroLinkButton
-                  to={`${basePath}/${currentSlide.slug}`}
+                  params={{ slug: currentSlide.slug }}
+                  to={postRoute}
                   variant="secondary"
                 >
                   Открыть пост
