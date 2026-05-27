@@ -24,6 +24,11 @@ export function ApplicationsSection({
   requestConfirmation,
   handleUpdateApplication,
 }: ApplicationsSectionProps) {
+  const resolveApplicationNote = (application: AdminApplicationRow) =>
+    Object.hasOwn(applicationNotes, application.id)
+      ? applicationNotes[application.id]
+      : (application.reviewNote ?? '')
+
   return (
     <AdminTableCard
       title="Заявки"
@@ -81,11 +86,7 @@ export function ApplicationsSection({
                   <Table.Cell className="min-w-[260px]">
                     <textarea
                       className="min-h-24 w-full rounded-[calc(var(--radius-lg)-2px)] border border-default-200 bg-content1 px-3 py-2 text-sm outline-none transition-colors focus:border-primary"
-                      value={
-                        applicationNotes[application.id] ??
-                        application.reviewNote ??
-                        ''
-                      }
+                      value={resolveApplicationNote(application)}
                       onChange={(event) =>
                         setApplicationNotes((prev) => ({
                           ...prev,

@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { AdminPage } from '@/pages/admin'
+import { AdminWhitelistRoute } from '@/pages/admin/ui/routes/AdminWhitelistRoute'
 
 export const Route = createFileRoute('/cabinet/admin/whitelist')({
   head: () => ({
@@ -9,5 +9,5 @@ export const Route = createFileRoute('/cabinet/admin/whitelist')({
       },
     ],
   }),
-  component: AdminPage,
+  component: AdminWhitelistRoute,
 })
