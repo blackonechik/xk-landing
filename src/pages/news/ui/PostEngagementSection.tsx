@@ -2,12 +2,11 @@ import { Alert, Avatar, Button, Card, Input, Spinner, Text } from '@heroui/react
 import { MessageCircle, SendHorizonal } from 'lucide-react'
 import { startTransition, useEffect, useMemo, useState } from 'react'
 import { getCachedAccount } from '@/entities/account'
+import type { PostReactionKey, SitePostEngagement } from '@/entities/site'
 import {
   createSitePostComment,
   fetchSitePostEngagement,
   setSitePostReaction,
-  type PostReactionKey,
-  type SitePostEngagement,
 } from '@/entities/site'
 import { EmojiReactionButton } from '@/shared/ui/emoji-reaction-button'
 
@@ -193,7 +192,7 @@ export function PostEngagementSection({
           {reactionOptions.map((reaction) => (
             <EmojiReactionButton
               key={reaction.key}
-              count={engagement.reactionTotals[reaction.key] ?? 0}
+              count={engagement.reactionTotals[reaction.key]}
               emoji={reaction.emoji}
               isSelected={engagement.currentUserReaction === reaction.key}
               onPress={() => {
