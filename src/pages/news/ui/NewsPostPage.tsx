@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Alert, Card, Chip, Spinner, Text } from '@heroui/react'
-import { fetchSitePost, type SitePost } from '@/entities/site'
+import type { SitePost } from '@/entities/site'
+import { fetchSitePost } from '@/entities/site'
 import { HeroLinkButton, HeroPage } from '@/shared/ui/hero-page'
 import { NewsSidebarPromo } from './NewsSidebarPromo'
+import { PostEngagementSection } from './PostEngagementSection'
 
 type NewsPostPageProps = {
   slug: string
@@ -169,6 +171,8 @@ export function NewsPostPage({
               </Card.Header>
               <Card.Content className="grid gap-4">{postContent}</Card.Content>
             </Card>
+
+            <PostEngagementSection postId={post.id} />
           </div>
 
           <NewsSidebarPromo />
