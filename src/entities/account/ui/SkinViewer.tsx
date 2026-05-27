@@ -3,18 +3,9 @@ import { Avatar } from '@heroui/react'
 import { UserRound } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { NoToneMapping } from 'three'
-import {
-  CrouchAnimation,
-  FlyingAnimation,
-  FunctionAnimation,
-  HitAnimation,
-  IdleAnimation,
-  Render as Skin3dRender,
-  RunningAnimation,
-  WalkingAnimation,
-  WaveAnimation,
-} from 'skin3d'
+import { Render as Skin3dRender } from 'skin3d'
 import { usePlayerAppearance } from './PlayerAvatar'
+import { createProfileAnimation } from '@/entities/account/model/profileAnimationLibrary'
 import type {
   ProfileAnimation,
   ProfileBackground,
@@ -30,91 +21,50 @@ type SkinViewerProps = {
   topRightAction?: ReactNode
 }
 
-function createAnimation(animation: ProfileAnimation) {
-  switch (animation) {
-    case 'idle':
-      return new IdleAnimation()
-    case 'nod':
-      return new FunctionAnimation((player, progress) => {
-        const duration = 1
-        const t = progress % duration
-        const halfDuration = duration / 2
+const viewerFrameClassName =
+  'relative grid min-h-[380px] w-full place-items-center overflow-hidden rounded-lg border border-[var(--separator)] bg-[var(--surface)] shadow-inner'
 
-        const headRotationX =
-          t <= halfDuration
-            ? (-42.5 * (t / halfDuration) * Math.PI) / 180
-            : (-42.5 * ((duration - t) / halfDuration) * Math.PI) / 180
+function configureViewer(
+  canvas: HTMLCanvasElement,
+  skinSource: string,
+  background: ProfileBackground,
+) {
+  const viewer = new Skin3dRender({
+    canvas,
+    width: 320,
+    height: 408,
+    skin: skinSource,
+    background: getProfileBackgroundColor(background),
+    zoom: 0.68,
+    allowRotateX: false,
+    allowRotateY: true,
+    allowZoom: false,
+  })
 
-        player.skin.head.rotation.x = headRotationX
-      })
-    case 'wave':
-      return new WaveAnimation('right')
-    case 'walk':
-      return new WalkingAnimation()
-    case 'run':
-      return new RunningAnimation()
-    case 'fly':
-      return new FlyingAnimation()
-    case 'crouch':
-      return new CrouchAnimation()
-    case 'hit':
-      return new HitAnimation()
-    case 'inspect':
-      return new FunctionAnimation((player, progress) => {
-        const duration = 4.2
-        const t = (progress % duration) / duration
-        const smoothstep = (edge0: number, edge1: number, value: number) => {
-          const x = Math.min(Math.max((value - edge0) / (edge1 - edge0), 0), 1)
-          return x * x * (3 - 2 * x)
-        }
-        const pulse = (
-          start: number,
-          holdStart: number,
-          holdEnd: number,
-          end: number,
-        ) => {
-          const enter = smoothstep(start, holdStart, t)
-          const exit = smoothstep(holdEnd, end, t)
-          return enter * (1 - exit)
-        }
+  viewer.renderer.toneMapping = NoToneMapping
+  viewer.camera.position.set(0, 14, 1)
+  viewer.adjustCameraDistance()
+  viewer.controls.enablePan = false
+  viewer.controls.enableZoom = false
+  viewer.controls.minPolarAngle = Math.PI / 2
+  viewer.controls.maxPolarAngle = Math.PI / 2
 
-        const leftLook = pulse(0.02, 0.2, 0.38, 0.54)
-        const rightLook = pulse(0.48, 0.66, 0.82, 0.98)
-        const activeLook = Math.max(leftLook, rightLook)
-        const breathe = Math.sin(progress * 2.2) * 0.015
-        const leftInspect = Math.sin(progress * 7) * leftLook
-        const rightInspect = Math.sin(progress * 7) * rightLook
-        const leftWristRoll = Math.sin(progress * 9.5) * leftLook
-        const rightWristRoll = Math.sin(progress * 9.5) * rightLook
-        const legBalance = Math.sin(progress * 3.4) * activeLook
+  return viewer
+}
 
-        player.skin.head.rotation.x = 0.42 * activeLook
-        player.skin.head.rotation.y = 0.3 * leftLook - 0.3 * rightLook
-        player.skin.head.rotation.z = 0.08 * leftLook - 0.08 * rightLook
-
-        player.skin.leftArm.rotation.x = -1.18 * leftLook - 0.08 * rightLook
-        player.skin.leftArm.rotation.y = 0.28 * leftLook + 0.1 * leftInspect
-        player.skin.leftArm.rotation.z =
-          0.5 * leftLook + 0.04 + breathe + 0.18 * leftWristRoll
-        player.skin.leftArm.rotation.order = 'YXZ'
-
-        player.skin.rightArm.rotation.x = -0.08 * leftLook - 1.18 * rightLook
-        player.skin.rightArm.rotation.y = -0.28 * rightLook - 0.1 * rightInspect
-        player.skin.rightArm.rotation.z =
-          -0.04 - 0.5 * rightLook - breathe - 0.18 * rightWristRoll
-        player.skin.rightArm.rotation.order = 'YXZ'
-
-        player.skin.body.rotation.y = 0.04 * leftLook - 0.04 * rightLook
-        player.skin.body.rotation.x = 0.03 * activeLook
-        player.skin.leftLeg.rotation.x =
-          -0.04 * activeLook + 0.025 * legBalance
-        player.skin.rightLeg.rotation.x =
-          -0.04 * activeLook - 0.025 * legBalance
-        player.skin.leftLeg.rotation.z = 0.018 * activeLook
-        player.skin.rightLeg.rotation.z = -0.018 * activeLook
-        player.cape.rotation.x = 0.06 * activeLook
-      })
+function resizeViewer(
+  viewer: Skin3dRender,
+  container: HTMLDivElement | null,
+) {
+  if (!container) {
+    return
   }
+
+  const width = Math.max(280, Math.floor(container.clientWidth))
+  const height = Math.round(width * 1.22)
+
+  viewer.setSize(width, height)
+  viewer.adjustCameraDistance()
 }
 
 export function SkinViewer({
@@ -133,88 +83,25 @@ export function SkinViewer({
       return undefined
     }
 
-    const viewerBackground = getProfileBackgroundColor(background)
+    const viewer = configureViewer(canvas, skinSource, background)
+    viewer.animation = createProfileAnimation(animation)
 
-    const viewer = new Skin3dRender({
-      canvas,
-      width: 320,
-      height: 408,
-      skin: skinSource,
-      background: viewerBackground,
-      zoom: 0.68,
-      allowRotateX: false,
-      allowRotateY: true,
-      allowZoom: false,
-    })
-
-    viewer.renderer.toneMapping = NoToneMapping
-
-    viewer.camera.position.set(0, 14, 1)
-    viewer.adjustCameraDistance()
-    viewer.controls.enablePan = false
-    viewer.controls.enableZoom = false
-    viewer.controls.minPolarAngle = Math.PI / 2
-    viewer.controls.maxPolarAngle = Math.PI / 2
-
-    let revertTimer: ReturnType<typeof window.setTimeout> | null = null
-
-    const playSelectedAnimation = () => {
-      if (revertTimer) {
-        window.clearTimeout(revertTimer)
-        revertTimer = null
-      }
-
-      if (animation === 'idle') {
-        viewer.animation = createAnimation('idle')
-        return
-      }
-
-      viewer.animation = createAnimation(animation)
-      revertTimer = window.setTimeout(() => {
-        viewer.animation = createAnimation('idle')
-      }, 5600)
+    const resizeCurrentViewer = () => {
+      resizeViewer(viewer, containerRef.current)
     }
 
-    playSelectedAnimation()
-    const animationInterval =
-      animation === 'idle'
-        ? null
-        : window.setInterval(playSelectedAnimation, 90000)
-
-    const resizeViewer = () => {
-      const container = containerRef.current
-      if (!container) {
-        return
-      }
-
-      const width = Math.max(280, Math.floor(container.clientWidth))
-      const height = Math.round(width * 1.22)
-
-      viewer.setSize(width, height)
-      viewer.adjustCameraDistance()
-    }
-
-    const resizeObserver = new ResizeObserver(resizeViewer)
+    const resizeObserver = new ResizeObserver(resizeCurrentViewer)
     resizeObserver.observe(containerRef.current ?? canvas)
-    resizeViewer()
+    resizeCurrentViewer()
 
     return () => {
       resizeObserver.disconnect()
-      if (revertTimer) {
-        window.clearTimeout(revertTimer)
-      }
-      if (animationInterval) {
-        window.clearInterval(animationInterval)
-      }
       viewer.dispose()
     }
   }, [animation, background, nickname, skinSource])
 
   return (
-    <div
-      className="relative grid min-h-[380px] w-full place-items-center overflow-hidden rounded-lg border border-[var(--separator)] bg-[var(--surface)] shadow-inner"
-      ref={containerRef}
-    >
+    <div className={viewerFrameClassName} ref={containerRef}>
       {topRightAction ? (
         <div className="absolute right-3 top-3 z-10">{topRightAction}</div>
       ) : null}

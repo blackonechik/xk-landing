@@ -26,7 +26,14 @@ export type CabinetPlayer = {
 export type PlayerProfileAppearance = {
   animation:
     | 'idle'
-    | 'nod'
+    | 'animation1'
+    | 'animation2'
+    | 'animation3'
+    | 'animation4'
+    | 'animation5'
+    | 'animation6'
+    | 'animation7'
+    | 'animation8'
     | 'inspect'
     | 'wave'
     | 'walk'

@@ -1,6 +1,13 @@
 export type ProfileAnimation =
   | 'idle'
-  | 'nod'
+  | 'animation1'
+  | 'animation2'
+  | 'animation3'
+  | 'animation4'
+  | 'animation5'
+  | 'animation6'
+  | 'animation7'
+  | 'animation8'
   | 'inspect'
   | 'wave'
   | 'walk'
@@ -35,7 +42,14 @@ export const defaultProfileAppearance: ProfileAppearance = {
 }
 
 export const profileAnimations = [
-  { id: 'nod', label: 'Кивок' },
+  { id: 'animation1', label: 'Разворот' },
+  { id: 'animation2', label: 'Рывок' },
+  { id: 'animation3', label: 'Вертушка' },
+  { id: 'animation4', label: 'Кач' },
+  { id: 'animation5', label: 'Позирование' },
+  { id: 'animation6', label: 'Танец' },
+  { id: 'animation7', label: 'Фристайл' },
+  { id: 'animation8', label: 'Пикирование' },
   { id: 'inspect', label: 'Осмотр рук' },
   { id: 'wave', label: 'Приветствие' },
   { id: 'walk', label: 'Прогулка' },
@@ -104,9 +118,7 @@ export const profileBackgrounds = [
   background: string
 }[]
 
-export const profilePaletteBackgrounds = profileBackgrounds.filter(
-  (item) => item.kind === 'palette',
-)
+export const profilePaletteBackgrounds = profileBackgrounds
 
 export function isCustomProfileBackground(
   background: string,
