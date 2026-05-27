@@ -57,6 +57,22 @@ export type SitePost = {
   updatedAt: string
 }
 
+export type PostReactionKey = 'heart' | 'party' | 'like' | 'laugh' | 'rocket'
+
+export type SitePostComment = {
+  id: string
+  authorNickname: string
+  message: string
+  createdAt: string
+  updatedAt: string
+}
+
+export type SitePostEngagement = {
+  comments: SitePostComment[]
+  currentUserReaction: PostReactionKey | null
+  reactionTotals: Record<PostReactionKey, number>
+}
+
 export type JoinApplication = {
   id: string
   nickname: string

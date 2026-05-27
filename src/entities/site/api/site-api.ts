@@ -1,5 +1,12 @@
 import { apiBaseUrl } from '@/shared/api/config'
-import type { JoinApplication, SitePost, SiteSettings } from '../model/types'
+import type {
+  JoinApplication,
+  PostReactionKey,
+  SitePost,
+  SitePostComment,
+  SitePostEngagement,
+  SiteSettings,
+} from '../model/types'
 
 let siteSettingsCache: SiteSettings | null = null
 let siteSettingsRequest: Promise<SiteSettings> | null = null
@@ -60,6 +67,103 @@ export async function fetchSitePost(slug: string) {
 
   const payload = (await response.json()) as { post: SitePost }
   return payload.post
+}
+
+export async function fetchSitePostEngagement(slug: string) {
+  const response = await fetch(
+    `${apiBaseUrl}/api/posts/${encodeURIComponent(slug)}/engagement`,
+    {
+      credentials: 'include',
+    },
+  )
+
+  if (!response.ok) {
+    throw new Error(
+      response.status === 404
+        ? 'POST_NOT_FOUND'
+        : 'POST_ENGAGEMENT_LOAD_FAILED',
+    )
+  }
+
+  const payload = (await response.json()) as { engagement: SitePostEngagement }
+  return payload.engagement
+}
+
+export async function setSitePostReaction(
+  slug: string,
+  reactionKey: PostReactionKey | null,
+) {
+  const response = await fetch(
+    `${apiBaseUrl}/api/posts/${encodeURIComponent(slug)}/reactions`,
+    {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ reactionKey }),
+    },
+  )
+
+  const data = (await response.json().catch(() => undefined)) as
+    | { engagement: SitePostEngagement; message?: string }
+    | { message?: string }
+    | undefined
+
+  if (!response.ok) {
+    const message =
+      data && 'message' in data && typeof data.message === 'string'
+        ? data.message
+        : response.status === 401
+          ? 'Войдите в аккаунт, чтобы оставлять реакции.'
+          : 'Не удалось сохранить реакцию.'
+    throw new Error(message)
+  }
+
+  if (!data || !('engagement' in data)) {
+    throw new Error('Неожиданный ответ сервера при сохранении реакции.')
+  }
+
+  return data.engagement
+}
+
+export async function createSitePostComment(slug: string, message: string) {
+  const response = await fetch(
+    `${apiBaseUrl}/api/posts/${encodeURIComponent(slug)}/comments`,
+    {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ message }),
+    },
+  )
+
+  const data = (await response.json().catch(() => undefined)) as
+    | {
+        comment: SitePostComment
+        engagement: SitePostEngagement
+        message?: string
+      }
+    | { message?: string }
+    | undefined
+
+  if (!response.ok) {
+    const messageText =
+      data && 'message' in data && typeof data.message === 'string'
+        ? data.message
+        : response.status === 401
+          ? 'Войдите в аккаунт, чтобы комментировать посты.'
+          : 'Не удалось отправить комментарий.'
+    throw new Error(messageText)
+  }
+
+  if (!data || !('engagement' in data) || !('comment' in data)) {
+    throw new Error('Неожиданный ответ сервера при отправке комментария.')
+  }
+
+  return data
 }
 
 export async function submitSitePost(payload: {

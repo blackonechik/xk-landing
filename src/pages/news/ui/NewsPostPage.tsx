@@ -172,7 +172,7 @@ export function NewsPostPage({
               <Card.Content className="grid gap-4">{postContent}</Card.Content>
             </Card>
 
-            <PostEngagementSection postId={post.id} />
+            <PostEngagementSection slug={post.slug} />
           </div>
 
           <NewsSidebarPromo />
