@@ -1,22 +1,21 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useRouterState } from '@tanstack/react-router'
-import { Alert, Button, Spinner } from '@heroui/react'
+import { Alert, Spinner } from '@heroui/react'
+import type { AccountPayload } from '@/entities/account'
 import {
   clearAccountCache,
   fetchAccountCached,
   getCachedAccount,
-  logout,
-  type AccountPayload,
 } from '@/entities/account'
 import { closeCard, createCard, transferDiamonds } from '@/entities/bank'
 import { HeroLinkButton, HeroPage } from '@/shared/ui/hero-page'
+import type { BankView } from '@/widgets/account/bank-cabinet'
 import {
   BankCardsView,
   BankHistoryView,
   BankOnboarding,
   BankSummary,
   BankTransferView,
-  type BankView,
 } from '@/widgets/account/bank-cabinet'
 import { AccountLayout } from '@/widgets/account/layout'
 
@@ -165,14 +164,6 @@ export function CabinetBankPage() {
           <HeroLinkButton to="/cabinet" variant="secondary">
             Назад в профиль
           </HeroLinkButton>
-          <Button
-            variant="ghost"
-            onPress={() => {
-              void logout().then(() => navigate({ to: '/' }))
-            }}
-          >
-            Выйти
-          </Button>
         </>
       }
     >
@@ -262,9 +253,16 @@ function getBankViewFromPathname(pathname: string): BankView {
   return 'cards'
 }
 
-function getBankViewPath(view: BankView) {
-  return `/cabinet/bank/${view}` as
-    | '/cabinet/bank/cards'
-    | '/cabinet/bank/transfer'
-    | '/cabinet/bank/history'
+function getBankViewPath(
+  view: BankView,
+): '/cabinet/bank/cards' | '/cabinet/bank/transfer' | '/cabinet/bank/history' {
+  if (view === 'transfer') {
+    return '/cabinet/bank/transfer'
+  }
+
+  if (view === 'history') {
+    return '/cabinet/bank/history'
+  }
+
+  return '/cabinet/bank/cards'
 }

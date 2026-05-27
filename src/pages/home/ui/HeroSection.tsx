@@ -99,12 +99,9 @@ export function HeroSection({ shouldReduceMotion }: HeroSectionProps) {
         initial={shouldReduceMotion ? false : { opacity: 0, y: -18 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.15, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+        aria-label="Прокрутить вниз"
       >
-        <img
-          src="/assets/img/general/header-arrow-down.svg"
-          className="tycoon-landing-header__arrow-icon"
-          alt=""
-        />
+        <span className="tycoon-landing-header__arrow-icon" aria-hidden="true" />
       </motion.a>
     </section>
   )

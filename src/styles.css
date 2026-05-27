@@ -304,6 +304,11 @@ a {
   width: 26px;
   height: 26px;
   flex: 0 0 auto;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  image-rendering: pixelated;
+  background: rgba(0, 0, 0, 0.28);
+  object-fit: cover;
 }
 
 .xk-site-header__auth-label {
@@ -1103,12 +1108,27 @@ a {
   right: 0;
   bottom: var(--g-75);
   z-index: 4;
-  width: 100px;
+  display: grid;
+  place-items: center;
+  width: 72px;
   margin: auto;
-  text-align: center;
+  color: rgba(255, 255, 255, 0.62);
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.tycoon-landing-header__arrow:hover {
+  color: rgba(255, 255, 255, 0.86);
+  transform: translateY(2px);
 }
 
 .tycoon-landing-header__arrow-icon {
+  width: 18px;
+  height: 18px;
+  border-right: 3px solid currentColor;
+  border-bottom: 3px solid currentColor;
+  transform: rotate(45deg);
   animation: xk-arrow 5s ease-in-out infinite;
 }
 

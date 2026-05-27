@@ -4,7 +4,7 @@ import { buttonVariants } from '@heroui/react'
 import { LogOut } from 'lucide-react'
 import AnimatedLink from './AnimatedLink'
 import {
-  PlayerAvatar,
+  PlayerHeadImage,
   fetchAccountCached,
   logout,
 } from '@/entities/account'
@@ -100,9 +100,6 @@ export default function Header() {
           <AnimatedLink className="xk-site-header__nav-link" to="/rules">
             Правила
           </AnimatedLink>
-          <AnimatedLink className="xk-site-header__nav-link" to="/offer">
-            Оферта
-          </AnimatedLink>
           {authState === 'authed' ? (
             <div className="xk-site-header__auth">
               <button
@@ -113,7 +110,8 @@ export default function Header() {
                 title="Личный кабинет"
               >
                 {account ? (
-                  <PlayerAvatar
+                  <PlayerHeadImage
+                    alt={account.player.nickname}
                     className="xk-site-header__auth-avatar"
                     nickname={account.player.nickname}
                   />
