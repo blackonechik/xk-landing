@@ -15,7 +15,7 @@ import {
 } from '@heroui/react'
 import type { SitePost } from '@/entities/site'
 import { fetchSitePosts } from '@/entities/site'
-import { HeroPage } from '@/shared/ui/hero-page'
+import { HeroLinkButton, HeroPage } from '@/shared/ui/hero-page'
 import { NewsHeroSlider } from './NewsHeroSlider'
 
 function formatDate(value: string | null) {

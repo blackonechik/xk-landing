@@ -244,7 +244,7 @@ function RulesPage() {
                   </Card.Header>
                   <Card.Content>
                     <Text color="muted" type="body-sm">
-                      {term.text}
+                      — {term.text}
                     </Text>
                   </Card.Content>
                 </Card>

@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { Outlet, createFileRoute, useRouterState } from '@tanstack/react-router'
 import { NewsPage } from '@/pages/news'
 
 export const Route = createFileRoute('/news')({
@@ -13,5 +13,13 @@ export const Route = createFileRoute('/news')({
       },
     ],
   }),
-  component: NewsPage,
+  component: NewsRoute,
 })
+
+function NewsRoute() {
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  })
+
+  return pathname === '/news' ? <NewsPage /> : <Outlet />
+}
