@@ -4,7 +4,6 @@ import {
   Button,
   Card,
   Checkbox,
-  Description,
   FieldError,
   Form,
   Input,
@@ -12,15 +11,12 @@ import {
   Radio,
   RadioGroup,
   TextField,
-  TextArea,
-  Text,
 } from '@heroui/react'
-import { Check, ShieldCheck, TicketPercent, WalletCards } from 'lucide-react'
+import { ShieldCheck, WalletCards } from 'lucide-react'
 import { createPayment } from '../model/api'
 import { paymentProducts } from '../model/products'
 import type { PaymentProductId } from '../model/products'
 import AnimatedLink from '@/components/AnimatedLink'
-import { HeroLinkButton } from '@/shared/ui/hero-page'
 import { PublicCabinetShell } from '@/shared/ui/public-cabinet-shell'
 
 const nicknamePattern = /^[A-Za-z0-9_]{3,16}$/
@@ -76,9 +72,7 @@ export function PaymentPage() {
     const normalizedPromoCode = promoCode.trim().toUpperCase()
 
     if (!nicknamePattern.test(normalizedNickname)) {
-      setError(
-        'Ник должен быть от 3 до 16 символов: латиница, цифры и подчёркивание.',
-      )
+      setError('Ник должен быть от 3 до 16 символов: латиница, цифры и подчёркивание.')
       return
     }
 
@@ -124,83 +118,11 @@ export function PaymentPage() {
   }
 
   return (
-    <PublicCabinetShell
-      eyebrow="Оплата"
-      title="Проходка и RP-жизни"
-      description="Публичная витрина теперь оформлена в том же визуальном слое, что и кабинет: чистые поверхности, понятная форма и фиксированный блок с итогом заказа."
-      actions={
-        <>
-          <HeroLinkButton to="/offer" variant="secondary">
-            Оферта
-          </HeroLinkButton>
-          <HeroLinkButton to="/privacy" variant="ghost">
-            Конфиденциальность
-          </HeroLinkButton>
-        </>
-      }
-      aside={
-        <Card className="overflow-hidden border border-white/12 bg-white/8 shadow-[0_24px_60px_rgba(15,23,42,0.45)] backdrop-blur-2xl">
-          <Card.Content className="grid gap-5 p-5">
-            <div className="grid gap-2">
-              <Text className="text-white" type="h3">
-                Итого по заказу
-              </Text>
-              <Text className="text-white/68" type="body-sm">
-                Выберите цифровую услугу, проверьте контакты и подтвердите документы перед переходом в ЮKassa.
-              </Text>
-            </div>
-
-            <div className="grid gap-3 rounded-3xl border border-white/10 bg-black/18 p-4">
-              <div className="flex items-center justify-between gap-3 text-sm text-white/68">
-                <span>Товар</span>
-                <strong className="text-right text-white">{selectedProduct.name}</strong>
-              </div>
-              <div className="flex items-center justify-between gap-3 text-sm text-white/68">
-                <span>Стоимость</span>
-                <strong className="text-white">{selectedProduct.amountRub} руб.</strong>
-              </div>
-              {promoCode.trim() ? (
-                <div className="flex items-start gap-2 text-sm text-emerald-200">
-                  <TicketPercent className="mt-0.5 shrink-0" size={16} />
-                  <span>Промокод {promoCode.trim()} будет проверен при создании платежа.</span>
-                </div>
-              ) : null}
-            </div>
-
-            <div className="grid gap-3">
-              {[
-                'Автоматическая переадресация на оплату после валидации формы.',
-                'Активация услуги происходит для указанного никнейма.',
-                'Физическая доставка не требуется: это цифровой продукт.',
-              ].map((item) => (
-                <div key={item} className="flex items-start gap-3 text-sm leading-6 text-white/68">
-                  <Check className="mt-1 shrink-0 text-emerald-300" size={16} />
-                  <span>{item}</span>
-                </div>
-              ))}
-            </div>
-
-            <Button
-              className="w-full"
-              form="xk-payment-form"
-              isDisabled={isSubmitting}
-              isPending={isSubmitting}
-              type="submit"
-              variant="primary"
-            >
-              {!isSubmitting ? 'Перейти к оплате' : null}
-            </Button>
-          </Card.Content>
-        </Card>
-      }
-    >
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
-        <Card className="border border-white/12 bg-white/8 backdrop-blur-xl xl:col-span-1">
-          <Card.Header className="grid gap-2 p-6 pb-0">
-            <Card.Title className="text-white">Данные заказа</Card.Title>
-            <Card.Description className="text-white/68">
-              Укажите игровой ник, рабочие контакты и выберите услугу. Эти данные нужны для связи и корректной активации после успешной оплаты.
-            </Card.Description>
+    <PublicCabinetShell eyebrow="Оплата" title="Проходка и RP-жизни">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_300px]">
+        <Card className="border border-separator bg-surface">
+          <Card.Header className="p-6 pb-0">
+            <Card.Title>Данные заказа</Card.Title>
           </Card.Header>
           <Card.Content className="p-6">
             <Form className="grid gap-5" id="xk-payment-form" onSubmit={handleSubmit}>
@@ -215,15 +137,12 @@ export function PaymentPage() {
                 >
                   <Label>Никнейм</Label>
                   <Input
-                    autoComplete="nickname"
                     aria-label="Никнейм"
+                    autoComplete="nickname"
                     maxLength={16}
                     placeholder="Steve_2026"
                     variant="secondary"
                   />
-                  <Description>
-                    На этот ник будет выдан доступ или дополнительная жизнь.
-                  </Description>
                   <FieldError />
                 </TextField>
 
@@ -238,14 +157,11 @@ export function PaymentPage() {
                 >
                   <Label>Электронная почта</Label>
                   <Input
-                    autoComplete="email"
                     aria-label="Электронная почта"
+                    autoComplete="email"
                     placeholder="name@example.com"
                     variant="secondary"
                   />
-                  <Description>
-                    Нужна для связи с администратором по платёжному вопросу.
-                  </Description>
                   <FieldError />
                 </TextField>
               </div>
@@ -261,14 +177,11 @@ export function PaymentPage() {
                 >
                   <Label>Telegram</Label>
                   <Input
-                    autoComplete="off"
                     aria-label="Telegram"
+                    autoComplete="off"
                     placeholder="@Steve2026"
                     variant="secondary"
                   />
-                  <Description>
-                    Основной канал связи для уточнений по покупке.
-                  </Description>
                   <FieldError />
                 </TextField>
 
@@ -280,15 +193,12 @@ export function PaymentPage() {
                 >
                   <Label>Промокод</Label>
                   <Input
-                    autoComplete="off"
                     aria-label="Промокод"
+                    autoComplete="off"
                     maxLength={32}
                     placeholder="WELCOME10"
                     variant="secondary"
                   />
-                  <Description>
-                    Необязательное поле. Скидка проверяется на стороне сервера.
-                  </Description>
                   <FieldError />
                 </TextField>
               </div>
@@ -299,15 +209,12 @@ export function PaymentPage() {
                 value={productId}
                 onChange={(value) => setProductId(value as PaymentProductId)}
               >
-                <Label>Выберите услугу</Label>
-                <Description>
-                  HeroUI-поле выбора товара: стоимость и тип услуги обновляют итоговый блок справа.
-                </Description>
+                <Label>Услуга</Label>
                 <div className="grid gap-3 md:grid-cols-2">
                   {paymentProducts.map((product) => (
                     <Radio
                       key={product.id}
-                      className="rounded-3xl border border-white/10 bg-black/14 p-4 transition hover:border-white/25 hover:bg-white/10 data-[selected=true]:border-rose-300/70 data-[selected=true]:bg-rose-400/14 data-[selected=true]:shadow-[0_18px_40px_rgba(244,114,182,0.18)]"
+                      className="rounded-3xl border border-separator bg-surface-secondary p-4 transition hover:border-border hover:bg-surface-tertiary data-[selected=true]:border-accent data-[selected=true]:bg-[color-mix(in_oklab,var(--accent)_12%,var(--surface))]"
                       value={product.id}
                     >
                       <Radio.Control className="mt-1">
@@ -315,7 +222,7 @@ export function PaymentPage() {
                       </Radio.Control>
                       <Radio.Content className="grid min-w-0 gap-2">
                         <div className="flex items-center justify-between gap-3">
-                          <div className="flex items-center gap-3 text-white">
+                          <div className="flex items-center gap-3 text-foreground">
                             {product.id === 'life' ? (
                               <ShieldCheck size={18} />
                             ) : (
@@ -323,33 +230,16 @@ export function PaymentPage() {
                             )}
                             <span className="font-medium">{product.name}</span>
                           </div>
-                          <span className="text-sm font-semibold text-white/90">
+                          <span className="text-sm font-semibold text-foreground">
                             {product.amountRub} руб.
                           </span>
                         </div>
-                        <span className="text-sm leading-6 text-white/68">
-                          {product.description}
-                        </span>
                       </Radio.Content>
                     </Radio>
                   ))}
                 </div>
                 <FieldError />
               </RadioGroup>
-
-              <TextField className="grid gap-2" name="paymentComment">
-                <Label>Комментарий к заказу</Label>
-                <TextArea
-                  aria-label="Комментарий к заказу"
-                  className="min-h-24"
-                  placeholder="Необязательно: например, если покупка связана с конкретной ситуацией на сервере."
-                  variant="secondary"
-                />
-                <Description>
-                  Поле необязательное. Если комментарий не нужен, оставьте пустым.
-                </Description>
-                <FieldError />
-              </TextField>
 
               <Checkbox
                 name="personalDataConsent"
@@ -360,7 +250,7 @@ export function PaymentPage() {
                   <Checkbox.Indicator />
                 </Checkbox.Control>
                 <Checkbox.Content>
-                  <span className="text-sm leading-6 text-white/72">
+                  <span className="text-sm leading-6 text-muted">
                     Я принимаю условия <AnimatedLink to="/offer">публичной оферты</AnimatedLink>, даю{' '}
                     <AnimatedLink to="/personal-data-consent">
                       согласие на обработку персональных данных
@@ -379,38 +269,34 @@ export function PaymentPage() {
                 </Alert>
               ) : null}
 
-              <div className="flex flex-wrap gap-3 xl:hidden">
-                <Button isDisabled={isSubmitting} isPending={isSubmitting} type="submit" variant="primary">
-                  {!isSubmitting ? 'Перейти к оплате' : null}
-                </Button>
-                <HeroLinkButton to="/join" variant="secondary">
-                  Сначала подать заявку
-                </HeroLinkButton>
-              </div>
+              <Button
+                className="w-full"
+                isDisabled={isSubmitting}
+                isPending={isSubmitting}
+                type="submit"
+                variant="primary"
+              >
+                {!isSubmitting ? 'Перейти к оплате' : null}
+              </Button>
             </Form>
           </Card.Content>
         </Card>
 
-        <Card className="border border-white/12 bg-white/8 backdrop-blur-xl">
-          <Card.Content className="grid gap-5 p-6">
-            <div className="grid gap-2">
-              <Text className="text-white" type="h3">
-                Перед оплатой
-              </Text>
-              <Text className="text-white/68" type="body-sm">
-                Проверьте соответствие никнейма и убедитесь, что используете актуальные контакты для связи.
-              </Text>
-            </div>
-
-            {[
-              'Проходка открывает доступ к приватному серверу после успешной оплаты.',
-              'Дополнительная жизнь подходит только для активного сезона и обрабатывается как цифровая услуга.',
-              'Если промокод неверный, платёж не будет создан и форма вернёт ошибку.',
-            ].map((item) => (
-              <div key={item} className="rounded-2xl border border-white/10 bg-black/14 p-4 text-sm leading-6 text-white/68">
-                {item}
+        <Card className="border border-separator bg-surface-secondary xl:sticky xl:top-0 xl:self-start">
+          <Card.Content className="grid gap-4 p-6">
+            <div className="grid gap-3 rounded-3xl border border-separator bg-surface p-4">
+              <div className="flex items-center justify-between gap-3 text-sm text-muted">
+                <span>Товар</span>
+                <strong className="text-right text-foreground">{selectedProduct.name}</strong>
               </div>
-            ))}
+              <div className="flex items-center justify-between gap-3 text-sm text-muted">
+                <span>Стоимость</span>
+                <strong className="text-foreground">{selectedProduct.amountRub} руб.</strong>
+              </div>
+              {promoCode.trim() ? (
+                <div className="text-sm text-success">Промокод {promoCode.trim()}</div>
+              ) : null}
+            </div>
           </Card.Content>
         </Card>
       </div>

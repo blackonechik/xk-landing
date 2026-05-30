@@ -3,14 +3,11 @@ import {
   Alert,
   Button,
   Card,
-  Chip,
   Description,
   FieldError,
   Form,
   Input,
   Label,
-  Spinner,
-  Text,
   TextArea,
   TextField,
 } from '@heroui/react'
@@ -167,38 +164,8 @@ export function JoinPage() {
           </HeroLinkButton>
         </>
       }
-      aside={
-        <Card className="overflow-hidden border border-white/12 bg-white/8 shadow-[0_24px_60px_rgba(15,23,42,0.45)] backdrop-blur-2xl">
-          <Card.Content className="grid gap-5 p-5">
-            <div className="grid gap-2">
-              <Chip color="accent" variant="soft">
-                Что проверяем
-              </Chip>
-              <Text className="text-white" type="h3">
-                Заявка должна объяснять вас, а не просто перечислять поля
-              </Text>
-              <Text className="text-white/68" type="body-sm">
-                Контакты нужны для обратной связи, а блок с планами показывает, как вы видите себя в сезоне: строителем, политиком, торговцем, автором событий или лидером города.
-              </Text>
-            </div>
-
-            <div className="grid gap-3">
-              {[
-                'Игровой ник должен совпадать с тем, под которым вы реально зайдёте на сервер.',
-                'Контакт для связи нужен как резервный способ быстро вернуть вас к заявке.',
-                'В описании планов лучше писать объёмно: какие цели, формат RP и роль в мире вам интересны.',
-              ].map((item) => (
-                <div key={item} className="rounded-2xl border border-white/10 bg-black/14 p-4 text-sm leading-6 text-white/68">
-                  {item}
-                </div>
-              ))}
-            </div>
-          </Card.Content>
-        </Card>
-      }
     >
-
-        <Card>
+      <Card className="border border-separator bg-surface">
           <Card.Header className="grid gap-2 p-6 pb-0">
             <Card.Title>Новая заявка</Card.Title>
             <Card.Description>
@@ -353,7 +320,7 @@ export function JoinPage() {
               </Button>
             </Form>
           </Card.Content>
-        </Card>
+      </Card>
     </PublicCabinetShell>
   )
 }
