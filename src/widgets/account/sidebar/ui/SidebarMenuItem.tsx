@@ -5,6 +5,7 @@ type SidebarMenuItemContentProps = {
   icon: React.ReactNode
   label: string
   badge?: string
+  compact?: boolean
   size?: 'sm' | 'md' | 'lg'
 }
 
@@ -12,27 +13,46 @@ function SidebarMenuItemContent({
   icon,
   label,
   badge,
+  compact = false,
   size = 'lg',
 }: SidebarMenuItemContentProps) {
   return (
-    <span className="flex w-full items-center justify-between gap-3">
+    <span
+      className={[
+        'flex w-full items-center justify-between gap-3',
+        compact ? 'justify-center' : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+    >
       <span
         className={[
           'flex min-w-0 items-center gap-3',
+          compact ? 'justify-center' : '',
           size === 'sm' ? 'text-sm' : '',
         ]
           .filter(Boolean)
           .join(' ')}
       >
-        <span className="shrink-0 text-muted">{icon}</span>
-        <span className="truncate">{label}</span>
+        <span
+          className={[
+            'xk-account-sidebar__menu-icon shrink-0 text-muted',
+            compact ? 'xk-account-sidebar__menu-icon_compact' : '',
+          ]
+            .filter(Boolean)
+            .join(' ')}
+        >
+          {icon}
+        </span>
+        {compact ? null : <span className="truncate">{label}</span>}
       </span>
-      {badge ? <Chip variant="soft">{badge}</Chip> : null}
+      {!compact && badge ? <Chip variant="soft">{badge}</Chip> : null}
     </span>
   )
 }
 
 type SidebarMenuItemProps = AccountSidebarMenuItemConfig & {
+  compact?: boolean
   onNavigate: (to: string) => void
 }
 
@@ -40,6 +60,7 @@ export function SidebarMenuItem({
   icon,
   label,
   to,
+  compact = false,
   onNavigate,
   onPress,
   current = false,
@@ -66,15 +87,19 @@ export function SidebarMenuItem({
   const button = (
     <Button
       aria-current={current ? 'page' : undefined}
-      className="w-full justify-start"
+      aria-label={label}
+      className={compact ? 'w-full justify-center px-0' : 'w-full justify-start'}
       fullWidth
       isDisabled={disabled}
+      isIconOnly={compact}
       onPress={handlePress}
       size={size}
+      title={compact ? label : undefined}
       variant={current ? 'secondary' : 'ghost'}
     >
       <SidebarMenuItemContent
         badge={badge}
+        compact={compact}
         icon={icon}
         label={label}
         size={size}
@@ -86,11 +111,18 @@ export function SidebarMenuItem({
     return (
       <div className="flex flex-col">
         {button}
-        <div className="mt-2 grid gap-2 pl-4">
+        <div className={compact ? 'mt-2 grid gap-2' : 'mt-2 grid gap-2 pl-4'}>
           {children?.map((item) => {
             const { key, ...menuItem } = item
 
-            return <SidebarMenuItem key={key} onNavigate={onNavigate} {...menuItem} />
+            return (
+              <SidebarMenuItem
+                key={key}
+                compact={compact}
+                onNavigate={onNavigate}
+                {...menuItem}
+              />
+            )
           })}
         </div>
       </div>

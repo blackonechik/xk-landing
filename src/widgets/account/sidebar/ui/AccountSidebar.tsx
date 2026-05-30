@@ -1,4 +1,6 @@
-import { Card, Chip, ScrollShadow, Text } from '@heroui/react'
+import { useEffect, useState } from 'react'
+import { Button, Card, Chip, ScrollShadow, Text } from '@heroui/react'
+import { ChevronsLeft, ChevronsRight } from 'lucide-react'
 import ThemeToggle from '@/components/ThemeToggle'
 import {
   getPrimaryRoleLabel,
@@ -14,26 +16,29 @@ import {
   type AdminView,
 } from '../model/account-sidebar-menu'
 import { SidebarMenuItem } from './SidebarMenuItem'
-import { useEffect, useState } from 'react'
 
 type AccountSidebarProps = {
   account: AccountPayload
+  compact?: boolean
   currentSection: 'home' | 'bank' | 'stats' | 'news' | 'admin'
   activeBankView?: BankView
   activeAdminView?: AdminView
   onNavigate: (to: string) => void
   onBankViewNavigate: (view: BankView) => void
   onAdminViewNavigate?: (view: AdminView) => void
+  onCompactToggle: () => void
 }
 
 export function AccountSidebar({
   account,
+  compact = false,
   currentSection,
   activeBankView = 'cards',
   activeAdminView = 'overview',
   onNavigate,
   onBankViewNavigate,
   onAdminViewNavigate,
+  onCompactToggle,
 }: AccountSidebarProps) {
   const [settings, setSettings] = useState<SiteSettings | null>(null)
 
@@ -72,20 +77,21 @@ export function AccountSidebar({
 
   return (
     <Card
-      className="flex h-full flex-col gap-5 rounded-[28px] border"
+      className="xk-account-sidebar flex h-full flex-col gap-5 rounded-[28px] border"
+      data-compact={compact ? 'true' : 'false'}
       variant="secondary"
     >
       <Card.Header className="flex flex-col gap-4 p-0">
-        <div className="flex items-center gap-3">
+        <div className="xk-account-sidebar__profile flex items-center gap-3">
           <PlayerAvatar
             className="size-14 shrink-0 border border-[var(--separator)] bg-[var(--surface-secondary)]"
             nickname={account.player.nickname}
           />
-          <div className="min-w-0 grid gap-1">
+          <div className="xk-account-sidebar__profile-copy min-w-0 grid gap-1">
             <Text className="truncate text-[18px] font-semibold">
               {account.player.nickname}
             </Text>
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="xk-account-sidebar__profile-meta flex flex-wrap items-center gap-2">
               <Chip
                 color={isAdminRole(account.player.roles) ? 'accent' : 'default'}
                 variant="soft"
@@ -106,36 +112,56 @@ export function AccountSidebar({
           orientation="vertical"
         >
           <div className="grid gap-2">
-          <Text
-            className="text-[12px] uppercase tracking-[0.08em]"
-            color="muted"
-          >
-            Навигация
-          </Text>
-          {sections.flatMap((section) =>
-            section.items.map((item) => {
-              const { key, ...menuItem } = item
+            <Text
+              className="xk-account-sidebar__section-title text-[12px] uppercase tracking-[0.08em]"
+              color="muted"
+            >
+              Навигация
+            </Text>
+            {sections.flatMap((section) =>
+              section.items.map((item) => {
+                const { key, ...menuItem } = item
 
-              return (
-                <SidebarMenuItem
-                  key={key}
-                  onNavigate={onNavigate}
-                  {...menuItem}
-                />
-              )
-            }),
-          )}
+                return (
+                  <SidebarMenuItem
+                    key={key}
+                    compact={compact}
+                    onNavigate={onNavigate}
+                    {...menuItem}
+                  />
+                )
+              }),
+            )}
           </div>
         </ScrollShadow>
       </Card.Content>
 
       <div className="h-px bg-[var(--separator)]/70" />
 
-      <Card.Footer className="flex items-center justify-center gap-3 p-0">
-        <Text className="text-[12px] uppercase tracking-[0.08em]" color="muted">
-          Тема
-        </Text>
-        <ThemeToggle />
+      <Card.Footer className="xk-account-sidebar__footer flex items-center justify-between gap-3 p-0">
+        <div className="xk-account-sidebar__footer-theme flex items-center gap-3">
+          <Text
+            className="xk-account-sidebar__theme-label text-[12px] uppercase tracking-[0.08em]"
+            color="muted"
+          >
+            Тема
+          </Text>
+          <ThemeToggle />
+        </div>
+        <div className="xk-account-sidebar__footer-controls flex items-center gap-2">
+          <Button
+            aria-label={
+              compact ? 'Развернуть боковое меню кабинета' : 'Сделать боковое меню компактным'
+            }
+            isIconOnly
+            size="sm"
+            title={compact ? 'Развернуть меню' : 'Свернуть меню'}
+            variant="ghost"
+            onPress={onCompactToggle}
+          >
+            {compact ? <ChevronsRight size={18} /> : <ChevronsLeft size={18} />}
+          </Button>
+        </div>
       </Card.Footer>
     </Card>
   )

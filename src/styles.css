@@ -340,6 +340,66 @@ a {
 
 .xk-account-layout__frame {
   min-height: calc(100svh - var(--xk-header-height));
+  transition: grid-template-columns 220ms ease;
+}
+
+.xk-account-layout__frame[data-sidebar-compact='true'] .xk-account-sidebar {
+  padding: 20px 14px;
+}
+
+.xk-account-layout__frame[data-sidebar-compact='true'] .xk-account-sidebar__profile {
+  justify-content: center;
+}
+
+.xk-account-layout__frame[data-sidebar-compact='true'] .xk-account-sidebar__profile-copy,
+.xk-account-layout__frame[data-sidebar-compact='true'] .xk-account-sidebar__section-title,
+.xk-account-layout__frame[data-sidebar-compact='true'] .xk-account-sidebar__theme-label {
+  display: none;
+}
+
+.xk-account-layout__frame[data-sidebar-compact='true'] .xk-account-sidebar__profile-meta {
+  justify-content: center;
+}
+
+.xk-account-layout__frame[data-sidebar-compact='true'] .xk-account-sidebar__footer {
+  justify-content: center;
+}
+
+.xk-account-sidebar,
+.xk-account-sidebar__profile,
+.xk-account-sidebar__profile-copy,
+.xk-account-sidebar__section-title,
+.xk-account-sidebar__footer,
+.xk-account-sidebar__footer-theme,
+.xk-account-sidebar__footer-controls {
+  transition:
+    padding 220ms ease,
+    gap 220ms ease,
+    opacity 180ms ease,
+    transform 220ms ease,
+    justify-content 220ms ease;
+}
+
+.xk-account-sidebar__profile-copy,
+.xk-account-sidebar__section-title,
+.xk-account-sidebar__theme-label {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.xk-account-sidebar__menu-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.xk-account-sidebar__menu-icon svg {
+  transition: width 220ms ease, height 220ms ease;
+}
+
+.xk-account-sidebar__menu-icon_compact svg {
+  width: 22px;
+  height: 22px;
 }
 
 .xk-account-layout__rail {
@@ -413,6 +473,10 @@ a {
     min-height: 0;
   }
 
+  .xk-account-layout__frame[data-sidebar-compact='true'] {
+    grid-template-columns: minmax(96px, 112px) minmax(0px, 1fr);
+  }
+
   .xk-account-layout__rail {
     height: 100%;
     min-height: 0;
@@ -444,6 +508,18 @@ a {
 
   .xk-account-sidebar {
     height: 100%;
+  }
+
+  .xk-account-layout__frame[data-sidebar-compact='true'] .xk-account-sidebar__footer-controls {
+    flex-direction: column;
+  }
+
+  .xk-account-layout__frame[data-sidebar-compact='true'] .xk-account-sidebar__profile-copy,
+  .xk-account-layout__frame[data-sidebar-compact='true'] .xk-account-sidebar__section-title,
+  .xk-account-layout__frame[data-sidebar-compact='true'] .xk-account-sidebar__theme-label {
+    opacity: 0;
+    transform: translateX(-8px);
+    pointer-events: none;
   }
 }
 

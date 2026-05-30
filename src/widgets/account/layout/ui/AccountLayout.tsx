@@ -1,9 +1,19 @@
-import type { ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { AccountSidebar } from '@/widgets/account/sidebar'
 import type { AccountPayload } from '@/entities/account'
 import type { BankView } from '@/widgets/account/bank-cabinet'
 import type { AdminView } from '@/widgets/account/sidebar/model/account-sidebar-menu'
 import { PageHeader } from '@/shared/ui/page-header'
+
+const accountSidebarDensityStorageKey = 'xk-account-sidebar-compact'
+
+function getInitialSidebarCompact() {
+  if (typeof window === 'undefined') {
+    return false
+  }
+
+  return window.localStorage.getItem(accountSidebarDensityStorageKey) === 'true'
+}
 
 type AccountLayoutProps = {
   account: AccountPayload
@@ -34,18 +44,34 @@ export function AccountLayout({
   actions,
   children,
 }: AccountLayoutProps) {
+  const [isSidebarCompact, setIsSidebarCompact] = useState(getInitialSidebarCompact)
+
+  useEffect(() => {
+    window.localStorage.setItem(
+      accountSidebarDensityStorageKey,
+      String(isSidebarCompact),
+    )
+  }, [isSidebarCompact])
+
   return (
     <main className="xk-account-layout xk-hero-scope">
-      <div className="xk-account-layout__frame">
+      <div
+        className="xk-account-layout__frame"
+        data-sidebar-compact={isSidebarCompact ? 'true' : 'false'}
+      >
         <div className="xk-account-layout__rail">
           <AccountSidebar
             account={account}
             activeAdminView={activeAdminView}
             activeBankView={activeBankView}
+            compact={isSidebarCompact}
             currentSection={currentSection}
             onNavigate={onNavigate}
             onAdminViewNavigate={onAdminViewNavigate}
             onBankViewNavigate={onBankViewNavigate}
+            onCompactToggle={() => {
+              setIsSidebarCompact((currentValue) => !currentValue)
+            }}
           />
         </div>
 
