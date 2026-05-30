@@ -9,11 +9,23 @@ type CreatePaymentPayload = {
   promoCode?: string
 }
 
+type ResolvePaymentPromoPayload = {
+  nickname: string
+  productId: PaymentProductId
+  promoCode: string
+}
+
 type CreatePaymentResponse = {
   payment: {
     id: string
     confirmationUrl: string
   }
+}
+
+type ResolvePaymentPromoResponse = {
+  promoCode: string
+  discountRub: number
+  amountRub: number
 }
 
 export type PaymentStatus = 'pending' | 'paid' | 'failed'
@@ -48,6 +60,33 @@ export async function createPayment(payload: CreatePaymentPayload) {
   }
 
   return data.payment
+}
+
+export async function resolvePaymentPromoCode(
+  payload: ResolvePaymentPromoPayload,
+) {
+  const response = await fetch(`${apiBaseUrl}/api/payments/promo/resolve`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  })
+
+  const data = (await response.json().catch(() => undefined)) as
+    | ResolvePaymentPromoResponse
+    | { message?: string }
+    | undefined
+
+  if (!response.ok) {
+    throw new Error(readErrorMessage(data) ?? 'Не удалось проверить промокод.')
+  }
+
+  if (!data || !('promoCode' in data)) {
+    throw new Error('Backend вернул неожиданный ответ.')
+  }
+
+  return data
 }
 
 export async function getPaymentStatus(

@@ -73,7 +73,7 @@ export function JoinPage() {
   const [contact, setContact] = useState('')
   const [telegram, setTelegram] = useState('')
   const [discord, setDiscord] = useState('')
-  const [age, setAge] = useState('16')
+  const [age, setAge] = useState('')
   const [serverPlans, setServerPlans] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
@@ -154,22 +154,12 @@ export function JoinPage() {
       eyebrow="Вступление"
       title="Анкета на вступление"
       description="Оставьте базовую информацию о себе и объёмно опишите, чем хотите заниматься на сервере. Чем понятнее ваши планы, тем проще команде принять решение."
-      actions={
-        <>
-          <HeroLinkButton to="/rules" variant="secondary">
-            Правила
-          </HeroLinkButton>
-          <HeroLinkButton to="/payment" variant="ghost">
-            Оплата
-          </HeroLinkButton>
-        </>
-      }
     >
       <Card className="border border-separator bg-surface">
           <Card.Header className="grid gap-2 p-6 pb-0">
             <Card.Title>Новая заявка</Card.Title>
             <Card.Description>
-              Ответ нужен один раз. Пишите развёрнуто: как хотите играть, что строить, в каких конфликтах или союзах себя видите.
+              Пишите развёрнуто: как хотите играть, что строить, с кем взаимодействовать, какие механики развивать. Команда читает каждую заявку и принимает решение на основе её содержания.
             </Card.Description>
           </Card.Header>
           <Card.Content className="p-6">

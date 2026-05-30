@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react'
-import { Chip, Text } from '@heroui/react'
 import { AccountSidebar } from '@/widgets/account/sidebar'
 import type { AccountPayload } from '@/entities/account'
 import type { BankView } from '@/widgets/account/bank-cabinet'
 import type { AdminView } from '@/widgets/account/sidebar/model/account-sidebar-menu'
+import { PageHeader } from '@/shared/ui/page-header'
 
 type AccountLayoutProps = {
   account: AccountPayload
@@ -52,41 +52,18 @@ export function AccountLayout({
         <section className="xk-account-layout__main">
           <div className="xk-account-layout__scroll">
             <header className="xk-account-layout__hero">
-              <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-                <div className="xk-account-layout__hero-copy">
-                  {eyebrow ? (
-                    <Chip
-                      className="xk-account-layout__eyebrow"
-                      color="accent"
-                      variant="soft"
-                    >
-                      {eyebrow}
-                    </Chip>
-                  ) : null}
-                  <div className="xk-account-layout__hero-text">
-                    <Text
-                      className="xk-account-layout__title"
-                      type="h1"
-                    >
-                      {title}
-                    </Text>
-                    {description ? (
-                      <Text
-                        className="xk-account-layout__description"
-                        color="muted"
-                        type="body"
-                      >
-                        {description}
-                      </Text>
-                    ) : null}
-                  </div>
-                </div>
-                {actions ? (
-                  <div className="flex flex-wrap items-center gap-3">
-                    {actions}
-                  </div>
-                ) : null}
-              </div>
+              <PageHeader
+                actions={actions}
+                actionsClassName="flex flex-wrap items-center gap-3"
+                className="gap-4"
+                description={description}
+                descriptionClassName="xk-account-layout__description max-w-none"
+                eyebrow={eyebrow}
+                eyebrowClassName="xk-account-layout__eyebrow"
+                title={title}
+                titleClassName="xk-account-layout__title"
+                titleWrapClassName="xk-account-layout__hero-copy xk-account-layout__hero-text max-w-none"
+              />
             </header>
 
             <div className="xk-account-layout__content">{children}</div>

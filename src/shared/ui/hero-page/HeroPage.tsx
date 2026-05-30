@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
-import { Chip, Link, Text, buttonVariants } from '@heroui/react'
+import { Link, buttonVariants } from '@heroui/react'
 import AnimatedLink from '@/components/AnimatedLink'
+import { PageHeader } from '@/shared/ui/page-header'
 
 type HeroPageProps = {
   eyebrow?: string
@@ -50,26 +51,12 @@ export function HeroPage({
           narrow ? 'max-w-4xl' : 'max-w-7xl',
         ].join(' ')}
       >
-        <header className="flex flex-col gap-5 items-start">
-          {eyebrow ? (
-            <Chip color="accent" variant="soft">
-              {eyebrow}
-            </Chip>
-          ) : null}
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-            <div className="max-w-3xl">
-              <Text type="h1">{title}</Text>
-              {description ? (
-                <Text className="mt-3 max-w-2xl" color="muted" type="body">
-                  {description}
-                </Text>
-              ) : null}
-            </div>
-            {actions ? (
-              <div className="flex flex-wrap items-center gap-3">{actions}</div>
-            ) : null}
-          </div>
-        </header>
+        <PageHeader
+          actions={actions}
+          description={description}
+          eyebrow={eyebrow}
+          title={title}
+        />
         {children}
       </section>
     </main>

@@ -1,9 +1,10 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   Alert,
   Button,
   Card,
   Checkbox,
+  Description,
   FieldError,
   Form,
   Input,
@@ -12,12 +13,13 @@ import {
   RadioGroup,
   TextField,
 } from '@heroui/react'
-import { ShieldCheck, WalletCards } from 'lucide-react'
-import { createPayment } from '../model/api'
+import { BadgePercent, Check, Gem, ShieldCheck, WalletCards } from 'lucide-react'
+import { createPayment, resolvePaymentPromoCode } from '../model/api'
 import { paymentProducts } from '../model/products'
 import type { PaymentProductId } from '../model/products'
 import AnimatedLink from '@/components/AnimatedLink'
 import { PublicCabinetShell } from '@/shared/ui/public-cabinet-shell'
+import { HeroSectionCard } from '@/shared/ui/hero-page'
 
 const nicknamePattern = /^[A-Za-z0-9_]{3,16}$/
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -47,6 +49,14 @@ function validateTelegram(value: string) {
   return null
 }
 
+type AppliedPromo = {
+  code: string
+  nickname: string
+  productId: PaymentProductId
+  discountRub: number
+  amountRub: number
+}
+
 export function PaymentPage() {
   const [nickname, setNickname] = useState('')
   const [email, setEmail] = useState('')
@@ -54,8 +64,14 @@ export function PaymentPage() {
   const [promoCode, setPromoCode] = useState('')
   const [productId, setProductId] = useState<PaymentProductId>('smp-pass')
   const [hasPersonalDataConsent, setHasPersonalDataConsent] = useState(false)
+  const [appliedPromo, setAppliedPromo] = useState<AppliedPromo | null>(null)
+  const [promoError, setPromoError] = useState('')
+  const [isApplyingPromo, setIsApplyingPromo] = useState(false)
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const normalizedNickname = nickname.trim()
+  const normalizedPromoCode = promoCode.trim().toUpperCase()
 
   const selectedProduct = useMemo(
     () =>
@@ -64,12 +80,85 @@ export function PaymentPage() {
     [productId],
   )
 
+  const activePromo = useMemo(() => {
+    if (!appliedPromo) {
+      return null
+    }
+
+    if (
+      appliedPromo.code !== normalizedPromoCode ||
+      appliedPromo.nickname !== normalizedNickname ||
+      appliedPromo.productId !== productId
+    ) {
+      return null
+    }
+
+    return appliedPromo
+  }, [appliedPromo, normalizedNickname, normalizedPromoCode, productId])
+
+  useEffect(() => {
+    if (appliedPromo && !activePromo) {
+      setAppliedPromo(null)
+    }
+  }, [activePromo, appliedPromo])
+
+  const finalAmountRub = activePromo?.amountRub ?? selectedProduct.amountRub
+  const discountRub = activePromo?.discountRub ?? 0
+  const isSubmitBlockedByPromo = Boolean(normalizedPromoCode) && !activePromo
+
+  function clearPromoState() {
+    setAppliedPromo(null)
+    setPromoError('')
+  }
+
+  async function handleApplyPromo() {
+    if (!normalizedPromoCode) {
+      setAppliedPromo(null)
+      setPromoError('Введите промокод.')
+      return
+    }
+
+    if (!nicknamePattern.test(normalizedNickname)) {
+      setAppliedPromo(null)
+      setPromoError('Сначала укажите корректный никнейм.')
+      return
+    }
+
+    setPromoError('')
+    setError('')
+    setIsApplyingPromo(true)
+
+    try {
+      const promo = await resolvePaymentPromoCode({
+        nickname: normalizedNickname,
+        productId,
+        promoCode: normalizedPromoCode,
+      })
+
+      setPromoCode(promo.promoCode)
+      setAppliedPromo({
+        code: promo.promoCode,
+        nickname: normalizedNickname,
+        productId,
+        discountRub: promo.discountRub,
+        amountRub: promo.amountRub,
+      })
+    } catch (requestError) {
+      setAppliedPromo(null)
+      setPromoError(
+        requestError instanceof Error
+          ? requestError.message
+          : 'Не удалось проверить промокод.',
+      )
+    } finally {
+      setIsApplyingPromo(false)
+    }
+  }
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    const normalizedNickname = nickname.trim()
     const normalizedEmail = email.trim()
     const normalizedTelegram = telegram.trim()
-    const normalizedPromoCode = promoCode.trim().toUpperCase()
 
     if (!nicknamePattern.test(normalizedNickname)) {
       setError('Ник должен быть от 3 до 16 символов: латиница, цифры и подчёркивание.')
@@ -83,6 +172,11 @@ export function PaymentPage() {
 
     if (!telegramPattern.test(normalizedTelegram)) {
       setError('Укажите Telegram для связи с администратором.')
+      return
+    }
+
+    if (normalizedPromoCode && !activePromo) {
+      setError('Промокод нужно сначала проверить и применить.')
       return
     }
 
@@ -102,7 +196,7 @@ export function PaymentPage() {
           ? normalizedTelegram
           : `@${normalizedTelegram}`,
         productId,
-        promoCode: normalizedPromoCode || undefined,
+        promoCode: activePromo?.code || undefined,
       })
 
       window.location.href = payment.confirmationUrl
@@ -118,7 +212,11 @@ export function PaymentPage() {
   }
 
   return (
-    <PublicCabinetShell eyebrow="Оплата" title="Проходка и RP-жизни">
+    <PublicCabinetShell
+      eyebrow="Оплата"
+      title="Проходка и RP-жизни"
+      description="Оформите доступ или дополнительную жизнь."
+    >
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_300px]">
         <Card className="border border-separator bg-surface">
           <Card.Header className="p-6 pb-0">
@@ -185,20 +283,52 @@ export function PaymentPage() {
                   <FieldError />
                 </TextField>
 
-                <TextField
-                  className="grid gap-2"
-                  name="promoCode"
-                  value={promoCode}
-                  onChange={(value) => setPromoCode(value.toUpperCase())}
-                >
+                <TextField className="grid gap-2" name="promoCode" value={promoCode}>
                   <Label>Промокод</Label>
-                  <Input
-                    aria-label="Промокод"
-                    autoComplete="off"
-                    maxLength={32}
-                    placeholder="WELCOME10"
-                    variant="secondary"
-                  />
+                  <div className="flex items-start gap-3">
+                    <Input
+                      aria-label="Промокод"
+                      autoComplete="off"
+                      className="flex-1"
+                      maxLength={32}
+                      placeholder="WELCOME10"
+                      value={promoCode}
+                      variant="secondary"
+                      onChange={(event) => {
+                        setPromoCode(event.target.value.toUpperCase())
+                        clearPromoState()
+                      }}
+                    />
+                    <Button
+                      isDisabled={!normalizedPromoCode || isApplyingPromo}
+                      isPending={isApplyingPromo}
+                      type="button"
+                      variant={activePromo ? 'secondary' : 'primary'}
+                      onPress={() => void handleApplyPromo()}
+                    >
+                      {!isApplyingPromo ? (
+                        activePromo ? (
+                          <span className="inline-flex items-center gap-2">
+                            <Check size={16} />
+                            Применён
+                          </span>
+                        ) : (
+                          'Применить'
+                        )
+                      ) : null}
+                    </Button>
+                  </div>
+                  {activePromo ? (
+                    <Description>
+                      <span className="text-success">
+                        Промокод применён. Скидка {activePromo.discountRub} руб., к оплате {activePromo.amountRub} руб.
+                      </span>
+                    </Description>
+                  ) : promoError ? (
+                    <Description>
+                      <span className="text-danger">{promoError}</span>
+                    </Description>
+                      ) : null}
                   <FieldError />
                 </TextField>
               </div>
@@ -271,7 +401,7 @@ export function PaymentPage() {
 
               <Button
                 className="w-full"
-                isDisabled={isSubmitting}
+                isDisabled={isSubmitting || isApplyingPromo || isSubmitBlockedByPromo}
                 isPending={isSubmitting}
                 type="submit"
                 variant="primary"
@@ -282,23 +412,36 @@ export function PaymentPage() {
           </Card.Content>
         </Card>
 
-        <Card className="border border-separator bg-surface-secondary xl:sticky xl:top-0 xl:self-start">
-          <Card.Content className="grid gap-4 p-6">
-            <div className="grid gap-3 rounded-3xl border border-separator bg-surface p-4">
-              <div className="flex items-center justify-between gap-3 text-sm text-muted">
-                <span>Товар</span>
-                <strong className="text-right text-foreground">{selectedProduct.name}</strong>
-              </div>
-              <div className="flex items-center justify-between gap-3 text-sm text-muted">
-                <span>Стоимость</span>
-                <strong className="text-foreground">{selectedProduct.amountRub} руб.</strong>
-              </div>
-              {promoCode.trim() ? (
-                <div className="text-sm text-success">Промокод {promoCode.trim()}</div>
-              ) : null}
-            </div>
-          </Card.Content>
-        </Card>
+        <div className="grid gap-4 xl:sticky xl:top-[18px] xl:self-start">
+          <HeroSectionCard
+            gradient="sky"
+            icon={<WalletCards size={36} />}
+            label="Товар"
+            value={selectedProduct.name}
+          />
+          <HeroSectionCard
+            gradient="amber"
+            icon={<Gem size={36} />}
+            label="К оплате"
+            value={`${finalAmountRub} руб.`}
+          />
+          {activePromo ? (
+            <HeroSectionCard
+              gradient="emerald"
+              icon={<BadgePercent size={36} />}
+              label="Скидка"
+              value={`${discountRub} руб.`}
+            />
+          ) : null}
+          {activePromo ? (
+            <HeroSectionCard
+              gradient="emerald"
+              icon={<ShieldCheck size={36} />}
+              label="Промокод"
+              value={activePromo.code}
+            />
+          ) : null}
+        </div>
       </div>
     </PublicCabinetShell>
   )
