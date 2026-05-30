@@ -3,9 +3,10 @@ import { Alert, Spinner } from '@heroui/react'
 import { useNavigate } from '@tanstack/react-router'
 import {
   fetchAccountCached,
-  getCachedAccount,
-  type AccountPayload,
+  getCachedAccount
+  
 } from '@/entities/account'
+import type {AccountPayload} from '@/entities/account';
 import { AccountLayout } from '@/widgets/account/layout'
 import { NewsPostPage } from './NewsPostPage'
 
@@ -73,8 +74,6 @@ export function CabinetNewsPostPage({ slug }: CabinetNewsPostPageProps) {
       onBankViewNavigate={(view) => {
         void navigate({ to: `/cabinet/bank/${view}` })
       }}
-      title="Посты"
-      description="Просмотр публикации из ленты XK HARDCORE."
     >
       <NewsPostPage backTo="/cabinet/news" embedded slug={slug} />
     </AccountLayout>

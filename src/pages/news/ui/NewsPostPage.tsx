@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Link } from '@tanstack/react-router'
 import { Alert, Card, Chip, Spinner, Text } from '@heroui/react'
 import type { SitePost } from '@/entities/site'
+import { PlayerAvatar } from '@/entities/account'
 import { fetchSitePost } from '@/entities/site'
-import { HeroLinkButton, HeroPage } from '@/shared/ui/hero-page'
+import { HeroLinkButton } from '@/shared/ui/hero-page'
 import { NewsSidebarPromo } from './NewsSidebarPromo'
 import { PostEngagementSection } from './PostEngagementSection'
 
@@ -105,6 +107,8 @@ export function NewsPostPage({
     ))
   }, [post])
 
+  const authorNickname = post?.authorName ?? post?.submittedByNickname ?? null
+
   const content = (
     <>
       {isLoading ? (
@@ -130,10 +134,16 @@ export function NewsPostPage({
       {post ? (
         <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px] xl:items-start">
           <div className="grid gap-6">
-            <Card className="overflow-hidden border border-[var(--separator)] bg-[var(--surface)]">
+            <div className="flex items-center justify-start">
+              <HeroLinkButton to={backTo} variant="secondary">
+                К ленте
+              </HeroLinkButton>
+            </div>
+
+            <Card className="overflow-hidden border border-separator bg-surface">
               <Card.Content className="p-0">
                 <div
-                  className="relative min-h-[280px] border-b border-[var(--separator)]"
+                  className="relative min-h-[280px] border-b border-separator"
                   style={getCoverBackground(post)}
                 >
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.26),transparent_28%),linear-gradient(180deg,rgba(15,23,42,0.08),rgba(15,23,42,0.82))]" />
@@ -161,13 +171,31 @@ export function NewsPostPage({
               </Card.Content>
             </Card>
 
-            <Card className="border border-[var(--separator)] bg-[var(--surface)]">
+            <Card className="border border-separator bg-surface">
               <Card.Header className="grid gap-2">
-                <Text color="muted" type="body-sm">
-                  {post.authorName
-                    ? `Автор: ${post.authorName}`
-                    : 'Официальный пост XK HARDCORE'}
-                </Text>
+                {authorNickname ? (
+                  <Link
+                    className="group inline-flex w-fit items-center gap-3 rounded-full border border-separator bg-surface-secondary px-3 py-2 transition hover:border-accent hover:bg-surface-elevated"
+                    params={{ nickname: authorNickname }}
+                    to="/u/$nickname"
+                  >
+                    <PlayerAvatar
+                      alt={authorNickname}
+                      className="size-8 border border-white/10 bg-black/20"
+                      nickname={authorNickname}
+                      size="sm"
+                    />
+                    <div className="min-w-0 text-left">
+                      <Text className="truncate" type="body-sm" weight="semibold">
+                        {authorNickname}
+                      </Text>
+                    </div>
+                  </Link>
+                ) : (
+                  <Text color="muted" type="body-sm">
+                    Официальный пост XK HARDCORE
+                  </Text>
+                )}
               </Card.Header>
               <Card.Content className="grid gap-4">{postContent}</Card.Content>
             </Card>
@@ -186,18 +214,10 @@ export function NewsPostPage({
   }
 
   return (
-    <HeroPage
-      eyebrow="Новости"
-      title={post?.title ?? 'Загружаем пост'}
-      description={post?.summary ?? 'Подгружаем публикацию сервера.'}
-      actions={
-        <HeroLinkButton to={backTo} variant="secondary">
-          К ленте
-        </HeroLinkButton>
-      }
-      narrow={false}
-    >
-      {content}
-    </HeroPage>
+    <main className="xk-hero-scope min-h-svh bg-background px-4 pb-16 pt-28 text-foreground sm:px-6 lg:px-8">
+      <section className="mx-auto flex w-full max-w-7xl flex-col gap-8">
+        {content}
+      </section>
+    </main>
   )
 }

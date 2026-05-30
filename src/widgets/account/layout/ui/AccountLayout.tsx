@@ -14,7 +14,7 @@ type AccountLayoutProps = {
   onAdminViewNavigate?: (view: AdminView) => void
   onNavigate: (to: string) => void
   eyebrow?: string
-  title: string
+  title?: string
   description?: ReactNode
   actions?: ReactNode
   children: ReactNode
@@ -51,20 +51,24 @@ export function AccountLayout({
 
         <section className="xk-account-layout__main">
           <div className="xk-account-layout__scroll">
-            <header className="xk-account-layout__hero">
-              <PageHeader
-                actions={actions}
-                actionsClassName="flex flex-wrap items-center gap-3"
-                className="gap-4"
-                description={description}
-                descriptionClassName="xk-account-layout__description max-w-none"
-                eyebrow={eyebrow}
-                eyebrowClassName="xk-account-layout__eyebrow"
-                title={title}
-                titleClassName="xk-account-layout__title"
-                titleWrapClassName="xk-account-layout__hero-copy xk-account-layout__hero-text max-w-none"
-              />
-            </header>
+            {title && (
+              <header className="xk-account-layout__hero">
+
+                <PageHeader
+                  actions={actions}
+                  actionsClassName="flex flex-wrap items-center gap-3"
+                  className="gap-4"
+                  description={description}
+                  descriptionClassName="xk-account-layout__description max-w-none"
+                  eyebrow={eyebrow}
+                  eyebrowClassName="xk-account-layout__eyebrow"
+                  title={title}
+                  titleClassName="xk-account-layout__title"
+                  titleWrapClassName="xk-account-layout__hero-copy xk-account-layout__hero-text max-w-none"
+                />
+              </header>
+            )}
+
 
             <div className="xk-account-layout__content">{children}</div>
           </div>

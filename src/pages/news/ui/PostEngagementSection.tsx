@@ -1,7 +1,8 @@
-import { Alert, Avatar, Button, Card, Input, Spinner, Text } from '@heroui/react'
+import { Link } from '@tanstack/react-router'
+import { Alert, Button, Card, Spinner, Text } from '@heroui/react'
 import { MessageCircle, SendHorizonal } from 'lucide-react'
 import { startTransition, useEffect, useMemo, useState } from 'react'
-import { getCachedAccount } from '@/entities/account'
+import { getCachedAccount, PlayerAvatar } from '@/entities/account'
 import type { PostReactionKey, SitePostEngagement } from '@/entities/site'
 import {
   createSitePostComment,
@@ -39,9 +40,6 @@ export function PostEngagementSection({
 }: PostEngagementSectionProps) {
   const cachedAccount = getCachedAccount()
   const [engagement, setEngagement] = useState<SitePostEngagement | null>(null)
-  const [author, setAuthor] = useState(
-    () => cachedAccount?.player.nickname ?? '',
-  )
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(true)
@@ -139,7 +137,6 @@ export function PostEngagementSection({
       startTransition(() => {
         setEngagement(result.engagement)
         setMessage('')
-        setAuthor(cachedAccount?.player.nickname ?? author)
       })
     } catch (submitError) {
       setError(
@@ -154,7 +151,7 @@ export function PostEngagementSection({
 
   if (isLoading || !engagement) {
     return (
-      <Card className="border border-[var(--separator)] bg-[var(--surface)]">
+      <Card className="border border-separator bg-surface">
         <Card.Content className="flex items-center gap-3">
           <Spinner size="sm" />
           <Text type="body-sm">Загружаем реакции и комментарии...</Text>
@@ -174,21 +171,7 @@ export function PostEngagementSection({
         </Alert>
       ) : null}
 
-      <Card className="border border-[var(--separator)] bg-[var(--surface)]">
-        <Card.Header className="flex flex-col gap-3">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <Card.Title>Реакции</Card.Title>
-              <Card.Description>
-                Выберите одну реакцию на пост.
-              </Card.Description>
-            </div>
-            <div className="rounded-full border border-[var(--separator)] bg-[var(--surface-secondary)] px-3 py-1 text-xs font-semibold text-muted-foreground">
-              {totalReactions} реакций
-            </div>
-          </div>
-        </Card.Header>
-        <Card.Content className="flex flex-wrap items-center gap-2 pt-0">
+      <div className="flex flex-wrap items-center gap-2 rounded-3xl border border-separator bg-surface p-3">
           {reactionOptions.map((reaction) => (
             <EmojiReactionButton
               key={reaction.key}
@@ -203,10 +186,12 @@ export function PostEngagementSection({
               <EmojiReactionButton.Count />
             </EmojiReactionButton>
           ))}
-        </Card.Content>
-      </Card>
+          <div className="ml-auto inline-flex items-center rounded-full bg-surface-secondary px-3 py-1 text-xs font-semibold text-muted-foreground">
+            {totalReactions} реакций
+          </div>
+      </div>
 
-      <Card className="border border-[var(--separator)] bg-[var(--surface)]">
+      <Card className="border border-separator bg-surface">
         <Card.Header className="flex flex-col gap-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -215,71 +200,100 @@ export function PostEngagementSection({
                 Оставьте впечатление или продолжите обсуждение поста.
               </Card.Description>
             </div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-[var(--separator)] bg-[var(--surface-secondary)] px-3 py-1 text-xs font-semibold text-muted-foreground">
+            <div className="inline-flex items-center gap-2 rounded-full border border-separator bg-surface-secondary px-3 py-1 text-xs font-semibold text-muted-foreground">
               <MessageCircle size={14} />
               {totalComments} комментариев
             </div>
           </div>
         </Card.Header>
         <Card.Content className="grid gap-5 pt-0">
-          <div className="grid gap-3 rounded-3xl border border-[var(--separator)] bg-[var(--surface-secondary)]/55 p-4">
-            <div className="grid gap-3 md:grid-cols-[220px_minmax(0,1fr)]">
-              <Input
-                isDisabled={Boolean(cachedAccount?.player.nickname)}
-                label="Ваше имя"
-                placeholder="Например, Vlad"
-                value={author}
-                onChange={(event) => {
-                  setAuthor(event.target.value)
-                }}
-              />
-              <label className="grid gap-2">
-                <span className="text-sm font-medium text-foreground">
-                  Комментарий
-                </span>
+          {cachedAccount ? (
+            <div className="flex items-end gap-3 rounded-[28px] border border-separator bg-(--surface-secondary)/55 p-3 sm:p-4">
+              <Link
+                className="shrink-0"
+                params={{ nickname: cachedAccount.player.nickname }}
+                to="/u/$nickname"
+              >
+                <PlayerAvatar
+                  alt={cachedAccount.player.nickname}
+                  className="size-10 border border-separator bg-surface"
+                  nickname={cachedAccount.player.nickname}
+                  size="md"
+                />
+              </Link>
+              <div className="min-w-0 flex-1 rounded-[24px] border border-separator bg-surface px-4 py-3">
+                <div className="mb-2 flex items-center gap-2 text-sm text-muted-foreground">
+                  <Link
+                    className="font-medium text-foreground transition hover:text-accent"
+                    params={{ nickname: cachedAccount.player.nickname }}
+                    to="/u/$nickname"
+                  >
+                    {cachedAccount.player.nickname}
+                  </Link>
+                  <span>пишет комментарий</span>
+                </div>
                 <textarea
-                  className="min-h-28 rounded-2xl border border-[var(--separator)] bg-[var(--surface)] px-4 py-3 text-sm text-foreground outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
-                  placeholder="Поделитесь впечатлениями о посте..."
+                  className="min-h-24 w-full resize-y bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
+                  placeholder="Напишите комментарий в стиле чата..."
                   value={message}
                   onChange={(event) => {
                     setMessage(event.target.value)
                   }}
                 />
-              </label>
-            </div>
-            <div className="flex justify-end">
+              </div>
               <Button
-                color="primary"
-                isLoading={isSubmittingComment}
+                className="shrink-0"
+                isDisabled={!message.trim()}
+                isPending={isSubmittingComment}
+                variant="primary"
                 onPress={() => {
                   void handleSubmitComment()
                 }}
               >
-                <SendHorizonal size={16} />
-                Отправить комментарий
+                {!isSubmittingComment ? <SendHorizonal size={16} /> : null}
+                Отправить
               </Button>
             </div>
-          </div>
+          ) : (
+            <div className="rounded-[28px] border border-dashed border-separator bg-(--surface-secondary)/35 p-5">
+              <Text type="body" weight="semibold">
+                Комментарии доступны только после входа в аккаунт.
+              </Text>
+              <Text className="mt-1" color="muted" type="body-sm">
+                Автор коммента берётся из вашего профиля, поэтому отдельное поле с ником здесь не нужно.
+              </Text>
+            </div>
+          )}
 
           {engagement.comments.length > 0 ? (
             <div className="grid gap-3">
               {engagement.comments.map((comment) => (
-                <Card
+                <div
                   key={comment.id}
-                  className="border border-[var(--separator)] bg-[var(--surface-secondary)]/45"
+                  className="flex items-start gap-3 rounded-[28px] border border-separator bg-(--surface-secondary)/45 p-4"
                 >
-                  <Card.Content className="flex items-start gap-3">
-                    <Avatar
-                      className="shrink-0 border border-[var(--separator)] bg-[var(--surface)]"
-                      name={comment.authorNickname}
-                      size="sm"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                        <Text type="body-sm" weight="semibold">
+                    <Link
+                      className="shrink-0"
+                      params={{ nickname: comment.authorNickname }}
+                      to="/u/$nickname"
+                    >
+                      <PlayerAvatar
+                        alt={comment.authorNickname}
+                        className="size-10 border border-separator bg-surface"
+                        nickname={comment.authorNickname}
+                        size="md"
+                      />
+                    </Link>
+                    <div className="min-w-0 flex-1 rounded-[22px] bg-surface px-4 py-3">
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+                        <Link
+                          className="font-semibold text-foreground transition hover:text-accent"
+                          params={{ nickname: comment.authorNickname }}
+                          to="/u/$nickname"
+                        >
                           {comment.authorNickname}
-                        </Text>
-                        <Text color="muted" type="body-sm">
+                        </Link>
+                        <Text type="body-sm" weight="semibold">
                           {formatCommentDate(comment.createdAt)}
                         </Text>
                       </div>
@@ -287,12 +301,11 @@ export function PostEngagementSection({
                         {comment.message}
                       </Text>
                     </div>
-                  </Card.Content>
-                </Card>
+                </div>
               ))}
             </div>
           ) : (
-            <div className="rounded-3xl border border-dashed border-[var(--separator)] p-5 text-center">
+            <div className="rounded-3xl border border-dashed border-separator p-5 text-center">
               <Text type="body">Пока нет комментариев</Text>
               <Text className="mt-1" color="muted" type="body-sm">
                 Станьте первым, кто оставит отзыв на этот пост.
