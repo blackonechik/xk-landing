@@ -4,14 +4,28 @@ import type { AccountPayload, PlayerProfileAppearance } from '../model/types'
 let accountCache: AccountPayload | null = null
 let accountRequest: Promise<AccountPayload> | null = null
 
-export function getDiscordLoginUrl(returnTo?: string) {
-  const url = new URL(`${apiBaseUrl}/api/auth/discord`)
+export async function loginWithPassword(input: {
+  nickname: string
+  password: string
+}) {
+  const response = await fetch(`${apiBaseUrl}/api/auth/login`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(input),
+  })
 
-  if (returnTo) {
-    url.searchParams.set('returnTo', returnTo)
+  if (!response.ok) {
+    throw new Error(
+      response.status === 403
+        ? 'ACCOUNT_BLOCKED'
+        : response.status === 404
+          ? 'PLAYER_NOT_FOUND'
+          : 'INVALID_CREDENTIALS',
+    )
   }
-
-  return url.toString()
 }
 
 export function getSkinProxyUrl(identifier: string) {

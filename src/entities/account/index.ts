@@ -2,9 +2,9 @@ export {
   clearAccountCache,
   fetchAccount,
   fetchAccountCached,
-  getDiscordLoginUrl,
   getCachedAccount,
   getSkinProxyUrl,
+  loginWithPassword,
   logout,
   updateProfileAppearance,
 } from './api/account-api'
